@@ -26,17 +26,7 @@
 
 
 
- 	//FETCH WALLET LIST TO BE USED IN SELECT2 PLUGIN
- 	function fetch_wallet_list_select($search){
- 		$this->db->select('WALLET_NUMBER');
- 		$this->db->from('wallet');
- 		$this->db->where('WALLET_NUMBER REGEXP', $search);
- 		$this->db->where('AMOUNT > ', 0);
- 		$query=$this->db->get();
- 		return $query->result_array();
- 	}
-
-
+ 
 
  	//FETCH STORE settings
  	function fetch_store(){
@@ -49,6 +39,16 @@
  		else{
  			return false;
  		}
+ 	}
+
+ 	//UPDATE STORE SETTINGS
+ 	function update_store_settings($store){
+		if($this->db->update('settings', $store)){
+			return true;
+		}
+		else{
+			return false;
+		}
  	}
 
  	//LOG STAFF LOG IN

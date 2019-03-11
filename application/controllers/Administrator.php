@@ -234,7 +234,7 @@ class Administrator extends CI_Controller {
 
 	//==============================
     //==============================
-    //SETTINGS
+    //STORE SETTINGS
     //==============================
     //==============================
 
@@ -250,23 +250,26 @@ class Administrator extends CI_Controller {
 	//EXPORT RECORDS IN CSV
 	public function export_records(){
 		$this->verify();
+		$prefs = array(
+		        'tables'        => array(),   
+		        'ignore'        => array(),                     
+		        'format'        => 'zip',                   
+		        'filename'      => 'Record-'.date("F-d-Y").'.sql',
+		        'add_drop'      => TRUE,                        
+		        'add_insert'    => TRUE,                        
+		        'newline'       => "\n"                        
+		);
 		$this->load->dbutil();
+		$backup = $this->dbutil->backup($prefs);
 		$this->load->helper('file');
+		write_file('backup/'.$tables.'-'.date("F-d-Y").'.zip', $backup);
 		$this->load->helper('download');
-		$this->load->library('zip');
-		$database_tables=['logs', 'products', 'products_to_sell', 'sales', 'setting', 'staff', 'wallet', 'wallet_log', 'pin'];
-		foreach ($database_tables as $tables) {
-			$query = $this->db->query("SELECT * FROM ".$tables);
-			$data=$this->dbutil->csv_from_result($query);
-			write_file('backup/'.$tables.'-'.date("F-d-Y").'.csv', $data);
-		}
-		$this->zip->read_dir('backup', TRUE);
 		delete_files('backup/');
-		$this->zip->download('Record-'.date("F-d-Y").'.zip');
+		force_download('backup/'.$tables.'-'.date("F-d-Y").'.zip', $backup);
 	}
 
-	//UPDATE CAFETERIA NAME
-	public function update_cafeteria_name(){
+	//UPDATE STORE SETTINGS
+	public function update_store_settings(){
 		$this->verify();
 		$this->load->library('form_validation');
 		$this->form_validation->set_rules('name', 'Cafeteria Name', 'required');
@@ -274,14 +277,14 @@ class Administrator extends CI_Controller {
 		$this->form_validation->set_rules('address', 'Address', 'required');
 		$this->form_validation->set_rules('email', 'Email Address', 'valid_email');
 		if($this->form_validation->run()){
-			$name=array(
-				'NAME'=>trim($this->input->post('name')),
+			$store=array(
+				'STORE_NAME'=>trim($this->input->post('name')),
 				'PHONE'=>trim($this->input->post('phone')),
 				'ADDRESS'=>trim($this->input->post('address')),
 				'EMAIL'=>trim($this->input->post('email'))
 			);
-			if($this->administrator_model->update_cafeteria_name($name)){
-				echo "Cafeteria Name has been updated";
+			if($this->administrator_model->update_store_settings($store)){
+				echo "Store Settings has been updated";
 			}
 		}
 		else{

@@ -27,16 +27,15 @@
 
                                     <button class="btn btn-success btn-sm" data-toggle="modal" data-target="#myModal">Change Store Name</button>
 
-                                    <a href="<?php echo base_url() ?>export-records" target="_blank" class="btn btn-info btn-sm">Export Records</a>
+                                    <a href="<?php echo base_url() ?>export-records" target="_blank" class="btn btn-info btn-sm">Backup Records</a>
                                 </h4>
 
                                
                                 <?php
 
-                                if($cafeteria){
+                                if($store){
                                   echo "
-                                  <p class='text-center'><img src='".base_url()."assets/images/dish.png'></p>
-
+                                 
                                   <h2 class='text-center'>".strtoupper($store->STORE_NAME)."</h2>
                                   <div class='col-lg-8 offset-lg-2'>
                                         <ul class='list-group'>
@@ -77,22 +76,22 @@
                                                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                                                     </div>
                                                     <div class="modal-body">
-                                                       <form method="post" id="updateCafeteriaName">
+                                                       <form method="post" id="updateStoreSettings" autocomplete="off">
                                                           
 
                                                            <div class="form-group">
-                                                               <input type="text" name="name" class="form-control" placeholder="Cafeteria Name" required="" value="<?php echo $cafeteria->NAME; ?>">
+                                                               <input type="text" name="name" class="form-control" placeholder="Cafeteria Name" required="" value="<?php echo $store->STORE_NAME; ?>" autocomplete="off">
                                                            </div>
 
                                                            <div class="form-group">
-                                                               <input type="text" name="phone" class="form-control" placeholder="Phone Number" required="" value="<?php echo $cafeteria->PHONE; ?>">
+                                                               <input type="text" name="phone" class="form-control" placeholder="Phone Number" required="" value="<?php echo $store->PHONE; ?>" autocomplete="off">
                                                            </div>
                                                             <div class="form-group">
-                                                               <input type="text" name="address" class="form-control" placeholder="Address" required="" value="<?php echo $cafeteria->ADDRESS; ?>">
+                                                               <input type="text" name="address" class="form-control" placeholder="Address" required="" value="<?php echo $store->ADDRESS; ?>" autocomplete="off">
                                                            </div>
 
                                                             <div class="form-group">
-                                                               <input type="text" name="email" class="form-control" placeholder="Email Address" value="<?php echo $cafeteria->EMAIL; ?>">
+                                                               <input type="text" name="email" class="form-control" placeholder="Email Address" value="<?php echo $store->EMAIL; ?>" autocomplete="off">
                                                            </div>
 
                                                            

@@ -12,4 +12,5 @@ $route['logout']='drinks/logout';
 
 
 $route['settings']="administrator/settings";
-
+$route['update-store-setting']="administrator/update_store_settings";
+$route['export-records']="administrator/export_records";

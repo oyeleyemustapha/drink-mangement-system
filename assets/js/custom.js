@@ -1,8 +1,7 @@
 $(document).ready(function(){
 
-	 var base_url_admin=location.protocol+"//"+location.host+"/cafeteria/";
-   var base_url=location.protocol+"//"+location.host+"/cafeteria/cashier/";
-
+	 var base_url=location.protocol+"//"+location.host+"/drinks/";
+ 
 	 $('.date').datepicker({
 	 	format:'MM dd, yyyy',
 	 	autoclose: true
@@ -14,195 +13,38 @@ $(document).ready(function(){
 	 });
 
 
-   //=======================
-   //=======================
-   //WALLET
-   //=======================
-   //=======================
 
-    $('.walletlog').DataTable();
 
-    //CREATE WALLET
-    $('#createWallet').submit(function(){
-      $.post( 
-          base_url_admin+"create-wallet", 
-          $(this).serialize(), 
-          function(data){
-              $('#myModal').modal('hide');
-              $('#createWallet')[0].reset();
-                $.notify({
-                  message: data
-                },{    
-                  type: "success",    
-                }); 
-                wallets();
-          }
-      );
+  //=========================
+  //=========================
+  //====STORE SETTINGS
+  //=========================
+  //=========================
+  
+  //UPDATE STORE SETTINGS
+  $('#updateStoreSettings').submit(function(){
+    $.post( 
+      base_url+"update-store-setting", 
+      $(this).serialize(), 
+        function(data){
+          $('#myModal').modal('hide');
+            $.notify({
+              message: data
+            },{         
+              type: "success",
+              onClose:function(){
+                location.reload();
+              }        
+            }); 
+        }
+    );
       $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
       $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});
       return false;          
-    });
-
-    wallets();
-
-    function wallets(){
-      var wallet_cb=function(){
-        $('.walletList').DataTable({
-            "drawCallback": function( settings ) {
-              
-              //DELETE WALLET
-              $('.deletewallet').click(function(){
-                  var wallet_no=$(this).attr('data-wallet');
-
-                      swal({
-                          title: 'Are you sure of this ?',
-                          text: "You can't revert this later!",
-                          type: 'warning',
-                          showCancelButton: true,
-                          confirmButtonColor: '#D62C1A',
-                          cancelButtonColor: '#2C3E50',
-                          confirmButtonText: 'Yes, delete it!'
-                      }).then(function () {
-                          $.post( 
-                              base_url_admin+"delete-wallet", 
-                              {wallet_no:wallet_no}, 
-                              function(data){
-                                  swal({
-                                    title: 'Deleted!',
-                                    text: data,
-                                    type: 'success',
-                                    timer:3000,
-                                    showConfirmButton:false,
-                                    onClose:function(){
-                                       wallets(); 
-                                    }
-                                  });
-                                }
-                            );
-                        $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
-                        $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});
-                         
-                      }); 
-              });
+  });
 
 
-              //EDIT WALLET ACCOUNT
-              $('.editWallet').click(function(){
-                $.post( 
-                    base_url_admin+"fetch-wallet", 
-                    {wallet_no:$(this).attr('data-wallet')}, 
-                    function(data){
-                      $('#walletInfoModal').modal('show');
-                      $('#walletInfoModal .modal-body').html(data);
-
-
-                      //UPDATE WALLET ACCOUNT
-                      $('#updateWalletForm').submit(function(){
-                        $.post( 
-                            base_url_admin+"update-wallet", 
-                            $(this).serialize(), 
-                            function(data){
-                                $('#walletInfoModal').modal('hide');
-                                 $.notify({
-                                    message: data
-                                },{
-                                    
-                                    type: "success",
-                                   
-                                }); 
-                                wallets();
-                            }
-                        );
-                        $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
-                        $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});
-                        return false;          
-                      }); 
-
-
-                            
-                    }
-                );
-                $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
-                $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});
-              });
-
-              //FUND WALLET
-              $('.fundWallet').click(function(){
-                $.post( 
-                    base_url_admin+"fund-wallet", 
-                    {wallet_no:$(this).attr('data-wallet')}, 
-                    function(data){
-                      $('#walletInfoModal').modal('show');
-                       $('#walletInfoModal .modal-title').html('Fund Wallet');
-                      $('#walletInfoModal .modal-body').html(data);
-
-
-                      //CREDIT WALLET
-                      $('#creditWalletForm').submit(function(){
-                        $.post( 
-                            base_url_admin+"credit-wallet", 
-                            $(this).serialize(), 
-                            function(data){
-                                $('#walletInfoModal').modal('hide');
-                                 $.notify({
-                                    message: data
-                                },{
-                                    
-                                    type: "success",
-                                   
-                                }); 
-                                wallets();
-                            }
-                        );
-                        $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
-                        $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});
-                        return false;          
-                      }); 
-
-
-                            
-                    }
-                );
-                $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
-                $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});
-              });
-
-
-            }
-        });
-      }
-      $('.walletListDiv').load(base_url_admin+'fetch-wallets', wallet_cb);
-    }
-
-    walletSelect();
-    function walletSelect(){
-      //FETCH WALLET LIST TO BE USED FOR SELECT2 PLUGIN
-      $(".walletSelect").select2({
-          placeholder: "Type Wallet Number",
-          allowClear: true, 
-          theme: "classic",
-          width: '100%',
-          ajax: {
-                  url: base_url_admin+"wallet-list-select",
-                  dataType: 'json',
-                  delay: 250,
-                  data: function (params) {
-                      return {
-                          search: params.term
-                      };
-                  },
-                  processResults: function (data) {
-                      return {
-                          results: data
-                      };
-                  },
-                  cache: true
-          },
-          minimumInputLength: 3
-      });
-    }
-    
-
+   
 
   //=======================
   //=======================
@@ -231,7 +73,7 @@ $(document).ready(function(){
                               confirmButtonText: 'Yes, delete it!'
                           }).then(function () {
                               $.post( 
-                                  base_url_admin+"deleteStaff", 
+                                  base_url+"deleteStaff", 
                                   {staff_id:staff_id}, 
                                   function(data){
 
@@ -268,7 +110,7 @@ $(document).ready(function(){
                   //EDIT STAFF
                   $('.editStaff').click(function(){
                         $.post( 
-                            base_url_admin+"fetchStaff", 
+                            base_url+"fetchStaff", 
                             {staff_id:$(this).attr('id')}, 
                             function(data){
                               $('#staffInfoModal').modal('show');
@@ -278,7 +120,7 @@ $(document).ready(function(){
                               //UPDATE STAFF
                               $('#updateStaffForm').submit(function(){
                                         $.post( 
-                                            base_url_admin+"updateStaff", 
+                                            base_url+"updateStaff", 
                                             $(this).serialize(), 
                                             function(data){
                                                 $('#staffInfoModal').modal('hide');
@@ -306,14 +148,14 @@ $(document).ready(function(){
 
         });
       }
-      $('.staffListDiv').load(base_url_admin+'fetchStafflist', staff_cb);
+      $('.staffListDiv').load(base_url+'fetchStafflist', staff_cb);
    }
 
     staff();
   	//ADD STAFF
   	$('#addStaffForm').submit(function(){
               $.post( 
-                  base_url_admin+"addStaff", 
+                  base_url+"addStaff", 
                   $(this).serialize(), 
                   function(data){
                       $('#myModal').modal('hide');
@@ -339,7 +181,7 @@ $(document).ready(function(){
   //=======================
 
   	//STAFF LOGS
-  	$('.logDiv').load(base_url_admin+'fetchLogs', function(){
+  	$('.logDiv').load(base_url+'fetchLogs', function(){
   		$('.log').DataTable();
   	});
 
@@ -356,7 +198,7 @@ $(document).ready(function(){
       }).then(function () {
 
             $.post( 
-                  base_url_admin+"purge-record", 
+                  base_url+"purge-record", 
                   {action:'purge'}, 
                   function(data){
                       
@@ -368,7 +210,7 @@ $(document).ready(function(){
                          
                       }); 
                        //STAFF LOGS
-                      $('.logDiv').load(base_url_admin+'fetchLogs', function(){
+                      $('.logDiv').load(base_url+'fetchLogs', function(){
                         $('.log').DataTable();
                       });
                   }
@@ -389,12 +231,12 @@ $(document).ready(function(){
 
   $('.stockToggle').click(function(){
 
-     $('.stock').load(base_url_admin+'drinks-to-stock', function(){
+     $('.stock').load(base_url+'drinks-to-stock', function(){
         
         //ADD DRINKS TO STOCK
         $('#addStockForm').submit(function(){
           $.post( 
-            base_url_admin+"add-drink-stock", 
+            base_url+"add-drink-stock", 
             $(this).serialize(), 
             function(data){
               $.notify({
@@ -417,18 +259,18 @@ $(document).ready(function(){
 
   
   function drinkStock(){
-    $('.Drinkstock').load(base_url_admin+'fetch-drinks-in-stock');
+    $('.Drinkstock').load(base_url+'fetch-drinks-in-stock');
   }
   drinkStock();
 
   drinksToallocate();
   function drinksToallocate(){
-    $('.allocateDrink').load(base_url_admin+'fetch-drinks-to-allocate', function(){
+    $('.allocateDrink').load(base_url+'fetch-drinks-to-allocate', function(){
 
       //ALLOCATE DRINK TO STAFF
         $('#allocateDrinks').submit(function(){
           $.post( 
-            base_url_admin+"allocate-drinks", 
+            base_url+"allocate-drinks", 
             $(this).serialize(), 
             function(data){
               $.notify({
@@ -449,7 +291,7 @@ $(document).ready(function(){
     });
   }
 
-   $('.stockDiv').load(base_url_admin+'drink-stock-log', function(){
+   $('.stockDiv').load(base_url+'drink-stock-log', function(){
     $('.stocklog').DataTable();
    });
 
@@ -465,7 +307,7 @@ $(document).ready(function(){
   //ADD DRINKS
   $('#addDrinkForm').submit(function(){
     $.post( 
-      base_url_admin+"add-drink", 
+      base_url+"add-drink", 
       $(this).serialize(), 
       function(data){
         $.notify({
@@ -493,7 +335,7 @@ $(document).ready(function(){
               //EDIT DRINK
               $('.editDrink').click(function(){
                     $.post( 
-                        base_url_admin+"fetch-drink", 
+                        base_url+"fetch-drink", 
                         {product_id:$(this).attr('id')}, 
                         function(data){
                           $('#productInfoModal').modal('show');
@@ -503,7 +345,7 @@ $(document).ready(function(){
                           //UPDATE DRINK
                           $('#updateDrinkForm').submit(function(){
                                     $.post( 
-                                        base_url_admin+"update-drink", 
+                                        base_url+"update-drink", 
                                         $(this).serialize(), 
                                         function(data){
                                             $('#productInfoModal').modal('hide');
@@ -531,7 +373,7 @@ $(document).ready(function(){
 
     });
   }
-    $('.drinkListDiv').load(base_url_admin+'fetch-drinks', drink_cb);
+    $('.drinkListDiv').load(base_url+'fetch-drinks', drink_cb);
   }
 
 	//=========================
@@ -550,7 +392,7 @@ $(document).ready(function(){
               //EDIT PRODUCT INFO
               $('.editProduct').click(function(){
                     $.post( 
-                        base_url_admin+"fetchProductInfo", 
+                        base_url+"fetchProductInfo", 
                         {product_id:$(this).attr('id')}, 
                         function(data){
                           $('#productInfoModal').modal('show');
@@ -560,7 +402,7 @@ $(document).ready(function(){
                           //UPDATE PRODUCT INFOMATION
                           $('#updateproductForm').submit(function(){
                                     $.post( 
-                                        base_url_admin+"updateProductInfo", 
+                                        base_url+"updateProductInfo", 
                                         $(this).serialize(), 
                                         function(data){
                                             $('#productInfoModal').modal('hide');
@@ -588,13 +430,13 @@ $(document).ready(function(){
 
     });
   }
-  $('.productListDiv').load(base_url_admin+'fetchProductList', product_cb);
+  $('.productListDiv').load(base_url+'fetchProductList', product_cb);
   }
 	
 	//ADD PRODUCT
 	$('#addProductForm').submit(function(){
             $.post( 
-                base_url_admin+"addProduct", 
+                base_url+"addProduct", 
                 $(this).serialize(), 
                 function(data){
                     $('#myModal').modal('hide');
@@ -625,7 +467,7 @@ $(document).ready(function(){
         width: '100%',
         //FETCH SUBJECT FROM THE DATABASE
         ajax: {
-                url: base_url_admin+"productListSelect",
+                url: base_url+"productListSelect",
                 dataType: 'json',
                 delay: 250,
                 data: function (params) {
@@ -652,7 +494,7 @@ $(document).ready(function(){
     //ADD SALES PRODUCTS
 	$('#addsalesProductForm').submit(function(){
             $.post( 
-                base_url_admin+"addSalesProducts", 
+                base_url+"addSalesProducts", 
                 $(this).serialize(), 
                 function(data){
                     $('#myModal').modal('hide');
@@ -667,7 +509,7 @@ $(document).ready(function(){
 
                     $('#addsalesProductForm')[0].reset();
                     $("#productsSelect").empty().trigger('change')
-                    $('.salesproductListDiv').load(base_url_admin+"fetchSalesProductsCurrent", salesProductList_cb);
+                    $('.salesproductListDiv').load(base_url+"fetchSalesProductsCurrent", salesProductList_cb);
                 }
             );
              $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
@@ -679,7 +521,7 @@ $(document).ready(function(){
   //GENERATE SALES PRODUCTS LIST FOR A PARTICULAR DATE
 	$('#generateSalesproducts').submit(function(){
             $.post( 
-                base_url_admin+"fetchSalesProducts", 
+                base_url+"fetchSalesProducts", 
                 $(this).serialize(), 
                 function(data){
                     $('#myModal2').modal('hide');
@@ -699,7 +541,7 @@ $(document).ready(function(){
 			//EDIT PRODUCT INFO
               $('.editSalesProduct').click(function(){
                     $.post( 
-                        base_url_admin+"salesProductInfo", 
+                        base_url+"salesProductInfo", 
                         {id:$(this).attr('id')}, 
                         function(data){
                         	$('#productInfoModal').modal('show');
@@ -709,7 +551,7 @@ $(document).ready(function(){
                         	//UPDATE SALES PRODUCT INFOMATION
 							$('#updateSalesproductForm').submit(function(){
 						            $.post( 
-						                base_url_admin+"updateSalesProduct", 
+						                base_url+"updateSalesProduct", 
 						                $(this).serialize(), 
 						                function(data){
 						                    $('#productInfoModal').modal('hide');
@@ -721,7 +563,7 @@ $(document).ready(function(){
 						                       
 						                    }); 
 
-						                    $('.salesproductListDiv').load(base_url_admin+"fetchSalesProductsCurrent", salesProductList_cb);
+						                    $('.salesproductListDiv').load(base_url+"fetchSalesProductsCurrent", salesProductList_cb);
 						                }
 						            );
 						             $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
@@ -734,42 +576,14 @@ $(document).ready(function(){
                 $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});       
               });
     };
-    $('.salesproductListDiv').load(base_url_admin+"fetchSalesProductsCurrent", salesProductList_cb);
+    $('.salesproductListDiv').load(base_url+"fetchSalesProductsCurrent", salesProductList_cb);
 
 
-  //=========================
-  //=========================
-  //====SETTINGS
-  //=========================
-  //=========================
   
-  //UPDATE CAFETERIA NAME
-	$('#updateCafeteriaName').submit(function(){
-            $.post( 
-                base_url_admin+"updateCafeteriaName", 
-                $(this).serialize(), 
-                function(data){
-                    $('#myModal').modal('hide');
-                     $.notify({
-                        message: data
-                    },{
-                        
-                        type: "success",
-                        onClose:function(){
-                          location.reload();
-                        }
-                       
-                    }); 
-                }
-            );
-             $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
-             $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});
-             return false;          
-    });
 
 
 
-  $('.reports').load(base_url_admin+"dailySalesReport",function(){});
+  $('.reports').load(base_url+"dailySalesReport",function(){});
 
 
     //SALES
@@ -788,7 +602,7 @@ $(document).ready(function(){
 
 
 			            $.post( 
-			                base_url_admin+"search-sales", 
+			                base_url+"search-sales", 
 			                {search:$('.SearchSalesRecord').val()}, 
 			                function(data){
 			                    $('#myModal3').modal('hide');
@@ -807,7 +621,7 @@ $(document).ready(function(){
                                     confirmButtonText: 'Cancel!'
                                 }).then(function () {
                                       $.post( 
-                                        base_url_admin+"cancel-product-order", 
+                                        base_url+"cancel-product-order", 
                                         {sales_id:sales_id}, 
                                         function(data){
                                             swal({
@@ -837,7 +651,7 @@ $(document).ready(function(){
 					                          confirmButtonText: 'Cancel!'
 					                      }).then(function () {
 					                          $.post( 
-					                              base_url_admin+"cancel-all-orders", 
+					                              base_url+"cancel-all-orders", 
 					                              {order_no:order_no}, 
 					                              function(data){
 
