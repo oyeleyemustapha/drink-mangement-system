@@ -301,83 +301,6 @@ $(document).ready(function(){
   
 
 
-  //=========================
-  //=========================
-  //====DRINKS
-  //=========================
-  //=========================
-
-  //ADD DRINKS
-  $('#addDrinkForm').submit(function(){
-    $.post( 
-      base_url+"add-drink", 
-      $(this).serialize(), 
-      function(data){
-        $.notify({
-          message: data
-        },{
-          type: "success",          
-        }); 
-        $('#addDrinkForm')[0].reset();
-        drinks();
-      }
-    );
-    $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
-    $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});
-    return false;          
-  });
-
-
-  drinks();
-  function drinks(){
-    var drink_cb=function(){
-    $('.drinkList').DataTable({
-        
-         "drawCallback": function( settings ) {
-
-              //EDIT DRINK
-              $('.editDrink').click(function(){
-                    $.post( 
-                        base_url+"fetch-drink", 
-                        {product_id:$(this).attr('id')}, 
-                        function(data){
-                          $('#productInfoModal').modal('show');
-                          $('#productInfoModal .modal-body').html(data);
-
-                            
-                          //UPDATE DRINK
-                          $('#updateDrinkForm').submit(function(){
-                                    $.post( 
-                                        base_url+"update-drink", 
-                                        $(this).serialize(), 
-                                        function(data){
-                                            $('#productInfoModal').modal('hide');
-                                             $.notify({
-                                                message: data
-                                            },{
-                                                
-                                                type: "success",
-                                               
-                                            }); 
-
-                                            drinks();
-                                        }
-                                    );
-                                     $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
-                                     $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});
-                                     return false;          
-                            }); 
-                        }
-                    );
-                $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
-                $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});       
-              });
-        }
-
-    });
-  }
-    $('.drinkListDiv').load(base_url+'fetch-drinks', drink_cb);
-  }
 
 	//=========================
 	//=========================
@@ -395,7 +318,7 @@ $(document).ready(function(){
               //EDIT PRODUCT INFO
               $('.editProduct').click(function(){
                     $.post( 
-                        base_url+"fetchProductInfo", 
+                        base_url+"fetch-product", 
                         {product_id:$(this).attr('id')}, 
                         function(data){
                           $('#productInfoModal').modal('show');
@@ -405,7 +328,7 @@ $(document).ready(function(){
                           //UPDATE PRODUCT INFOMATION
                           $('#updateproductForm').submit(function(){
                                     $.post( 
-                                        base_url+"updateProductInfo", 
+                                        base_url+"update-product", 
                                         $(this).serialize(), 
                                         function(data){
                                             $('#productInfoModal').modal('hide');
@@ -433,13 +356,13 @@ $(document).ready(function(){
 
     });
   }
-  $('.productListDiv').load(base_url+'fetchProductList', product_cb);
+  $('.productListDiv').load(base_url+'fetch-products', product_cb);
   }
 	
 	//ADD PRODUCT
 	$('#addProductForm').submit(function(){
             $.post( 
-                base_url+"addProduct", 
+                base_url+"add-product", 
                 $(this).serialize(), 
                 function(data){
                     $('#myModal').modal('hide');

@@ -433,124 +433,9 @@ class Administrator extends CI_Controller {
     //==============================
     //==============================
 
-	public function drinks(){
-		$this->verify();
-		$data['title']=$this->administrator_model->fetch_store()->NAME." :: Drinks";
-		$this->load->view('administrator/parts/head',$data);
-		$this->load->view('administrator/drinks/drinks',$data);
-		$this->load->view('administrator/parts/bottom',$data);
-	}
-
-	//ADD DRINKS
-	public function add_drink(){
-		$this->verify();
-		$this->load->library('form_validation');
-		$this->form_validation->set_rules('product', 'Drink Name', 'required|is_unique[drinks.NAME]', array('is_unique' => 'Drink has been added before.'));
-		$this->form_validation->set_rules('costPrice', 'Cost Price', 'required|numeric');
-		$this->form_validation->set_rules('salesPrice', 'Sales Price', 'required|numeric');
-		if($this->form_validation->run()){
-			$product=array(
-				'NAME'=>ucwords(trim($this->input->post('product'))),
-				'COST_PRICE'=>trim($this->input->post('costPrice')),
-				'SELLING_PRICE'=>trim($this->input->post('salesPrice')),
-			);
-			if($this->administrator_model->add_drink($product)){
-				echo "Drink has been added";
-			}
-		}
-		else{
-
-			$error="";
-
-			if(form_error('product')){
-				$error.=form_error('product');
-			}
-
-			if(form_error('costPrice')){
-				$error.=form_error('costPrice');
-			}
-
-			if(form_error('salesPrice')){
-				$error.=form_error('salesPrice');
-			}
-			echo $error;
-		}
-	}
-
-	//FETCH DRINK LIST
-	public function fetch_drink_list(){
-		$data['drinks']=$this->administrator_model->fetch_drink_list();
-		$this->load->view('administrator/drinks/list', $data);
-	}
-
-
-	//FETCH DRINK
-	public function fetch_drink(){
-		$this->verify();
-		$this->load->library('form_validation');
-		$this->form_validation->set_rules('product_id', 'Product ID', 'required|numeric');
-		if($this->form_validation->run()){
-			$data['product']= $this->administrator_model->fetch_drink($this->input->post('product_id'));
-			$this->load->view('administrator/drinks/info', $data);
-		}
-	}
-
-
-	//UPDATE DRINK
-	public function update_drink(){
-		$this->verify();
-		$this->load->library('form_validation');
-		$this->form_validation->set_rules('product_id', 'Product', 'required|numeric');
-		$this->form_validation->set_rules('product', 'Product', 'required');
-		$this->form_validation->set_rules('costPrice', 'Cost Price', 'required|numeric');
-		$this->form_validation->set_rules('salesPrice', 'Sales Price', 'required|numeric');
-		if($this->form_validation->run()){
-			$product=array(
-				'DRINK_ID'=>$this->input->post('product_id'),
-				'NAME'=>ucwords(trim($this->input->post('product'))),
-				'COST_PRICE'=>trim($this->input->post('costPrice')),
-				'SELLING_PRICE'=>trim($this->input->post('salesPrice'))
-			);
-			if($this->administrator_model->update_drink($product)){
-				echo "Drink has been updated";
-			}
-		}
-		else{
-
-			$error="";
-
-			if(form_error('product')){
-				$error.=form_error('product');
-			}
-
-			if(form_error('product_id')){
-				$error.=form_error('product_id');
-			}
-
-			
-			if(form_error('costPrice')){
-				$error.=form_error('costPrice');
-			}
-
-			if(form_error('salesPrice')){
-				$error.=form_error('salesPrice');
-			}
-
-			echo $error;
-		}
-	}
-
-
-
-	//==============================
-    //==============================
-    //PRODUCTS (FOODS)
-    //==============================
-    //==============================
-
 	public function products(){
 		$this->verify();
-		$data['title']=$this->administrator_model->fetch_store()->NAME." :: Foods";
+		$data['title']=$this->administrator_model->fetch_store()->STORE_NAME."| Products";
 		$this->load->view('administrator/parts/head',$data);
 		$this->load->view('administrator/products/products',$data);
 		$this->load->view('administrator/parts/bottom',$data);
@@ -561,16 +446,14 @@ class Administrator extends CI_Controller {
 	public function add_product(){
 		$this->verify();
 		$this->load->library('form_validation');
-		$this->form_validation->set_rules('product', 'Product', 'required|is_unique[products.PRODUCT]', array('is_unique' => 'Product has been added before.'));
-		$this->form_validation->set_rules('labelname', 'Label Name', 'required');
-		$this->form_validation->set_rules('costPrice', 'Cost Price', 'required|numeric');
-		$this->form_validation->set_rules('salesPrice', 'Sales Price', 'required|numeric');
+		$this->form_validation->set_rules('product', 'Product', 'required|is_unique[products.PRODUCT_NAME]', array('is_unique' => 'Product has been added before.'));
+		$this->form_validation->set_rules('costPrice', 'Cost Price', 'required');
+		$this->form_validation->set_rules('salesPrice', 'Sales Price', 'required');
 		if($this->form_validation->run()){
 			$product=array(
-				'PRODUCT'=>ucwords(trim($this->input->post('product'))),
-				'LABEL_NAME'=>ucwords(trim($this->input->post('labelname'))),
-				'COST_PRICE'=>trim($this->input->post('costPrice')),
-				'SALES_PRICE'=>trim($this->input->post('salesPrice')),
+				'PRODUCT_NAME'=>ucwords(trim($this->input->post('product'))),
+				'COST_PRICE'=>str_replace(',', '', trim($this->input->post('costPrice'))),
+				'SALES_PRICE'=>str_replace(',', '', trim($this->input->post('salesPrice')))
 			);
 			if($this->administrator_model->add_product($product)){
 				echo "Product has been added";
@@ -582,10 +465,6 @@ class Administrator extends CI_Controller {
 
 			if(form_error('product')){
 				$error.=form_error('product');
-			}
-
-			if(form_error('labelname')){
-				$error.=form_error('labelname');
 			}
 
 			if(form_error('costPrice')){
@@ -628,17 +507,17 @@ class Administrator extends CI_Controller {
 		$this->load->library('form_validation');
 		$this->form_validation->set_rules('product_id', 'Product', 'required|numeric');
 		$this->form_validation->set_rules('product', 'Product', 'required');
-		$this->form_validation->set_rules('labelname', 'Label Name', 'required');
-		$this->form_validation->set_rules('costPrice', 'Cost Price', 'required|numeric');
-		$this->form_validation->set_rules('salesPrice', 'Sales Price', 'required|numeric');
+		$this->form_validation->set_rules('costPrice', 'Cost Price', 'required');
+		$this->form_validation->set_rules('salesPrice', 'Sales Price', 'required');
 		if($this->form_validation->run()){
 			$product=array(
 				'PRODUCT_ID'=>$this->input->post('product_id'),
-				'PRODUCT'=>ucwords(trim($this->input->post('product'))),
-				'LABEL_NAME'=>ucwords(trim($this->input->post('labelname'))),
-				'COST_PRICE'=>trim($this->input->post('costPrice')),
-				'SALES_PRICE'=>trim($this->input->post('salesPrice'))
+				'PRODUCT_NAME'=>ucwords(trim($this->input->post('product'))),
+				'COST_PRICE'=>str_replace(',', '', trim($this->input->post('costPrice'))),
+				'SALES_PRICE'=>str_replace(',', '', trim($this->input->post('salesPrice')))
 			);
+
+
 			if($this->administrator_model->update_product($product)){
 				echo "Product Information has been updated";
 			}
@@ -655,10 +534,7 @@ class Administrator extends CI_Controller {
 				$error.=form_error('product_id');
 			}
 
-			if(form_error('labelname')){
-				$error.=form_error('labelname');
-			}
-
+			
 			if(form_error('costPrice')){
 				$error.=form_error('costPrice');
 			}

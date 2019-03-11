@@ -9,7 +9,7 @@
                     <div class="col-sm-12">
                         <div class="page-title-box">
                            
-                            <h4 class="page-title">Products</h4>
+                            <h4 class="page-title">Products (Drinks)</h4>
                         </div>
                     </div>
                 </div>
@@ -50,23 +50,17 @@
                                                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                                                     </div>
                                                     <div class="modal-body">
-                                                       <form method="post" id="addProductForm">
+                                                       <form method="post" id="addProductForm" autocomplete="off">
                                                            <div class="form-group">
-                                                               <input type="text" name="product" class="form-control" placeholder="Product Name" required="">
-                                                           </div>
-
-                                                           
-
-                                                           <div class="form-group">
-                                                               <input type="text" name="labelname" class="form-control" placeholder="Label Name" required="">
+                                                               <input type="text" name="product" class="form-control" placeholder="Product Name" required="" autocomplete="off">
                                                            </div>
 
                                                            <div class="form-group">
-                                                               <input type="text" name="costPrice" class="form-control" placeholder="Cost Price" required="">
+                                                               <input type="text" name="costPrice" class="form-control" placeholder="Cost Price" required="" autocomplete="off">
                                                            </div>
 
                                                            <div class="form-group">
-                                                               <input type="text" name="salesPrice" class="form-control" placeholder="Sales Price" required="">
+                                                               <input type="text" name="salesPrice" class="form-control" placeholder="Sales Price" required="" autocomplete="off">
                                                            </div>
 
                                                             

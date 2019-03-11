@@ -8,7 +8,7 @@ if($product_list){
                                         <tr>
                                             <th>ID</th>
                                             <th>PRODUCT</th>
-                                            <th>LABEL NAME</th>
+                                            
                                             <th>COST PRICE</th>
                                             <th>SALES PRICE</th>
                                            
@@ -20,10 +20,9 @@ if($product_list){
                                         echo"
                                             <tr>
                                                 <td>$counter</td>
-                                                <td><a href='#' class='editProduct' id='$product->PRODUCT_ID'>$product->PRODUCT</a></td>
-                                                <td>$product->LABEL_NAME</td>
-                                                <td>&#8358; $product->COST_PRICE</td>
-                                                <td>&#8358; $product->SALES_PRICE</td>
+                                                <td><a href='#' class='editProduct' id='$product->PRODUCT_ID'>$product->PRODUCT_NAME</a></td>
+                                                <td>&#8358; ".number_format($product->COST_PRICE)."</td>
+                                                <td>&#8358; ".number_format($product->SALES_PRICE)."</td>
                                 
                                             </tr>
                                         ";

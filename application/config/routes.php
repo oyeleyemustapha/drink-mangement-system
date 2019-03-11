@@ -30,3 +30,10 @@ $route['add-staff']="administrator/add_staff";
 $route['delete-staff']="administrator/delete_staff";
 $route['fetch-staff']="administrator/fetch_staff_info";
 $route['update-staff']="administrator/update_staff";
+
+//PRODUCT
+$route['products']="administrator/products";
+$route['add-product']="administrator/add_product";
+$route['fetch-products']="administrator/fetch_product_list";
+$route['fetch-product']="administrator/fetch_product_info";
+$route['update-product']="administrator/update_product_info";

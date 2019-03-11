@@ -89,7 +89,7 @@ echo'
                             </li>
 
                             <li class="has-submenu">
-                                <a href="'.base_url().'change-administrator"><i class="ti-money"></i>Products</a>
+                                <a href="'.base_url().'products"><i class="ti-money"></i>Products</a>
                             </li>
 
                             <li class="has-submenu">
