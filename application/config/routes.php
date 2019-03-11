@@ -37,3 +37,12 @@ $route['add-product']="administrator/add_product";
 $route['fetch-products']="administrator/fetch_product_list";
 $route['fetch-product']="administrator/fetch_product_info";
 $route['update-product']="administrator/update_product_info";
+
+
+//STOCK
+$route['stock']="administrator/stock";
+$route['drinks-to-stock']="administrator/fetchDrinktoStock";
+$route['add-drinks-to-stock']="administrator/add_drinks_stock";
+$route['fetch-drinks-stock']="administrator/fetchDrinksStock";
+
+

@@ -93,11 +93,11 @@ echo'
                             </li>
 
                             <li class="has-submenu">
-                                <a href="'.base_url().'take-order"><i class="ti-shopping-cart-full"></i>Stock</a>
+                                <a href="'.base_url().'stock"><i class="ti-shopping-cart-full"></i>Stock</a>
                             </li>
 
                             <li class="has-submenu">
-                                <a href="'.base_url().'wallet"><i class="ti-money"></i>Sales</a>
+                                <a href="'.base_url().'sales"><i class="ti-money"></i>Sales</a>
                             </li>
 
                             <li class="has-submenu">

@@ -411,6 +411,52 @@ $(document).ready(function(){
         minimumInputLength: 3
     });
 
+
+
+
+
+  //=========================
+  //=========================
+  //====DRINKS STOCK
+  //=========================
+  //=========================
+
+  $('.stockToggle').click(function(){
+     $('.stock').load(base_url+'drinks-to-stock', function(){
+        //ADD DRINKS TO STOCK
+        $('#addStockForm').submit(function(){
+          $.post( 
+            base_url+"add-drinks-to-stock", 
+            $(this).serialize(), 
+            function(data){
+              $.notify({
+                message: data
+              },{
+                type: "success",          
+              }); 
+              $('#addStockForm')[0].reset();
+              drinkStock();
+              drinksToallocate();
+            }
+          );
+          $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
+          $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});
+          return false;          
+        });
+     });
+
+  });
+
+  
+  function drinkStock(){
+    $('.Drinkstock').load(base_url+'fetch-drinks-stock', function(){
+      $('.stockList').DataTable();
+    });
+  }
+  drinkStock();
+
+
+
   //=========================
   //=========================
   //====SALES PRODUCTS

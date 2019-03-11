@@ -160,14 +160,6 @@
  	//===================
  	//===================
 
-
- 	//=========================
- 	//==========================
- 	//PRODUCTS (FOODS)
- 	//=========================
- 	//=========================
- 
-
  	//ADD PRODUCT
  	function add_product($product){
  		if($this->db->insert('products', $product)){
@@ -230,8 +222,70 @@
 
 
 
- 	
+ 	//================
+ 	//================
+ 	//STOCK
+ 	//================
+ 	//=================
 
+ 	//FETCH DRINK LIST
+ 	function fetch_drink_list(){
+ 		$this->db->select('*');
+ 		$this->db->from('products');
+ 		$this->db->order_by('PRODUCT_NAME', 'ASC');
+ 		$query=$this->db->get();
+ 		if($query->num_rows()>0){
+ 			return $query->result();
+ 		}
+ 		else{
+ 			return false;
+ 		}
+ 	}
+
+
+
+ 	//ADD DRINKS TO STOCK
+ 	function add_drink_stock($product){
+ 		$this->db->select('*');
+ 		$this->db->from('stock');
+ 		$this->db->where('PRODUCT_ID', $product['PRODUCT_ID']);
+ 		$this->db->where('STAFF_ID', $product['STAFF_ID']);
+ 		$query=$this->db->get();
+ 		if($query->num_rows()==1){
+ 			$quantity=$product['QUANTITY'];
+	 		$this->db->set('QUANTITY', "QUANTITY+$quantity", FALSE);
+	 		$this->db->where('PRODUCT_ID', $product['PRODUCT_ID']);
+	 		$this->db->where('STAFF_ID', $product['STAFF_ID']);
+			$this->db->update('stock');	
+ 		}      
+ 		else{
+ 			if($this->db->insert('stock', $product)){
+	 			return true;
+	 		}
+	 		else{
+	 			return false;
+	 		}
+ 		}
+ 	}
+
+ 	//FETCH LIST OF DRINKS IN STOCK
+ 	function fetch_drinks_in_stock(){
+ 		$this->db->select('products.PRODUCT_NAME, stock.QUANTITY, products.COST_PRICE, products.SALES_PRICE, stock.QUANTITY_SOLD, staff.NAME');
+ 		$this->db->from('stock');
+ 		$this->db->join('products', 'stock.PRODUCT_ID=products.PRODUCT_ID', 'left');
+ 		$this->db->join('staff', 'staff.STAFF_ID=stock.STAFF_ID', 'left');
+ 		$this->db->order_by('products.PRODUCT_NAME', 'ASC');
+ 		$query=$this->db->get();
+ 		if($query->num_rows()>0){
+ 			return $query->result();
+ 		}
+ 		else{
+ 			return false;
+ 		}
+ 	}
+
+
+ 	
  	
  	
 

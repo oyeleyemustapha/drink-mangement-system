@@ -313,38 +313,40 @@ class Administrator extends CI_Controller {
     //==============================
     //==============================
 
-	public function stockDrinks(){
+	public function stock(){
 		$this->verify();
-		$data['title']=$this->administrator_model->fetch_store()->NAME." :: Drinks' Stock";
+		$data['title']=$this->administrator_model->fetch_store()->STORE_NAME." :: Stock";
 		$data['staffList']=$this->staff_list();
 		$this->load->view('administrator/parts/head',$data);
-		$this->load->view('administrator/drinks/stock',$data);
+		$this->load->view('administrator/stock/stock',$data);
 		$this->load->view('administrator/parts/bottom',$data);
 	}
-
+	public function staff_list(){
+		$staff=$this->administrator_model->fetch_staff_list();
+		$staffList='<option value="">Select Staff</option>';
+		foreach ($staff as $person) {
+			$staffList.="<option value='$person->STAFF_ID'>$person->NAME</option>";
+		}
+		return $staffList;
+	}
 
 	//FETCH LIST OF DRINKS TO ADD TO STOCK
 	public function fetchDrinktoStock(){
+		$data['staffList']=$this->staff_list();
 		$data['drinks']=$this->administrator_model->fetch_drink_list();
-		$this->load->view('administrator/drinks/drinksToStock', $data);
+		$this->load->view('administrator/stock/drinksToStock', $data);
 	}
 
 	//FETCH LIST OF DRINKS IN STOCK
 	public function fetchDrinksStock(){
 		$data['drinks']=$this->administrator_model->fetch_drinks_in_stock();
-
-		$this->load->view('administrator/drinks/stockedDrinks', $data);
+		$this->load->view('administrator/stock/stockedDrinks', $data);
 	}
 
-	//FETCH LIST OF DRINKS TO ALLOCATE TO STAFF
-	public function fetchDrinkstoAllocate(){
-		$data['staffList']=$this->staff_list();
-		$data['drinks']=$this->administrator_model->fetch_drinks_with_stock();
-		$this->load->view('administrator/drinks/listDrinks', $data);
-	}
-
-	//ALLOCATE DRINK TO STAFF
-	public function allocate_drink(){
+	
+	
+	//ADD DRINKS TO STOCK
+	public function add_drinks_stock(){
 		$this->verify();
 		$this->load->library('form_validation');
 		$this->form_validation->set_rules('staff', 'Staff', 'numeric');
@@ -359,52 +361,10 @@ class Administrator extends CI_Controller {
 				}
 				else{
 					$product=array(
-						'STAFF'=>$this->input->post('staff'),
-						'DRINK'=>$product,
+						'STAFF_ID'=>$this->input->post('staff'),
+						'PRODUCT_ID'=>$product,
 						'QUANTITY'=>$quantity,
-						'DATE'=>date('Y-m-d')
-					);					
-					$this->administrator_model->allocate_drinks($product);
-				}
-			}
-			echo "Products has been added allocated to staff";
-		}
-		else{
-
-			$error="";
-
-			if(form_error('product[]')){
-				$error.=form_error('product[]');
-			}
-
-			if(form_error('quantity[]')){
-				$error.=form_error('quantity[]');
-			}
-			echo $error;
-		}
-	}
-
-
-
-
-	//ADD DRINKS TO STOCK
-	public function add_drinks_stock(){
-		$this->verify();
-		$this->load->library('form_validation');
-		$this->form_validation->set_rules('product[]', 'Product', 'numeric');
-		$this->form_validation->set_rules('quantity[]', 'Quantity', 'numeric');
-		if($this->form_validation->run()){
-			for ($i=0; $i <count($this->input->post('product')) ; $i++) { 
-				$product=$_POST['product'][$i];
-				$quantity=$_POST['quantity'][$i];
-				if(	$quantity==''){
-					continue;
-				}
-				else{
-
-					$product=array(
-						'DRINK'=>$product,
-						'QUANTITY'=>$quantity
+						'DATE_ADDED'=>date('Y-m-d')
 					);					
 					$this->administrator_model->add_drink_stock($product);
 				}
@@ -417,6 +377,10 @@ class Administrator extends CI_Controller {
 
 			if(form_error('product[]')){
 				$error.=form_error('product[]');
+			}
+
+			if(form_error('staff')){
+				$error.=form_error('staff');
 			}
 
 			if(form_error('quantity[]')){
@@ -548,138 +512,7 @@ class Administrator extends CI_Controller {
 	}
 	
 
-	//==============================
-    //==============================
-    //SALES PRODUCTS
-    //==============================
-    //==============================
-
-	public function sales_product(){
-		$this->verify();
-		$data['title']=$this->administrator_model->fetch_store()->NAME." :: Sales Products";
-		$data['products']=$this->administrator_model->fetch_product_list();
-		$this->load->view('administrator/parts/head',$data);
-		$this->load->view('administrator/products/salesProduct',$data);
-		$this->load->view('administrator/parts/bottom',$data);
-	}
-
-	//FETCH SUBEJCT LIST [TO BE USED IN SELECT2 PLUGIN]
-	public function get_product_list_plugin(){
-		$this->verify();
-		$products=$this->administrator_model->fetch_product_list_select($_GET['search']);
-		foreach ($products as $key => $value) {
-			$data[] = array('id' => $value['PRODUCT_ID'], 'text' => $value['PRODUCT']);			 	
-   		}
-		echo json_encode($data);
-	}
-
-	//ADD SALES PRODUCTS
-	public function add_sales_products(){
-		$this->verify();
-		$this->load->library('form_validation');
-		$this->form_validation->set_rules('product[]', 'Product', 'numeric');
-		$this->form_validation->set_rules('quantity[]', 'Quantity', 'numeric');
-		if($this->form_validation->run()){
-			for ($i=0; $i <count($this->input->post('product')) ; $i++) { 
-				$product=$_POST['product'][$i];
-				$quantity=$_POST['quantity'][$i];
-				if(	$quantity==''){
-					continue;
-				}
-				else{
-
-					$product=array(
-						'PRODUCT_ID'=>$product,
-						'QUANTITY'=>$quantity,
-						'STAFF_ID'=>$_SESSION['staff_id'],
-						'DATE_ADDED'=> date('Y-m-d')
-					);
-					$this->administrator_model->add_sales_products($product);
-				}
-			}
-			echo "Product has been added";
-		}
-		else{
-
-			$error="";
-
-			if(form_error('product[]')){
-				$error.=form_error('product[]');
-			}
-
-			if(form_error('quantity[]')){
-				$error.=form_error('quantity[]');
-			}
-			echo $error;
-		}
-	}
-
-	//FETCH SALES PRODUCTS LIST FOR A PARTICULAR DATE
-	public function fetch_sales_product_list(){
-		$this->load->library('form_validation');
-		$this->form_validation->set_rules('date', 'Date', 'required');
-		if($this->form_validation->run()){
-			$date=date('Y-m-d', strtotime($this->input->post('date')));
-			$data['products']=$this->administrator_model->fetch_sales_product_list($date);
-			$this->load->view('administrator/products/salesproductList', $data);
-		}
-		
-	}
-
-
-	//FETCH SALES PRODUCTS LIST FOR THE CURRENT DATE
-	public function fetch_sales_product_list_current(){
-		$data['products']=$this->administrator_model->fetch_sales_product_list(date('Y-m-d'));
-		$this->load->view('administrator/products/salesproductList', $data);	
-	}
-
-	//FETCH SALES PRODUCT INFO
-	public function fetch_sales_product_info(){
-		$this->verify();
-		$this->load->library('form_validation');
-		$this->form_validation->set_rules('id', 'ID', 'required|numeric');
-		if($this->form_validation->run()){
-			$data['product']= $this->administrator_model->fetch_sales_product_info($this->input->post('id'));
-			$this->load->view('administrator/products/salesproductInfo', $data);
-		}
-	}
-
-	//UPDATE SALES PRODUCTS INFO
-	public function update_sales_products(){
-		$this->verify();
-		$this->load->library('form_validation');
-		$this->form_validation->set_rules('product', 'Product', 'required|numeric');
-		$this->form_validation->set_rules('id', 'ID', 'required|numeric');
-		$this->form_validation->set_rules('quantity', 'Quantity', 'required|numeric');
-		if($this->form_validation->run()){
-			$product=array(
-				'PRODUCT_ID'=>$this->input->post('product'),
-				'QUANTITY'=>trim($this->input->post('quantity')),
-				'ID'=>$this->input->post('id')
-			);
-			if($this->administrator_model->update_sales_product($product)){
-				echo "Product has been updated";
-			}
-		}
-		else{
-
-			$error="";
-
-			if(form_error('product')){
-				$error.=form_error('product');
-			}
-
-			if(form_error('quantity')){
-				$error.=form_error('quantity');
-			}
-
-			if(form_error('id')){
-				$error.=form_error('id');
-			}
-			echo $error;
-		}
-	}
-
+	
 
 
 
@@ -861,14 +694,7 @@ class Administrator extends CI_Controller {
 		$this->load->view('administrator/parts/bottom',$data);
 	}
 
-	public function staff_list(){
-		$staff=$this->administrator_model->fetch_staff_list();
-		$staffList='<option value="">Select Staff</option>';
-		foreach ($staff as $person) {
-			$staffList.="<option value='$person->STAFF_ID'>$person->NAME</option>";
-		}
-		return $staffList;
-	}
+	
 
 
 	//GENERATE SALES RECORDS BASED ON SALES DATE FOR A PARTICULAR STAFFs
