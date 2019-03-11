@@ -44,6 +44,54 @@ $(document).ready(function(){
   });
 
 
+  //=======================
+  //=======================
+  //LOGIN LOGS
+  //=======================
+  //=======================
+
+    STAFF_LOGS();
+    function STAFF_LOGS(){
+      //STAFF LOGS
+      $('.logDiv').load(base_url+'fetchLogs', function(){
+        $('.log').DataTable();
+      });
+    }
+
+    //PURGE LOGS
+    $('.deleteRecord').click(function(){
+      swal({
+        title: 'Are you sure of this ?',
+        text: "You can't be reverted!",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#D62C1A',
+        cancelButtonColor: '#2C3E50',
+        confirmButtonText: 'Yes, delete it!'
+      }).then(function () {
+
+            $.post( 
+                  base_url+"purge-staff-logs", 
+                  {action:'purge'}, 
+                  function(data){
+                      
+                       $.notify({
+                          message: data
+                      },{
+                          
+                          type: "success",
+                         
+                      }); 
+                       STAFF_LOGS();
+                  }
+              );
+               $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
+               $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});
+               return false;
+      });                  
+    });
+
+
    
 
   //=======================
@@ -174,52 +222,7 @@ $(document).ready(function(){
                return false;          
     });
 
-  //=======================
-  //=======================
-  //LOGIN LOGS
-  //=======================
-  //=======================
-
-  	//STAFF LOGS
-  	$('.logDiv').load(base_url+'fetchLogs', function(){
-  		$('.log').DataTable();
-  	});
-
-    //PURGE LOGS
-    $('.deleteRecord').click(function(){
-      swal({
-        title: 'Are you sure of this ?',
-        text: "You can't be reverted!",
-        type: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#D62C1A',
-        cancelButtonColor: '#2C3E50',
-        confirmButtonText: 'Yes, delete it!'
-      }).then(function () {
-
-            $.post( 
-                  base_url+"purge-record", 
-                  {action:'purge'}, 
-                  function(data){
-                      
-                       $.notify({
-                          message: data
-                      },{
-                          
-                          type: "success",
-                         
-                      }); 
-                       //STAFF LOGS
-                      $('.logDiv').load(base_url+'fetchLogs', function(){
-                        $('.log').DataTable();
-                      });
-                  }
-              );
-               $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
-               $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});
-               return false;
-      });                  
-    });
+  
 
   //=========================
   //=========================

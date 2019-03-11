@@ -250,21 +250,7 @@
  	}
 
 
- 	//FETCH LOGS
- 	function fetch_logs(){
- 		$this->db->select('STAFF.NAME, STAFF.ROLE, logs.TIME_LOGGED');
- 		$this->db->from('logs');
- 		$this->db->join('staff', 'staff.STAFF_ID=logs.STAFF_ID', 'left');
- 		$this->db->order_by('logs.TIME_LOGGED', 'DESC');
- 		$query=$this->db->get();
- 		if($query->num_rows()>0){
- 			return $query->result();
- 		}
- 		else{
- 			return false;
- 		}
- 	}
-
+ 	
  	//FETCH DRINK STOCK LOGS
  	function fetch_drinkstock_logs(){
  		$this->db->select('drinks.NAME DRINK, staff.NAME STAFFNAME, drinkstocklog.DATE, drinkstocklog.QUANTITY');
@@ -620,15 +606,7 @@
  	}
 
 
- 	//UPDATE CAFETERIA NAME
- 	function update_cafeteria_name($name){
-		if($this->db->update('settings', $name)){
-			return true;
-		}
-		else{
-			return false;
-		}
- 	}
+ 	
 
 
 
@@ -876,16 +854,7 @@
 
 
 
- 	//CLEAR LOGS
- 	function clear_logs(){
- 		$this->db->where('LOG_ID >', 0);
- 		if($this->db->delete('logs')){
- 			return true;
- 		}
- 		else{
- 			return false;
- 		}
- 	}
+ 	
 	
 	//FETCH THE TOTAL NUMBER OF ORDERS FOR A DAY FOR A PARTICULARC STAFF
  	function fetch_no_order_staff(){
@@ -903,33 +872,6 @@
  			return 0;
  		}
  	}
-
-
-//============================================================
-//============================================================
-//CHANGE CRUD OPERATION
-//============================================================
-//============================================================
-
- 	function change_report_individual($report){
- 		$this->db->select('pin.ID, pin.NAME CUSTOMER, pin.PIN, pin.PHONE, pin.AMOUNT, pin.DATE_CREATED DATE_CREATED, pin.DATE_CLEARED,pin.CLEARED_BY, staff.NAME STAFF_CREATED, pin.PHONE');
- 		$this->db->from('pin');
- 		$this->db->join('staff', 'pin.CREATED_BY=staff.STAFF_ID', 'left');
- 		$this->db->where('pin.CREATED_BY', $report['CREATED_BY']);
- 		$this->db->where('pin.STATUS', $report['STATUS']);
- 		$query=$this->db->get();
- 		if($query->num_rows()>0){
- 			return $query->result();
- 		}
- 	}
-
-
- 	
-
-
- 	
-
-
 
 
 

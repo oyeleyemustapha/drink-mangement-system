@@ -17,10 +17,9 @@ if($logs){
                                     foreach ($logs as $log) {
                                         echo"
                                             <tr>
-                                                
                                                 <td>$log->NAME</td>
                                                 <td>$log->ROLE</td>
-                                                <td>".date('F d Y h:i:s', $log->TIME_LOGGED)."</td>
+                                                <td>".date('F d Y h:i:s', strtotime($log->TIME_LOGGED))."</td>
                                                 
                                             </tr>
                                         ";

@@ -11,6 +11,14 @@ $route['login']='drinks/login';
 $route['logout']='drinks/logout';
 
 
+
+//STOTE SETTINGS
 $route['settings']="administrator/settings";
 $route['update-store-setting']="administrator/update_store_settings";
 $route['export-records']="administrator/export_records";
+
+
+//STAFF LOGS
+$route['staff-logs']="administrator/logs";
+$route['fetchLogs']="administrator/fetch_logs";
+$route['purge-staff-logs']="administrator/clear_staff_logs";

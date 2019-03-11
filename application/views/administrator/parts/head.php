@@ -110,7 +110,7 @@ echo'
 
 
                             <li class="has-submenu">
-                                <a href="'.base_url().'login-logs"><i class="ti-notepad"></i>Logs</a>
+                                <a href="'.base_url().'staff-logs"><i class="ti-notepad"></i>Logs</a>
                             </li>
 
                             <li class="has-submenu">

@@ -24,7 +24,7 @@ class Administrator extends CI_Controller {
     //DASHBOARD
 	public function index(){
 		$this->verify();
-		$data['title']=$this->administrator_model->fetch_cafeteria()->STORE_NAME." :: Dashboard";
+		$data['title']=$this->administrator_model->fetch_store()->STORE_NAME." :: Dashboard";
 		//$data['dailyReport']=$this->daily_sales_reports_dashboard();
 		//$data['monthReport']=$this->monthly_sales_reports_dashboard();
 		//$data['dailyOrders']=$this->administrator_model->fetch_no_order();
@@ -32,6 +32,117 @@ class Administrator extends CI_Controller {
 		$this->load->view('administrator/dashboard', $data);
 		$this->load->view('administrator/parts/bottom', $data);
 	}
+
+
+	//==============================
+    //==============================
+    //LOGIN LOGS
+    //==============================
+    //==============================
+
+	public function logs(){
+		$this->verify();
+		$data['title']=$this->administrator_model->fetch_store()->STORE_NAME." :: Staff Login Logs";
+		$this->load->view('administrator/parts/head',$data);
+		$this->load->view('administrator/logs/logs',$data);
+		$this->load->view('administrator/parts/bottom',$data);
+	}
+
+	//LOGIN LOGS
+	public function fetch_logs(){
+		$data['logs']=$this->administrator_model->fetch_staff_logs();
+		$this->load->view('administrator/logs/staff_log', $data);
+	}
+
+	//CLEAR LOGIN LOGS
+	public function clear_staff_logs(){
+		$this->verify();
+		if($this->administrator_model->clear_staff_logs()){
+			echo "Logs has been cleared";
+		}
+	}
+
+
+	//==============================
+    //==============================
+    //STORE SETTINGS
+    //==============================
+    //==============================
+
+	public function settings(){
+		$this->verify();
+		$data['title']=$this->administrator_model->fetch_store()->STORE_NAME." :: Settings";
+		$data['store']=$this->administrator_model->fetch_store();
+		$this->load->view('administrator/parts/head',$data);
+		$this->load->view('administrator/settings',$data);
+		$this->load->view('administrator/parts/bottom',$data);
+	}
+
+	//EXPORT RECORDS IN CSV
+	public function export_records(){
+		$this->verify();
+		$prefs = array(
+		        'tables'        => array(),   
+		        'ignore'        => array(),                     
+		        'format'        => 'zip',                   
+		        'filename'      => 'Record-'.date("F-d-Y").'.sql',
+		        'add_drop'      => TRUE,                        
+		        'add_insert'    => TRUE,                        
+		        'newline'       => "\n"                        
+		);
+		$this->load->dbutil();
+		$backup = $this->dbutil->backup($prefs);
+		$this->load->helper('file');
+		write_file('backup/'.$tables.'-'.date("F-d-Y").'.zip', $backup);
+		$this->load->helper('download');
+		delete_files('backup/');
+		force_download('backup/'.$tables.'-'.date("F-d-Y").'.zip', $backup);
+	}
+
+	//UPDATE STORE SETTINGS
+	public function update_store_settings(){
+		$this->verify();
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules('name', 'Cafeteria Name', 'required');
+		$this->form_validation->set_rules('phone', 'Phone Number', 'required');
+		$this->form_validation->set_rules('address', 'Address', 'required');
+		$this->form_validation->set_rules('email', 'Email Address', 'valid_email');
+		if($this->form_validation->run()){
+			$store=array(
+				'STORE_NAME'=>trim($this->input->post('name')),
+				'PHONE'=>trim($this->input->post('phone')),
+				'ADDRESS'=>trim($this->input->post('address')),
+				'EMAIL'=>trim($this->input->post('email'))
+			);
+			if($this->administrator_model->update_store_settings($store)){
+				echo "Store Settings has been updated";
+			}
+		}
+		else{
+
+			$error="";
+			if(form_error('name')){
+				$error.=form_error('name');
+			}
+			if(form_error('phone')){
+				$error.=form_error('phone');
+			}
+			if(form_error('address')){
+				$error.=form_error('address');
+			}
+			if(form_error('email')){
+				$error.=form_error('email');
+			}
+			echo $error;
+		}
+	}
+
+
+
+
+
+
+
 	
 
 	
@@ -44,7 +155,7 @@ class Administrator extends CI_Controller {
 
 	public function staff(){
 		$this->verify();
-		$data['title']=$this->administrator_model->fetch_cafeteria()->NAME." :: Staff";
+		$data['title']=$this->administrator_model->fetch_store()->NAME." :: Staff";
 		$this->load->view('administrator/parts/head',$data);
 		$this->load->view('administrator/staff/staff',$data);
 		$this->load->view('administrator/parts/bottom',$data);
@@ -182,34 +293,7 @@ class Administrator extends CI_Controller {
 	}
 
 
-	//==============================
-    //==============================
-    //LOGIN LOGS
-    //==============================
-    //==============================
-
-	public function logs(){
-		$this->verify();
-		$data['title']=$this->administrator_model->fetch_cafeteria()->NAME." :: Staff Login Logs";
-		$this->load->view('administrator/parts/head',$data);
-		$this->load->view('administrator/logs/logs',$data);
-		$this->load->view('administrator/parts/bottom',$data);
-	}
-
-	//LOGIN LOGS
-	public function fetch_logs(){
-		$data['logs']=$this->administrator_model->fetch_logs();
-		$this->load->view('administrator/logs/staff_log', $data);
-	}
-
-	//CLEAR LOGIN LOGS
-	public function clear_logs(){
-		$this->verify();
-		if($this->administrator_model->clear_logs()){
-			echo "Logs has been cleared";
-		}
-	}
-
+	
 	//==============================
     //==============================
     //DRINK STOCK LOGS
@@ -218,7 +302,7 @@ class Administrator extends CI_Controller {
 
 	public function drinkstocklogs(){
 		$this->verify();
-		$data['title']=$this->administrator_model->fetch_cafeteria()->NAME." :: Drinks Stock Logs";
+		$data['title']=$this->administrator_model->fetch_store()->NAME." :: Drinks Stock Logs";
 		$this->load->view('administrator/parts/head',$data);
 		$this->load->view('administrator/logs/drinkStocklogs',$data);
 		$this->load->view('administrator/parts/bottom',$data);
@@ -232,81 +316,7 @@ class Administrator extends CI_Controller {
 
 	
 
-	//==============================
-    //==============================
-    //STORE SETTINGS
-    //==============================
-    //==============================
-
-	public function settings(){
-		$this->verify();
-		$data['title']=$this->administrator_model->fetch_store()->STORE_NAME." :: Settings";
-		$data['store']=$this->administrator_model->fetch_store();
-		$this->load->view('administrator/parts/head',$data);
-		$this->load->view('administrator/settings',$data);
-		$this->load->view('administrator/parts/bottom',$data);
-	}
-
-	//EXPORT RECORDS IN CSV
-	public function export_records(){
-		$this->verify();
-		$prefs = array(
-		        'tables'        => array(),   
-		        'ignore'        => array(),                     
-		        'format'        => 'zip',                   
-		        'filename'      => 'Record-'.date("F-d-Y").'.sql',
-		        'add_drop'      => TRUE,                        
-		        'add_insert'    => TRUE,                        
-		        'newline'       => "\n"                        
-		);
-		$this->load->dbutil();
-		$backup = $this->dbutil->backup($prefs);
-		$this->load->helper('file');
-		write_file('backup/'.$tables.'-'.date("F-d-Y").'.zip', $backup);
-		$this->load->helper('download');
-		delete_files('backup/');
-		force_download('backup/'.$tables.'-'.date("F-d-Y").'.zip', $backup);
-	}
-
-	//UPDATE STORE SETTINGS
-	public function update_store_settings(){
-		$this->verify();
-		$this->load->library('form_validation');
-		$this->form_validation->set_rules('name', 'Cafeteria Name', 'required');
-		$this->form_validation->set_rules('phone', 'Phone Number', 'required');
-		$this->form_validation->set_rules('address', 'Address', 'required');
-		$this->form_validation->set_rules('email', 'Email Address', 'valid_email');
-		if($this->form_validation->run()){
-			$store=array(
-				'STORE_NAME'=>trim($this->input->post('name')),
-				'PHONE'=>trim($this->input->post('phone')),
-				'ADDRESS'=>trim($this->input->post('address')),
-				'EMAIL'=>trim($this->input->post('email'))
-			);
-			if($this->administrator_model->update_store_settings($store)){
-				echo "Store Settings has been updated";
-			}
-		}
-		else{
-
-			$error="";
-			if(form_error('name')){
-				$error.=form_error('name');
-			}
-			if(form_error('phone')){
-				$error.=form_error('phone');
-			}
-			if(form_error('address')){
-				$error.=form_error('address');
-			}
-			if(form_error('email')){
-				$error.=form_error('email');
-			}
-			echo $error;
-		}
-	}
-
-
+	
 	//==============================
     //==============================
     //STOCK DRINKS
@@ -315,7 +325,7 @@ class Administrator extends CI_Controller {
 
 	public function stockDrinks(){
 		$this->verify();
-		$data['title']=$this->administrator_model->fetch_cafeteria()->NAME." :: Drinks' Stock";
+		$data['title']=$this->administrator_model->fetch_store()->NAME." :: Drinks' Stock";
 		$data['staffList']=$this->staff_list();
 		$this->load->view('administrator/parts/head',$data);
 		$this->load->view('administrator/drinks/stock',$data);
@@ -435,7 +445,7 @@ class Administrator extends CI_Controller {
 
 	public function drinks(){
 		$this->verify();
-		$data['title']=$this->administrator_model->fetch_cafeteria()->NAME." :: Drinks";
+		$data['title']=$this->administrator_model->fetch_store()->NAME." :: Drinks";
 		$this->load->view('administrator/parts/head',$data);
 		$this->load->view('administrator/drinks/drinks',$data);
 		$this->load->view('administrator/parts/bottom',$data);
@@ -550,7 +560,7 @@ class Administrator extends CI_Controller {
 
 	public function products(){
 		$this->verify();
-		$data['title']=$this->administrator_model->fetch_cafeteria()->NAME." :: Foods";
+		$data['title']=$this->administrator_model->fetch_store()->NAME." :: Foods";
 		$this->load->view('administrator/parts/head',$data);
 		$this->load->view('administrator/products/products',$data);
 		$this->load->view('administrator/parts/bottom',$data);
@@ -680,7 +690,7 @@ class Administrator extends CI_Controller {
 
 	public function sales_product(){
 		$this->verify();
-		$data['title']=$this->administrator_model->fetch_cafeteria()->NAME." :: Sales Products";
+		$data['title']=$this->administrator_model->fetch_store()->NAME." :: Sales Products";
 		$data['products']=$this->administrator_model->fetch_product_list();
 		$this->load->view('administrator/parts/head',$data);
 		$this->load->view('administrator/products/salesProduct',$data);
@@ -816,7 +826,7 @@ class Administrator extends CI_Controller {
 
 	public function reports(){
 		$this->verify();
-		$data['title']=$this->administrator_model->fetch_cafeteria()->NAME." :: Financial Reports";
+		$data['title']=$this->administrator_model->fetch_store()->NAME." :: Financial Reports";
 		$data['year']=$this->list_year();
 		$data['month']=$this->list_month();
 		$this->load->view('administrator/parts/head',$data);
@@ -837,7 +847,7 @@ class Administrator extends CI_Controller {
 		$this->load->library('form_validation');
 		$this->form_validation->set_rules('date', 'Sales date', 'required');
 		if($this->form_validation->run()){
-			$data['cafeteria']=$this->administrator_model->fetch_cafeteria()->NAME;
+			$data['cafeteria']=$this->administrator_model->fetch_store()->NAME;
 			$date=date('Y-m-d', strtotime($this->input->post('date')));
 			$data['date']=$date;
 			$data['report']=$this->administrator_model->sales_report_day($date);
@@ -858,7 +868,7 @@ class Administrator extends CI_Controller {
 				'MONTH'=>date('m',strtotime($this->input->post('month'))),
 				'YEAR'=>$this->input->post('year')
 			);
-			$data['cafeteria']=$this->administrator_model->fetch_cafeteria()->NAME;
+			$data['cafeteria']=$this->administrator_model->fetch_store()->NAME;
 			$data['date']=$this->input->post('month')." ".$this->input->post('year');
 			$data['report']=$this->administrator_model->sales_report_month($month_report);
 			$this->load->view('administrator/reports/generalMonthsales',$data);
@@ -871,7 +881,7 @@ class Administrator extends CI_Controller {
 		$this->load->library('form_validation');
 		$this->form_validation->set_rules('year', 'Sales Year', 'required');
 		if($this->form_validation->run()){
-			$data['cafeteria']=$this->administrator_model->fetch_cafeteria()->NAME;
+			$data['cafeteria']=$this->administrator_model->fetch_store()->NAME;
 			$data['date']=$this->input->post('year');
 			$data['report']=$this->administrator_model->sales_report_annual($this->input->post('year'));
 			$this->load->view('administrator/reports/generalYearsales',$data);
@@ -976,7 +986,7 @@ class Administrator extends CI_Controller {
 
 	public function sales(){
 		$this->verify();
-		$data['title']=$this->administrator_model->fetch_cafeteria()->NAME." :: Sales";
+		$data['title']=$this->administrator_model->fetch_store()->NAME." :: Sales";
 		$data['year']=$this->list_year();
 		$data['month']=$this->list_month();
 		$data['staffList']=$this->staff_list();
@@ -1001,7 +1011,7 @@ class Administrator extends CI_Controller {
 		$this->load->library('form_validation');
 		$this->form_validation->set_rules('staff', 'Staff', 'required|numeric');
 		if($this->form_validation->run()){
-			$data['cafeteria']=$this->administrator_model->fetch_cafeteria()->NAME;
+			$data['cafeteria']=$this->administrator_model->fetch_store()->NAME;
 			$data['year']=$this->list_year();
 			$data['month']=$this->list_month();
 
@@ -1036,7 +1046,7 @@ class Administrator extends CI_Controller {
 	public function sales_reports_day_general(){
 		$this->verify();
 		$this->load->library('form_validation');
-			$data['cafeteria']=$this->administrator_model->fetch_cafeteria()->NAME;
+			$data['cafeteria']=$this->administrator_model->fetch_store()->NAME;
 			$data['month']=$this->list_month();
 
 			if($this->input->post('month')!=''){
@@ -1109,8 +1119,8 @@ class Administrator extends CI_Controller {
 	 //DASHBOARD
 	public function order_page(){
 		$this->verify();
-		$data['title']=$this->administrator_model->fetch_cafeteria()->NAME." :: Take Order";
-		$data['cafeteria']=$this->administrator_model->fetch_cafeteria()->NAME;
+		$data['title']=$this->administrator_model->fetch_store()->NAME." :: Take Order";
+		$data['cafeteria']=$this->administrator_model->fetch_store()->NAME;
 		$this->load->view('administrator/parts/head', $data);
 		$this->load->view('administrator/order/order', $data);
 		$this->load->view('administrator/parts/bottom', $data);
@@ -1130,7 +1140,7 @@ class Administrator extends CI_Controller {
 		$this->load->library('form_validation');
 			$this->form_validation->set_rules('date', 'Date', 'required');
 		if($this->form_validation->run()){
-			$data['cafeteria']=$this->administrator_model->fetch_cafeteria()->NAME;
+			$data['cafeteria']=$this->administrator_model->fetch_store()->NAME;
 			$date=date('Y-m-d', strtotime($this->input->post('date')));
 			$data['report']=$this->administrator_model->fetch_sales_product_list($date);
 			$this->load->view('administrator/reports/leftover', $data);
@@ -1149,7 +1159,7 @@ class Administrator extends CI_Controller {
 
 	public function change(){
 		$this->verify();
-		$data['title']=$this->administrator_model->fetch_cafeteria()->NAME." :: Change";
+		$data['title']=$this->administrator_model->fetch_store()->NAME." :: Change";
 		$data['year']=$this->list_year();
 		$data['month']=$this->list_month();
 		$data['staffList']=$this->staff_list();
