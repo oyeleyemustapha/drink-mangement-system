@@ -54,12 +54,12 @@
                                                            </div>
 
                                                             <div class="form-group">
-                                                               <select name="role" class="form-control" required="">
+                                                               <select name="role" class="form-control" required="" autocomplete="off">
                                                                    <option value="">Choose Role</option>
                                                                    <option value="Administrator">Administrator</option>
                                                                    <option value="Supervisor">Supervisor</option>
                                                                    <option value="Cashier">Cashier</option>
-                                                                   <option value="Stock Manager">Stock Manager</option>
+                      
                                                                </select>
                                                            </div>
 

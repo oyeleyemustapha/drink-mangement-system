@@ -84,8 +84,96 @@
  	}
 
 
+ 	//=========================
+ 	//==========================
+ 	//STAFF
+ 	//=========================
+ 	//=========================
+ 
+
+ 	//ADD STAFF
+ 	function add_staff($staff_info){
+ 		if($this->db->insert('staff', $staff_info)){
+ 			return true;
+ 		}
+ 		else{
+ 			return false;
+ 		}
+ 	}
+
+ 	//FETCH STAFF LIST
+ 	function fetch_staff_list(){
+ 		$this->db->select('*');
+ 		$this->db->from('staff');
+ 		$this->db->order_by('STAFF_ID', 'ASC');
+ 		$query=$this->db->get();
+ 		if($query->num_rows()>0){
+ 			return $query->result();
+ 		}
+ 		else{
+ 			return false;
+ 		}
+ 	}
+
+
+ 	//DELETE STAFF
+ 	function delete_staff($staff_id){
+ 		$this->db->where('STAFF_ID', $staff_id);
+ 		if($this->db->delete('staff')){
+ 			return true;
+ 		}
+ 		else{
+ 			return false;
+ 		}
+ 	}
+
+ 	//FETCH STAFF INFO
+ 	function fetch_staff_info($staff_id){
+ 		$this->db->select('*');
+ 		$this->db->from('staff');
+ 		$this->db->where('STAFF_ID', $staff_id);
+ 		$query=$this->db->get();
+ 		if($query->num_rows()==1){
+ 			return $query->row();
+ 		}
+ 		else{
+ 			return false;
+ 		}
+ 	}
+
+ 	//UPDATE STAFF ACCOUNT
+ 	function update_staff($staff){
+ 		$this->db->where('STAFF_ID', $staff['STAFF_ID']);
+		if($this->db->update('staff', $staff)){
+			return true;
+		}
+		else{
+			return false;
+		}
+ 	}
+
+
+ 	
+
  	
  	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	//UPDATE PASSWORD
 	public function update_password($password){

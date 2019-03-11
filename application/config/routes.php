@@ -22,3 +22,11 @@ $route['export-records']="administrator/export_records";
 $route['staff-logs']="administrator/logs";
 $route['fetchLogs']="administrator/fetch_logs";
 $route['purge-staff-logs']="administrator/clear_staff_logs";
+
+//STAFF
+$route['staff']="administrator/staff";
+$route['staff-list']="administrator/fetch_staff_list";
+$route['add-staff']="administrator/add_staff";
+$route['delete-staff']="administrator/delete_staff";
+$route['fetch-staff']="administrator/fetch_staff_info";
+$route['update-staff']="administrator/update_staff";

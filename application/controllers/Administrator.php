@@ -135,17 +135,7 @@ class Administrator extends CI_Controller {
 			}
 			echo $error;
 		}
-	}
-
-
-
-
-
-
-
-	
-
-	
+	}	
 
 	//==============================
     //==============================
@@ -155,7 +145,7 @@ class Administrator extends CI_Controller {
 
 	public function staff(){
 		$this->verify();
-		$data['title']=$this->administrator_model->fetch_store()->NAME." :: Staff";
+		$data['title']=$this->administrator_model->fetch_store()->STORE_NAME." :: Staff";
 		$this->load->view('administrator/parts/head',$data);
 		$this->load->view('administrator/staff/staff',$data);
 		$this->load->view('administrator/parts/bottom',$data);

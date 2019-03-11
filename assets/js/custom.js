@@ -121,7 +121,7 @@ $(document).ready(function(){
                               confirmButtonText: 'Yes, delete it!'
                           }).then(function () {
                               $.post( 
-                                  base_url+"deleteStaff", 
+                                  base_url+"delete-staff", 
                                   {staff_id:staff_id}, 
                                   function(data){
 
@@ -158,7 +158,7 @@ $(document).ready(function(){
                   //EDIT STAFF
                   $('.editStaff').click(function(){
                         $.post( 
-                            base_url+"fetchStaff", 
+                            base_url+"fetch-staff", 
                             {staff_id:$(this).attr('id')}, 
                             function(data){
                               $('#staffInfoModal').modal('show');
@@ -168,7 +168,7 @@ $(document).ready(function(){
                               //UPDATE STAFF
                               $('#updateStaffForm').submit(function(){
                                         $.post( 
-                                            base_url+"updateStaff", 
+                                            base_url+"update-staff", 
                                             $(this).serialize(), 
                                             function(data){
                                                 $('#staffInfoModal').modal('hide');
@@ -196,14 +196,14 @@ $(document).ready(function(){
 
         });
       }
-      $('.staffListDiv').load(base_url+'fetchStafflist', staff_cb);
+      $('.staffListDiv').load(base_url+'staff-list', staff_cb);
    }
 
     staff();
   	//ADD STAFF
   	$('#addStaffForm').submit(function(){
               $.post( 
-                  base_url+"addStaff", 
+                  base_url+"add-staff", 
                   $(this).serialize(), 
                   function(data){
                       $('#myModal').modal('hide');
