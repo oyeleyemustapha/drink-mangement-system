@@ -45,4 +45,9 @@ $route['drinks-to-stock']="administrator/fetchDrinktoStock";
 $route['add-drinks-to-stock']="administrator/add_drinks_stock";
 $route['fetch-drinks-stock']="administrator/fetchDrinksStock";
 
+//SALES
+$route['sales']="administrator/sales";
+$route['fetch-allocated-stock']="administrator/fetch_allocated_stock";
+$route['post-record']="administrator/post_sales";
+
 

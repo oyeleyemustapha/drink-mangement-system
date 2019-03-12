@@ -457,103 +457,7 @@ $(document).ready(function(){
 
 
 
-  //=========================
-  //=========================
-  //====SALES PRODUCTS
-  //=========================
-  //=========================
-
-    //ADD SALES PRODUCTS
-	$('#addsalesProductForm').submit(function(){
-            $.post( 
-                base_url+"addSalesProducts", 
-                $(this).serialize(), 
-                function(data){
-                    $('#myModal').modal('hide');
-                     $.notify({
-                        message: data
-                    },{
-                        
-                        type: "success",
-                       
-                    }); 
-
-
-                    $('#addsalesProductForm')[0].reset();
-                    $("#productsSelect").empty().trigger('change')
-                    $('.salesproductListDiv').load(base_url+"fetchSalesProductsCurrent", salesProductList_cb);
-                }
-            );
-             $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
-             $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});
-             return false;          
-    });
-
-
-  //GENERATE SALES PRODUCTS LIST FOR A PARTICULAR DATE
-	$('#generateSalesproducts').submit(function(){
-            $.post( 
-                base_url+"fetchSalesProducts", 
-                $(this).serialize(), 
-                function(data){
-                    $('#myModal2').modal('hide');
-                    $('.salesproductListDiv').html(data);
-                }
-            );
-             $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
-             $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});
-             return false;          
-    });
-
-
-
-	var salesProductList_cb=function(){
-
-		
-			//EDIT PRODUCT INFO
-              $('.editSalesProduct').click(function(){
-                    $.post( 
-                        base_url+"salesProductInfo", 
-                        {id:$(this).attr('id')}, 
-                        function(data){
-                        	$('#productInfoModal').modal('show');
-                        	$('#productInfoModal .modal-body').html(data);
-
-                        	  
-                        	//UPDATE SALES PRODUCT INFOMATION
-							$('#updateSalesproductForm').submit(function(){
-						            $.post( 
-						                base_url+"updateSalesProduct", 
-						                $(this).serialize(), 
-						                function(data){
-						                    $('#productInfoModal').modal('hide');
-						                     $.notify({
-						                        message: data
-						                    },{
-						                        
-						                        type: "success",
-						                       
-						                    }); 
-
-						                    $('.salesproductListDiv').load(base_url+"fetchSalesProductsCurrent", salesProductList_cb);
-						                }
-						            );
-						             $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
-						             $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});
-						             return false;          
-						    });	
-                        }
-                    );
-                $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
-                $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});       
-              });
-    };
-    $('.salesproductListDiv').load(base_url+"fetchSalesProductsCurrent", salesProductList_cb);
-
-
   
-
-
 
   $('.reports').load(base_url+"dailySalesReport",function(){});
 
@@ -567,93 +471,85 @@ $(document).ready(function(){
         minimumInputLength: 3
     });
 
+  //=========================
+  //=========================
+  //====SALES
+  //=========================
+  //=========================
 
-     $('.SearchSalesRecord').keyup(function(){
-  
-     	if($('.SearchSalesRecord').val().length==6){
+    $('#staff-List1').change(function(){
+      $.post( 
+          base_url+"fetch-allocated-stock", 
+          {staff:$(this).val()}, 
+          function(data){
+             $('.allocatedProducts').html(data); 
+
+             //CHECK IF LEFTOVER IS NOT MORE THAN THE INITIAL STOCK
+             $('.leftOverform').keyup(function(){
+
+              if($(this).val().length>=2){
+
+                let leftover=Number($(this).val());
+                let initial_stock=$(this).attr('data-initial-stock');
+
+                if(leftover>initial_stock){
+                     $.notify({
+                          message: "Inputted leftover can't be more than the Initial stock"
+                      },{
+                          
+                          type: "success"
+                      });  
+
+                       $(this).val('');     
+                }
+              }
+             })                         
+          }
+      );
+        $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
+        $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});
+        return false;          
+    });
 
 
-			            $.post( 
-			                base_url+"search-sales", 
-			                {search:$('.SearchSalesRecord').val()}, 
-			                function(data){
-			                    $('#myModal3').modal('hide');
-			                    $('.reports').html(data);
 
-                          //CANCEL SPECIFIC PRODUCT ORDER
-                          $('.cancel-single-order').click(function(){
-                              var sales_id=$(this).attr('id');
+    $('#PostSales').submit(function(){
+        let salesdata= $(this).serialize();
 
-                                swal({
-                                    title: 'Are you sure of this ?',
-                                    type: 'warning',
-                                    showCancelButton: true,
-                                    confirmButtonColor: '#D62C1A',
-                                    cancelButtonColor: '#2C3E50',
-                                    confirmButtonText: 'Cancel!'
-                                }).then(function () {
-                                      $.post( 
-                                        base_url+"cancel-product-order", 
-                                        {sales_id:sales_id}, 
-                                        function(data){
-                                            swal({
-                                              title: 'Order Cancelled',
-                                              text: data,
-                                              type: 'success',
-                                              timer:3000,
-                                              showConfirmButton:false
-                                            });  
-                                        });
-                                      });
-                                  $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
-                                  $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});   
-                          });
+      swal({
+        title: 'Are you sure of this?',
+        text: "Cross Check Sales before posting it !",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#D62C1A',
+        cancelButtonColor: '#2C3E50',
+        confirmButtonText: 'Post it'
+      }).then(function () {
 
-								        //CANCEL ALL ORDER
-					              $('.CancelOrderall').click(function(){
-					                  var order_no=$(this).attr('id');
-
-					                      swal({
-					                          title: 'Are you sure of this ?',
-					                          text: "You can revert this later!",
-					                          type: 'warning',
-					                          showCancelButton: true,
-					                          confirmButtonColor: '#D62C1A',
-					                          cancelButtonColor: '#2C3E50',
-					                          confirmButtonText: 'Cancel!'
-					                      }).then(function () {
-					                          $.post( 
-					                              base_url+"cancel-all-orders", 
-					                              {order_no:order_no}, 
-					                              function(data){
-
-					                  
-					                              		swal({
-					                                    title: 'Order Cancelled',
-					                                    text: data,
-					                                    type: 'success',
-					                                    timer:3000,
-					                                    showConfirmButton:false,
-					                                    onClose:function(){
-					                                       
-					                                    }
-					                                  });
-					                              	
-					                            }
-					                          );
-					                        $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
-					                       $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});
-					                         
-					                      }); 
-					              });
-			                }
-			            );
-			             $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
-			             $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});
-			             return false;          
-     	}
-     });
-
+        $.post( 
+          base_url+"post-record", 
+          salesdata, 
+            function(data){
+                 $.notify({
+                          message: data
+                      },{
+                          
+                          type: "success",
+                          onClose: function(){
+                            $('.allocatedProducts').html('');
+                          }
+                         
+                      });            
+            }
+        );
+          $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
+          $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});
+      });
+                              
+        $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
+        $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});
+        return false;          
+    });
 
 
 

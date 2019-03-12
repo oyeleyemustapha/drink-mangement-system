@@ -685,7 +685,7 @@ class Administrator extends CI_Controller {
 
 	public function sales(){
 		$this->verify();
-		$data['title']=$this->administrator_model->fetch_store()->NAME." :: Sales";
+		$data['title']=$this->administrator_model->fetch_store()->STORE_NAME." :: Sales";
 		$data['year']=$this->list_year();
 		$data['month']=$this->list_month();
 		$data['staffList']=$this->staff_list();
@@ -694,7 +694,107 @@ class Administrator extends CI_Controller {
 		$this->load->view('administrator/parts/bottom',$data);
 	}
 
+
+	//FETCH PRODUCTS ALLOCATED TO CASHIER
+	public function fetch_allocated_stock(){
+		$this->verify();
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules('staff', 'Staff', 'required|numeric');
+		if($this->form_validation->run()){
+			$data['products']=$this->administrator_model->fetch_allocated_stock($this->input->post('staff'));
+			
+			if($data['products']==1){
+
+				echo "<div class='alert alert-info'><h3 class='text-center'>Sales has been posted before for this staff</h3></div>";
+			}
+			elseif ($data['products']==2) {
+				echo "<div class='alert alert-info'><h3 class='text-center'>No products was allocated to this staff today</h3></div>";
+			}
+			else{
+				$this->load->view('administrator/sales/allocated', $data);
+
+			}
+
+
+			
+		}
+		else{
+
+		}
+	}
+
+
+	//POST SALES RECORD
+	public function post_sales(){
+		$this->verify();
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules('staff', 'Staff', 'numeric');
+		$this->form_validation->set_rules('product[]', 'Product', 'numeric');
+		$this->form_validation->set_rules('leftover[]', 'Leftover', 'numeric');
+		if($this->form_validation->run()){
+			for ($i=0; $i <count($this->input->post('product')) ; $i++) { 
+				$product=$_POST['product'][$i];
+				$leftover=$_POST['leftover'][$i];
+				$initial_stock=$_POST['initial_stock'][$i];
+				$sales_price=$_POST['sales_price'][$i];
+				$cost_price=$_POST['cost_price'][$i];
+				if(	$leftover==''){
+					continue;
+				}
+				else{
+
+					$quantity_sold=$initial_stock-$leftover;
+					$sales=array(
+						'STAFF_ID'=>$this->input->post('staff'),
+						'PRODUCT_ID'=>$product,
+						'QUANTITY_SOLD'=>$quantity_sold,
+						'DATE_ADDED'=>date('Y-m-d'),
+						'SALES_PRICE'=>$sales_price,
+						'COST_PRICE'=>$cost_price,
+						'LEFTOVER'=>$leftover
+					);					
+					$this->administrator_model->post_sales($sales);
+				}
+			}
+			echo "Sales has been posted";
+		}
+		else{
+
+			$error="";
+
+			if(form_error('product[]')){
+				$error.=form_error('product[]');
+			}
+
+			if(form_error('staff')){
+				$error.=form_error('staff');
+			}
+
+			if(form_error('leftover[]')){
+				$error.=form_error('leftover[]');
+			}
+			echo $error;
+		}
+	}
 	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 	//GENERATE SALES RECORDS BASED ON SALES DATE FOR A PARTICULAR STAFFs
@@ -734,91 +834,6 @@ class Administrator extends CI_Controller {
 	}
 
 
-	//GENERATE GENERAL SALES RECORDS BASED ON SALES DATE
-	public function sales_reports_day_general(){
-		$this->verify();
-		$this->load->library('form_validation');
-			$data['cafeteria']=$this->administrator_model->fetch_store()->NAME;
-			$data['month']=$this->list_month();
-
-			if($this->input->post('month')!=''){
-				$month=date('m',strtotime($this->input->post('month')));
-			}
-			else{
-				$month="";
-			}
-
-
-			if($this->input->post('date')!=''){
-				$date=date('Y-m-d', strtotime($this->input->post('date')));
-			}
-			else{
-				$date="";
-			}
-			$report=array(
-				'MONTH'=>   $month,
-				'SALES_DATE'=> $date
-			);
-			$data['date']=$date;
-			$data['month']=$month;
-			$data['report']=$this->administrator_model->sales_report_day_general($report);
-			$this->load->view('administrator/sales/generalDailysales',$data);
-
-			//var_dump($report);
-	}
-
-
-	//GENERATE SALES RECORD BASED ON ORDER NO
-	public function sales_records_order_no(){
-		$this->verify();
-		$this->load->library('form_validation');
-			$this->form_validation->set_rules('search', 'Search', 'required|numeric');
-		if($this->form_validation->run()){
-			$data['sales']=$this->administrator_model->sales_records_order_no(trim($this->input->post('search')));
-			$this->load->view('administrator/sales/salesdetails',$data);
-		}
-			
-			
-	}
-
-
-	//CANCEL ALL ORDERS
-	public function cancel_all_orders(){
-		$this->verify();
-		$this->load->library('form_validation');
-			$this->form_validation->set_rules('order_no', 'Order NO', 'required|numeric');
-		if($this->form_validation->run()){
-			if($this->administrator_model->cancel_orders_all($this->input->post('order_no'))){
-				echo "Orders has been canceled";
-			}
-		}		
-	}
-
-
-	//CANCEL SPECIFIC PRODUCT ORDER
-	public function cancel_product_order(){
-		$this->verify();
-		$this->load->library('form_validation');
-			$this->form_validation->set_rules('sales_id', 'Sales ID', 'required|numeric');
-		if($this->form_validation->run()){
-			if($this->administrator_model->cancel_specific_order($this->input->post('sales_id'))){
-				echo "Order has been canceled";
-			}
-		}		
-	}
-
-
-	 //DASHBOARD
-	public function order_page(){
-		$this->verify();
-		$data['title']=$this->administrator_model->fetch_store()->NAME." :: Take Order";
-		$data['cafeteria']=$this->administrator_model->fetch_store()->NAME;
-		$this->load->view('administrator/parts/head', $data);
-		$this->load->view('administrator/order/order', $data);
-		$this->load->view('administrator/parts/bottom', $data);
-	}
-	
-
 
 	
 
@@ -826,66 +841,7 @@ class Administrator extends CI_Controller {
 	
 
 
-	//FETCH LEFT OVER RECORDS
-	public function fetch_leftover(){
-		$this->verify();
-		$this->load->library('form_validation');
-			$this->form_validation->set_rules('date', 'Date', 'required');
-		if($this->form_validation->run()){
-			$data['cafeteria']=$this->administrator_model->fetch_store()->NAME;
-			$date=date('Y-m-d', strtotime($this->input->post('date')));
-			$data['report']=$this->administrator_model->fetch_sales_product_list($date);
-			$this->load->view('administrator/reports/leftover', $data);
-
-			
-		}	
-	}
-
-
-
-	//==============================
-    //==============================
-    //CHANGE
-    //==============================
-    //==============================
-
-	public function change(){
-		$this->verify();
-		$data['title']=$this->administrator_model->fetch_store()->NAME." :: Change";
-		$data['year']=$this->list_year();
-		$data['month']=$this->list_month();
-		$data['staffList']=$this->staff_list();
-		$this->load->view('administrator/parts/head',$data);
-		$this->load->view('administrator/change/change',$data);
-		$this->load->view('administrator/parts/bottom',$data);
-	}
-
-
-	//FETCH INDIVIDUAL CHANGE REPORT BASED ON CHANGE STATUS
-	public function change_report_individual(){
-		$this->verify();
-		$this->load->library('form_validation');
-		$this->form_validation->set_rules('status', 'Status', 'required');
-		$this->form_validation->set_rules('staff', 'Staff', 'required');
-		if($this->form_validation->run()){
-			$report=array(
-				'STATUS'=> $this->input->post('status'),
-				'CREATED_BY'=>$this->input->post('staff')
-			);
-
-			$data['report']=$this->administrator_model->change_report_individual($report);
-			$this->load->view('administrator/change/individualReportStatus', $data);
-		}		
-	}
 	
-
-	
-
-
-	
-
-
-
 
 	
 	

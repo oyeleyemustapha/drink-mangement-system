@@ -9,6 +9,7 @@ if($drinks){
                                             <th>ID</th>
                                             <th>STAFF</th>
                                             <th>PRODUCT</th>
+                                            <th>INITIAL STOCK</th>
                                             <th>QUANTITY AVAILABLE</th>
                                             <th>COST PRICE</th>
                                             <th>SALES PRICE</th>
@@ -24,6 +25,7 @@ if($drinks){
                                                 <td>$counter</td>
                                                 <td>$drink->NAME</td>
                                                 <td>$drink->PRODUCT_NAME</td>
+                                                <td>$drink->QUANTITY</td>
                                                 <td>$quantity_available</td>
                                                 <td>&#8358; $drink->COST_PRICE</td>
                                                 <td>&#8358; $drink->SALES_PRICE</td>
