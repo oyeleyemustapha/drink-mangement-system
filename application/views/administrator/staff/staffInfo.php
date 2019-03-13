@@ -15,7 +15,7 @@ if($staff){
                                                                    <option value="Administrator">Administrator</option>
                                                                    <option value="Supervisor">Supervisor</option>
                                                                    <option value="Cashier">Cashier</option>
-                                                                   <option value="Stock Manager">Stock Manager</option>
+                                                                   
                                                                </select>
                                                            </div>
 

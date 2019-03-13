@@ -11,6 +11,7 @@ $route['login']='drinks/login';
 $route['logout']='drinks/logout';
 
 $route['supervisor']="supervisor/index";
+$route['cashier']="cashier/index";
 
 //STOTE SETTINGS
 $route['settings']="administrator/settings";
