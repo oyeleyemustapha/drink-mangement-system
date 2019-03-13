@@ -34,6 +34,48 @@ class Administrator extends CI_Controller {
 	}
 
 
+	//UPDATE PROFILE
+	public function update_profile(){
+		$this->verify();
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules('name', 'Name', 'required');
+		$this->form_validation->set_rules('username', 'Username', 'required');
+		$this->form_validation->set_rules('password', 'Password', 'required');
+		$this->form_validation->set_rules('cpassword', 'Password', 'required|matches[password]');
+		if($this->form_validation->run()){
+			$staff=array(
+				'NAME'=>trim($this->input->post('name')),
+				'USERNAME'=>strtolower(trim($this->input->post('username'))),
+				'PASSWORD'=>md5(strtolower(trim($this->input->post('password')))),
+				'STAFF_ID'=>$_SESSION['staff_id']
+			);
+
+			if($this->administrator_model->update_profile($staff)){
+				
+					$session_data=array(
+						'username' => $staff['USERNAME'], 
+						'password' => $staff['PASSWORD'], 
+						'name'=> $staff['NAME']
+					);
+					$this->session->set_userdata($session_data);
+				echo "Your profile has been updated";
+			}
+		}
+		else{
+			$error="";
+			if(form_error('username')){
+				$error.=form_error('username');
+			}
+			if(form_error('password')){
+				$error.=form_error('password');
+			}
+			if(form_error('cpassword')){
+				$error.=form_error('cpassword');
+			}
+		}
+	}
+
+
 	//==============================
     //==============================
     //LOGIN LOGS
@@ -60,6 +102,21 @@ class Administrator extends CI_Controller {
 		if($this->administrator_model->clear_staff_logs()){
 			echo "Logs has been cleared";
 		}
+	}
+
+	//==============================
+    //==============================
+    //PROFILE
+    //==============================
+    //==============================
+
+	public function profile(){
+		$this->verify();
+		$data['title']=$this->administrator_model->fetch_store()->STORE_NAME." :: My Profile";
+		$data['profile']=$this->administrator_model->fetch_staff_info($_SESSION['staff_id']);
+		$this->load->view('administrator/parts/head',$data);
+		$this->load->view('administrator/profile',$data);
+		$this->load->view('administrator/parts/bottom',$data);
 	}
 
 

@@ -57,3 +57,8 @@ $route['monthly-sales-reports']="administrator/sales_reports_month";
 $route['annual-sales-reports']="administrator/sales_reports_annual";
 $route['staff-sales']="administrator/sales_reports_day_staff";
 $route['sales-sheet']="administrator/sales_sheet";
+
+
+//PROFILE
+$route['profile']="administrator/profile";
+$route['update-profile']="administrator/update_profile";

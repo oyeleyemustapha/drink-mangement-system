@@ -13,7 +13,26 @@ $(document).ready(function(){
 	 });
 
 
-
+  //UPDATE PROFILE
+  $('#updateProfile').submit(function(){
+    $.post( 
+      base_url+"update-profile", 
+      $(this).serialize(), 
+        function(data){
+            $.notify({
+              message: data
+            },{         
+              type: "success",
+              onClose:function(){
+                location.reload();
+              }        
+            }); 
+        }
+    );
+      $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
+      $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});
+      return false;          
+  });
 
   //=========================
   //=========================
@@ -90,9 +109,6 @@ $(document).ready(function(){
                return false;
       });                  
     });
-
-
-   
 
   //=======================
   //=======================
@@ -454,22 +470,6 @@ $(document).ready(function(){
     });
   }
   drinkStock();
-
-
-
-  
-
-  $('.reports').load(base_url+"dailySalesReport",function(){});
-
-
-    //SALES
-     $("#staff-List").select2({
-        placeholder: "Type Staff Name",
-        allowClear: true, 
-        theme: "classic",
-        width: '100%',
-        minimumInputLength: 3
-    });
 
   //=========================
   //=========================

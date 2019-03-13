@@ -152,6 +152,17 @@
 		}
  	}
 
+ 	//UPDATE PROFILE
+ 	function update_profile($staff){
+ 		$this->db->where('STAFF_ID', $staff['STAFF_ID']);
+		if($this->db->update('staff', $staff)){
+			return true;
+		}
+		else{
+			return false;
+		}
+ 	}
+
 
 
  	//===================
@@ -528,7 +539,7 @@
  	//SALES SHEET
  	function sales_sheet($report){
 
- 		
+
  		$this->db->select('products.PRODUCT_NAME, sum(stock.QUANTITY) QUANTITY, sum(stock.QUANTITY_SOLD) QUANTITY_SOLD, products.COST_PRICE, products.SALES_PRICE');
  		$this->db->from('stock');
  		$this->db->join('products', 'products.PRODUCT_ID=stock.PRODUCT_ID', 'left');

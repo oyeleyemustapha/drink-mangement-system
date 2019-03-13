@@ -49,6 +49,9 @@ echo'
                                     '.$_SESSION["name"].'
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right profile-dropdown ">
+
+                                <a class="dropdown-item" href="'.base_url().'profile"><i class="dripicons-user text-muted"></i> Profile</a>
+                                
                                     
                                    <a class="dropdown-item" href="'.base_url().'logout"><i class="dripicons-exit text-muted"></i> Logout</a>
                                 </div>
