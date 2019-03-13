@@ -511,172 +511,6 @@ class Administrator extends CI_Controller {
 		}
 	}
 	
-
-	
-
-
-
-
-	//==============================
-    //==============================
-    //REPORTS
-    //==============================
-    //==============================
-
-	public function reports(){
-		$this->verify();
-		$data['title']=$this->administrator_model->fetch_store()->NAME." :: Financial Reports";
-		$data['year']=$this->list_year();
-		$data['month']=$this->list_month();
-		$this->load->view('administrator/parts/head',$data);
-		$this->load->view('administrator/reports/reports',$data);
-		$this->load->view('administrator/parts/bottom',$data);
-	}
-
-	//GENERATE DAILY SALES REPORT
-	public function daily_sales_reports(){
-		$data['daily_sales']=$this->administrator_model->fetch_daily_sales_report();
-		$this->load->view('administrator/reports/dailysales',$data);
-	}
-
-
-	//GENERATE SALES RECORDS BASED ON SALES DATE
-	public function sales_reports_day(){
-		$this->verify();
-		$this->load->library('form_validation');
-		$this->form_validation->set_rules('date', 'Sales date', 'required');
-		if($this->form_validation->run()){
-			$data['cafeteria']=$this->administrator_model->fetch_store()->NAME;
-			$date=date('Y-m-d', strtotime($this->input->post('date')));
-			$data['date']=$date;
-			$data['report']=$this->administrator_model->sales_report_day($date);
-			
-			$this->load->view('administrator/reports/generalDailysales',$data);
-		}
-	}
-
-
-	//GENERATE SALES REPORTS BASED ON MONTH AND YEAR
-	public function sales_reports_month(){
-		$this->verify();
-		$this->load->library('form_validation');
-		$this->form_validation->set_rules('month', 'Sales Month', 'required');
-		$this->form_validation->set_rules('year', 'Sales Year', 'required');
-		if($this->form_validation->run()){
-			$month_report=array(
-				'MONTH'=>date('m',strtotime($this->input->post('month'))),
-				'YEAR'=>$this->input->post('year')
-			);
-			$data['cafeteria']=$this->administrator_model->fetch_store()->NAME;
-			$data['date']=$this->input->post('month')." ".$this->input->post('year');
-			$data['report']=$this->administrator_model->sales_report_month($month_report);
-			$this->load->view('administrator/reports/generalMonthsales',$data);
-		}
-	}
-
-	//GENERATE ANNUAL SALES REPORT
-	public function sales_reports_annual(){
-		$this->verify();
-		$this->load->library('form_validation');
-		$this->form_validation->set_rules('year', 'Sales Year', 'required');
-		if($this->form_validation->run()){
-			$data['cafeteria']=$this->administrator_model->fetch_store()->NAME;
-			$data['date']=$this->input->post('year');
-			$data['report']=$this->administrator_model->sales_report_annual($this->input->post('year'));
-			$this->load->view('administrator/reports/generalYearsales',$data);
-		}
-	}
-
-	public function list_year(){
-		$year="";
-		$date=date('Y');
-	    $count=1;
-	    while($count<=10){
-	    	$year.="<option value='$date'>$date</option>\n";
-	        $date++;
-	        $count++;
-	    }
-	    return $year;
-	}
-
-
-	public function list_month(){
-		$month_list="<option value='' selected>Select Month</option>";
-		for ($m=1; $m<=12; $m++) {
-	     $month = date('F', mktime(0,0,0,$m, 1, date('Y')));
-	     $month_list.="<option value='$month'>$month</option>";
-	    }
-	    return $month_list;		
-	}
-
-
-
-	//REPORTS ON DASHBOARD
-
-	public function daily_sales_reports_dashboard(){
-		$report=$this->administrator_model->sales_report_day(date('Y-m-d'));
-
-		$total_amt=0;
-        $total_profit=0;
-
-        if($report){
-        	foreach ($report as $product) {
-	            $cost_price_sum=$product->SALES*$product->COST_PRICE;
-	            $amount=$product->SALES*$product->SALES_PRICE;
-	            $profit=$amount-$cost_price_sum;
-	            $total_profit+=$profit;
-	            $total_amt+=$amount;                        
-	        }
-
-
-	        return $daily_report=array(
-	        	'SALES'=>$total_amt,
-	        	'PROFIT'=>$total_profit
-	        );
-        }
-        else{
-        	return $daily_report=array(
-	        	'SALES'=>0,
-	        	'PROFIT'=>0
-	        );
-        }                        
-	}
-
-
-	public function monthly_sales_reports_dashboard(){
-		$month=array(
-			'MONTH'=>date('m'),
-			'YEAR'=> date('Y')
-		);
-		$report=$this->administrator_model->sales_report_month($month);
-
-		$total_amt=0;
-        $total_profit=0;
-
-        if($report){
-        	foreach ($report as $product) {
-	            $cost_price_sum=$product->SALES*$product->COST_PRICE;
-	            $amount=$product->SALES*$product->SALES_PRICE;
-	            $profit=$amount-$cost_price_sum;
-	            $total_profit+=$profit;
-	            $total_amt+=$amount;                        
-	        }
-
-
-	        return $daily_report=array(
-	        	'SALES'=>$total_amt,
-	        	'PROFIT'=>$total_profit
-	        );
-        }
-        else{
-        	return $daily_report=array(
-	        	'SALES'=>0,
-	        	'PROFIT'=>0
-	        );
-        }                        
-	}
-
-
 	//==============================
     //==============================
     //SALES
@@ -781,55 +615,127 @@ class Administrator extends CI_Controller {
 
 
 
+	//==============================
+    //==============================
+    //REPORTS
+    //==============================
+    //==============================
+
+	public function reports(){
+		$this->verify();
+		$data['title']=$this->administrator_model->fetch_store()->STORE_NAME." :: Financial Reports";
+		$data['daily_report']=$this->administrator_model->fetch_daily_sales_report();
+		$data['year']=$this->list_year();
+		$data['month']=$this->list_month();
+		$data['staffList']=$this->staff_list();
+		$this->load->view('administrator/parts/head',$data);
+		$this->load->view('administrator/reports/reports',$data);
+		$this->load->view('administrator/parts/bottom',$data);
+	}
+
+	
+
+	//GENERATE SALES RECORDS BASED ON SALES DATE
+	public function sales_reports_day(){
+		$this->verify();
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules('date', 'Sales date', 'required');
+		if($this->form_validation->run()){
+			$data['cafeteria']=$this->administrator_model->fetch_store()->STORE_NAME;
+			$date=date('Y-m-d', strtotime($this->input->post('date')));
+			$data['date']=$date;
+			$data['report']=$this->administrator_model->sales_report_day($date);
+			
+			$this->load->view('administrator/reports/generalDailysales',$data);
+		}
+	}
 
 
+	//GENERATE SALES REPORTS BASED ON MONTH AND YEAR
+	public function sales_reports_month(){
+		$this->verify();
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules('month', 'Sales Month', 'required');
+		$this->form_validation->set_rules('year', 'Sales Year', 'required');
+		if($this->form_validation->run()){
+			$month_report=array(
+				'MONTH'=>date('m',strtotime($this->input->post('month'))),
+				'YEAR'=>$this->input->post('year')
+			);
+			$data['cafeteria']=$this->administrator_model->fetch_store()->STORE_NAME;
+			$data['date']=$this->input->post('month')." ".$this->input->post('year');
+			$data['report']=$this->administrator_model->sales_report_month($month_report);
+			$this->load->view('administrator/reports/generalMonthsales',$data);
+		}
+	}
+
+	//GENERATE ANNUAL SALES REPORT
+	public function sales_reports_annual(){
+		$this->verify();
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules('year', 'Sales Year', 'required');
+		if($this->form_validation->run()){
+			$data['cafeteria']=$this->administrator_model->fetch_store()->STORE_NAME;
+			$data['date']=$this->input->post('year');
+			$data['report']=$this->administrator_model->sales_report_annual($this->input->post('year'));
+			$this->load->view('administrator/reports/generalYearsales',$data);
+		}
+	}
+
+	public function list_year(){
+		$year="";
+		$date=date('Y');
+	    $count=1;
+	    while($count<=10){
+	    	$year.="<option value='$date'>$date</option>\n";
+	        $date++;
+	        $count++;
+	    }
+	    return $year;
+	}
 
 
-
-
-
-
-
-
-
-
-
-
-
+	public function list_month(){
+		$month_list="<option value='' selected>Select Month</option>";
+		for ($m=1; $m<=12; $m++) {
+	     $month = date('F', mktime(0,0,0,$m, 1, date('Y')));
+	     $month_list.="<option value='$month'>$month</option>";
+	    }
+	    return $month_list;		
+	}
 
 	//GENERATE SALES RECORDS BASED ON SALES DATE FOR A PARTICULAR STAFFs
 	public function sales_reports_day_staff(){
 		$this->verify();
 		$this->load->library('form_validation');
 		$this->form_validation->set_rules('staff', 'Staff', 'required|numeric');
+		$this->form_validation->set_rules('date', 'Sales Date', 'required');
 		if($this->form_validation->run()){
-			$data['cafeteria']=$this->administrator_model->fetch_store()->NAME;
-			$data['year']=$this->list_year();
-			$data['month']=$this->list_month();
-
-			if($this->input->post('month')!=''){
-				$month=date('m',strtotime($this->input->post('month')));
-			}
-			else{
-				$month="";
-			}
-
-
-			if($this->input->post('date')!=''){
-				$date=date('Y-m-d', strtotime($this->input->post('date')));
-			}
-			else{
-				$date="";
-			}
+			$data['cafeteria']=$this->administrator_model->fetch_store()->STORE_NAME;
 			$report=array(
-				'MONTH'=>   $month,
-				'SALES_DATE'=> $date,
+				'DATE'=> $this->input->post('date'),
 				'STAFF_ID'=>$this->input->post('staff')
 			);
-			$data['date']=$date;
-			$data['month']=$month;
 			$data['report']=$this->administrator_model->sales_report_day_staff($report);
-			$this->load->view('administrator/sales/staffDailysales',$data);
+			$this->load->view('administrator/reports/staffDailySales',$data);
+		}
+	}
+
+
+	//GENERATE SALES SHEET
+	public function sales_sheet(){
+		$this->verify();
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules('date', 'Sales Date', 'required');
+		if($this->form_validation->run()){
+			$data['cafeteria']=$this->administrator_model->fetch_store()->STORE_NAME;
+			$report=array(
+				'DATE'=> $this->input->post('date'),
+				'STAFF_ID'=>$this->input->post('staff')
+			);
+			$data['date']=$this->input->post('date');
+			$data['report']=$this->administrator_model->sales_sheet($report);
+			$this->load->view('administrator/reports/saleSheet',$data);
 		}
 	}
 

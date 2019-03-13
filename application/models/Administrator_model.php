@@ -396,79 +396,22 @@
 	}
 
 
-
-	
-
-
- 	//GET STAFF NAME
- 	function staff_name($id){
- 		$this->db->select('NAME');
- 		$this->db->from('staff');
- 		$this->db->where('STAFF_ID', $id);
- 		$query=$this->db->get();
- 		return $query->row();
- 	}
-
-
- 	//CLEAR CHANGE
- 	function pay_change($change){
- 		$amt=$change['AMOUNT'];
- 		$this->db->set('DATE_CLEARED', $change['DATE_CLEARED']);
- 		$this->db->set('CLEARED_BY', $change['CLEARED_BY']);
- 		$this->db->set('STATUS', $change['STATUS']);
- 		$this->db->set('AMOUNT', "AMOUNT-$amt", FALSE);
- 		$this->db->where('PIN', $change['PIN']);
- 		if($this->db->update('pin')){
- 			return true;
- 		}
- 		else{
- 			return false;
- 		}
- 	}
+	//================
+ 	//================
+ 	//SALES REPORT
+ 	//================
+ 	//=================
 
 
 
- 	//CHANGES NOT PAID BY STAFF FOR THE CURRENT DATE
- 	function change_not_paid_by_staff_day($staff_id){
- 		$this->db->select('SUM(AMOUNT) AMOUNT');
- 		$this->db->from('pin');
- 		$this->db->where('CREATED_BY', $staff_id);
- 		$this->db->where('STATUS', 'NOT PAID');
- 		$this->db->where('DATE(DATE_CREATED)', date('Y-m-d'));
- 		$query=$this->db->get();
- 		if($query->row()->AMOUNT){
- 			return $query->row()->AMOUNT;
- 		}
- 		else{
- 			return 0;
- 		}
- 		
- 	}
-
- 
- 	//CHANGES NOT PAID BY STAFF FOR THE CURRENT MONTH
- 	function change_not_paid_by_staff_month($staff_id){
- 		$this->db->select('SUM(AMOUNT) AMOUNT');
- 		$this->db->from('pin');
- 		$this->db->where('CREATED_BY', $staff_id);
- 		$this->db->where('STATUS', 'NOT PAID');
- 		$this->db->where('MONTH(DATE_CREATED)', date('m'));
- 		$query=$this->db->get();
- 		if($query->row()->AMOUNT){
- 			return $query->row()->AMOUNT;
- 		}
- 		else{
- 			return 0;
- 		}
- 	}
-
-
- 	//GET LIST OF UNPAID CHANGE PIN
- 	function get_list_of_unpaid_change(){
- 		$this->db->select('pin.ID, pin.NAME, pin.STATUS,  pin.PIN, pin.AMOUNT, pin.DATE_CREATED, staff.NAME STAFF');
- 		$this->db->from('pin');
- 		$this->db->join('staff', 'pin.CREATED_BY=staff.STAFF_ID', 'left');
- 		$this->db->order_by('DATE_CREATED', 'DESC');
+	//FETCH DAILY SALES FOR THE CURRENT DAY
+ 	function fetch_daily_sales_report(){
+ 		$this->db->select('products.PRODUCT_NAME, SUM(sales.QUANTITY) SALES, sales.COST_PRICE, sales.SALES_PRICE, sales.DATE');
+ 		$this->db->from('sales');
+ 		$this->db->join('products', 'products.PRODUCT_ID=sales.PRODUCT_ID', 'left');
+ 		$this->db->where('sales.DATE', date('Y-m-d'));
+ 		$this->db->group_by(array('sales.PRODUCT_ID', 'sales.COST_PRICE', 'sales.SALES_PRICE'));
+ 		$this->db->order_by('products.PRODUCT_NAME', 'ASC');
  		$query=$this->db->get();
  		if($query->num_rows()>0){
  			return $query->result();
@@ -477,6 +420,150 @@
  			return false;
  		}
  	}
+
+
+ 	//FETCH DAILY SALES FOR THE CURRENT DAY
+ 	function sales_report_day($date){
+ 		$this->db->select('products.PRODUCT_NAME, SUM(sales.QUANTITY) SALES, products.COST_PRICE, products.SALES_PRICE, sales.DATE');
+ 		$this->db->from('sales');
+ 		$this->db->join('products', 'products.PRODUCT_ID=sales.PRODUCT_ID', 'left');
+ 		$this->db->where('sales.DATE', $date);
+ 		$this->db->group_by(array('sales.PRODUCT_ID', 'sales.COST_PRICE', 'sales.SALES_PRICE'));
+ 		$this->db->order_by('products.PRODUCT_NAME', 'ASC');
+ 		$query=$this->db->get();
+ 		if($query->num_rows()>0){
+ 			return $query->result();
+ 		}
+ 		else{
+ 			return false;
+ 		}
+ 	}
+
+
+ 	//FETCH MONTHLY SALES FOR A PARTICULAR MONTH AND YEAR
+ 	function sales_report_month($month){
+ 		$this->db->select('products.PRODUCT_NAME, SUM(sales.QUANTITY) SALES, products.COST_PRICE, products.SALES_PRICE');
+ 		$this->db->from('sales');
+ 		$this->db->join('products', 'products.PRODUCT_ID=sales.PRODUCT_ID', 'left');
+ 		$this->db->where('MONTH(sales.DATE)', $month['MONTH']);
+ 		$this->db->where('YEAR(sales.DATE)', $month['YEAR']);
+ 		$this->db->group_by(array('sales.PRODUCT_ID', 'sales.COST_PRICE', 'sales.SALES_PRICE'));
+ 		$this->db->order_by('products.PRODUCT_NAME', 'ASC');
+ 		$query=$this->db->get();
+ 		if($query->num_rows()>0){
+ 			return $query->result();
+ 		}
+ 		else{
+ 			return false;
+ 		}
+ 	}
+
+
+ 	//FETCH ANNUAL REPORTS FOR A PARTICULAR YEAR
+ 	function sales_report_annual($year){
+ 		$this->db->select('products.PRODUCT_NAME, SUM(sales.QUANTITY) SALES, products.COST_PRICE, products.SALES_PRICE');
+ 		$this->db->from('sales');
+ 		$this->db->join('products', 'products.PRODUCT_ID=sales.PRODUCT_ID', 'left');
+ 		$this->db->where('YEAR(sales.DATE)', $year);
+ 		$this->db->group_by(array('sales.PRODUCT_ID', 'sales.COST_PRICE', 'sales.SALES_PRICE'));
+ 		$this->db->order_by('products.PRODUCT_NAME', 'ASC');
+ 		$query=$this->db->get();
+ 		if($query->num_rows()>0){
+ 			return $query->result();
+ 		}
+ 		else{
+ 			return false;
+ 		}
+ 	}
+
+
+
+ 	//FETCH DAILY SALES FOR THE CURRENT DAY FOR A PARTICULAR STAFF USUALLY A CASHIER
+ 	function sales_report_day_staff($report){
+ 		$this->db->select('products.PRODUCT_NAME, products.COST_PRICE, products.SALES_PRICE, sales.QUANTITY SALES, sales.DATE,  staff.NAME');
+ 		$this->db->from('sales');
+ 		$this->db->join('products', 'products.PRODUCT_ID=sales.PRODUCT_ID', 'left');
+ 		$this->db->join('staff', 'sales.STAFF_ID=staff.STAFF_ID', 'left');
+ 		$this->db->where('sales.DATE', $report['DATE']);
+ 		$this->db->where('sales.STAFF_ID', $report['STAFF_ID']);
+ 		$this->db->order_by('products.PRODUCT_NAME', 'ASC');
+ 		$query=$this->db->get();
+ 		if($query->num_rows()>0){
+ 			return $query->result();
+ 		}
+ 		else{
+ 			return false;
+ 		}
+ 	}
+
+ 	//FETCH GENERAL DAILY SALES FOR THE CURRENT DAY
+ 	function sales_report_day_general($report){
+ 		$this->db->select('products.PRODUCT, products.COST_PRICE, products.SALES_PRICE, sales.SALES_DATE, sales.ORDER_NO, sales.QUANTITY_SOLD, staff.NAME, sales.STATUS');
+ 		$this->db->from('sales');
+ 		$this->db->join('products', 'products.PRODUCT_ID=sales.PRODUCT_ID', 'left');
+ 		$this->db->join('staff', 'sales.STAFF_ID=staff.STAFF_ID', 'left');
+
+ 		if($report['SALES_DATE']=="" and isset($report['MONTH'])){
+ 			$this->db->where('MONTH(sales.SALES_DATE)', $report['MONTH']);
+ 			$this->db->where('YEAR(sales.SALES_DATE)', date('Y'));
+ 		}
+ 		elseif(isset($report['SALES_DATE']) and $report['MONTH']==""){
+ 			$this->db->where('sales.SALES_DATE', $report['SALES_DATE']);
+ 		}
+ 		
+ 		$this->db->order_by('sales.STAFF_ID', 'DESC');
+ 		$this->db->order_by('staff.NAME', 'DESC');
+ 		$this->db->where('sales.STATUS', 'Confirmed');
+ 		$this->db->order_by('products.LABEL_NAME', 'ASC');
+ 		$query=$this->db->get();
+ 		if($query->num_rows()>0){
+ 			return $query->result();
+ 		}
+ 		else{
+ 			return false;
+ 		}
+ 	}
+
+
+ 	//SALES SHEET
+ 	function sales_sheet($report){
+
+ 		
+ 		$this->db->select('products.PRODUCT_NAME, sum(stock.QUANTITY) QUANTITY, sum(stock.QUANTITY_SOLD) QUANTITY_SOLD, products.COST_PRICE, products.SALES_PRICE');
+ 		$this->db->from('stock');
+ 		$this->db->join('products', 'products.PRODUCT_ID=stock.PRODUCT_ID', 'left');
+ 		$this->db->where('stock.DATE_ADDED', $report['DATE']);
+ 		$this->db->group_by(array('stock.PRODUCT_ID', 'products.COST_PRICE', 'products.SALES_PRICE'));
+ 		$this->db->order_by('products.PRODUCT_NAME', 'ASC');
+ 		$query=$this->db->get();
+ 		if($query->num_rows()>0){
+ 			return $query->result();
+ 		}
+ 		else{
+ 			return false;
+ 		}
+ 	}
+
+
+
+ 
+
+
+
+
+ 	
+
+ 	
+
+
+
+ 	
+	
+	
+	
+
+
+ 	
  	
  	
 

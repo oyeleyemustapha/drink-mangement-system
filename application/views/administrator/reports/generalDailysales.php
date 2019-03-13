@@ -44,7 +44,7 @@
                  <h2 class="text-center">'.strtoupper($cafeteria).'</h2>
                  <hr>
 
-    <h4 class="text-center">Sales Reports for '.date('F d, Y',strtotime($report[0]->SALES_DATE)).'</h4>
+    <h4 class="text-center">Sales Reports for '.date('F d, Y',strtotime($report[0]->DATE)).'</h4>
 
         <table class="table table-bordered table-condensed table-hover productList">
                                     <thead>
@@ -74,7 +74,7 @@
                                         echo"
                                             <tr>
                                                 <td>$counter</td>
-                                                <td>$product->PRODUCT</td>
+                                                <td>$product->PRODUCT_NAME</td>
                                                 <td>$product->SALES</td>
                                                 <td>&#8358; ".number_format($amount)."</td>
                                                

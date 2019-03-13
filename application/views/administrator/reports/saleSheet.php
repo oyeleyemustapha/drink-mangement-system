@@ -3,7 +3,7 @@
 <head>
     <?php
         echo'
-             <title>Left Over Report</title>
+             <title>Sale Sheet for '.date('F d, Y',strtotime($date)).'</title>
             <link href="'.base_url().'assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
             <link href="'.base_url().'assets/css/style.css" rel="stylesheet" type="text/css" />
 
@@ -44,32 +44,45 @@
                  <h2 class="text-center">'.strtoupper($cafeteria).'</h2>
                  <hr>
 
-    <h4 class="text-center">Left Over Reports for '.date('F d, Y',strtotime($report[0]->DATE_ADDED)).'</h4>
+    <h4 class="text-center">Sales Sheet '.date('F d, Y',strtotime($date)).'</h4>
 
         <table class="table table-bordered table-condensed table-hover productList">
                                     <thead>
                                         <tr>
                                             <th>ID</th>
-                                            <th>PRODUCTS</th>
-                                            <th>QUANTITY</th>
-                                           
-                                         
+                                            <th>PRODUCT</th>
+                                            <th>INITIAL STOCK</th>
+                                            <th>QUANTITY SOLD</th>
+                                            <th>LEFTOVER</th>
+                                            
+                                            <th>AMOUNT</th>
                                             
                                            
                                         </tr>
                                     </thead>
                                     <tbody>';
                                     $counter=1;
-                                    
+                                    $total_amt=0;
+                                    $total_profit=0;
                                     foreach ($report as $product) {
+                                        $leftover=$product->QUANTITY-$product->QUANTITY_SOLD;
 
-                                        
+                                        $cost_price_sum=$product->QUANTITY_SOLD*$product->COST_PRICE;
+
+                                        $amount=$product->QUANTITY_SOLD*$product->SALES_PRICE;
+
+                                        $profit=$amount-$cost_price_sum;
+                                        $total_profit+=$profit;
+                                        $total_amt+=$amount;
                                         echo"
                                             <tr>
                                                 <td>$counter</td>
-                                                <td>$product->PRODUCT</td>
+                                                <td>$product->PRODUCT_NAME</td>
                                                 <td>$product->QUANTITY</td>
-                                               
+                                                <td>$product->QUANTITY_SOLD</td>
+                                                <td>$leftover</td>
+                                                
+                                                <td>&#8358; ".number_format($amount)."</td>
                                                
                                             </tr>
                                         ";
@@ -80,6 +93,9 @@
                                         
                                     echo'</tbody>
                                 </table>
+
+                                <h5>TOTAL AMOUNT : &#8358; '.number_format($total_amt).' </h5>
+                                <h5>PROFIT : &#8358; '.number_format($total_profit).' </h5>
 
 
 

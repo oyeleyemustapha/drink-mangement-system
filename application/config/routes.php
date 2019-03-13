@@ -50,4 +50,10 @@ $route['sales']="administrator/sales";
 $route['fetch-allocated-stock']="administrator/fetch_allocated_stock";
 $route['post-record']="administrator/post_sales";
 
-
+//REPORTS
+$route['reports']="administrator/reports";
+$route['daily-sales-reports']="administrator/sales_reports_day";
+$route['monthly-sales-reports']="administrator/sales_reports_month";
+$route['annual-sales-reports']="administrator/sales_reports_annual";
+$route['staff-sales']="administrator/sales_reports_day_staff";
+$route['sales-sheet']="administrator/sales_sheet";

@@ -76,7 +76,7 @@
                                         echo"
                                             <tr>
                                                 <td>$counter</td>
-                                                <td>$product->PRODUCT</td>
+                                                <td>$product->PRODUCT_NAME</td>
                                                 <td>$product->SALES</td>
                                                 <td>&#8358; ".number_format($amount)."</td>
                                                

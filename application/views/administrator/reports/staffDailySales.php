@@ -3,7 +3,7 @@
 <head>
     <?php
         echo'
-             <title>Sales Report : '.$date.'</title>
+             <title>Staff Sales Report</title>
             <link href="'.base_url().'assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
             <link href="'.base_url().'assets/css/style.css" rel="stylesheet" type="text/css" />
 
@@ -39,14 +39,12 @@
         <?php
 
 
-
-
-           if($report){
+            if($report){
                  echo'
                  <h2 class="text-center">'.strtoupper($cafeteria).'</h2>
                  <hr>
 
-    <h4 class="text-center">Annual Sales Reports for '.$date.'</h4>
+    <h4 class="text-center">Sales Reports for '.date('F d, Y',strtotime($report[0]->DATE)).' ['.$report[0]->NAME.']</h4>
 
         <table class="table table-bordered table-condensed table-hover productList">
                                     <thead>
