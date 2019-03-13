@@ -5,10 +5,8 @@ class Supervisor extends CI_Controller {
 
 	public function __construct(){
         parent::__construct();
+        $this->load->model('drinks_model');  
         $this->load->model('supervisor_model');  
-        $this->load->model('cafeteria_model');  
-        $this->load->model('cashier_model');  
-
     }	
 
 	//VERIFY USER FOR SECURITY PURPOSES
@@ -26,15 +24,315 @@ class Supervisor extends CI_Controller {
     //DASHBOARD
 	public function index(){
 		$this->verify();
-		$data['title']=$this->cafeteria_model->fetch_cafeteria()->NAME." :: Dashboard";
+		$data['title']=$this->supervisor_model->fetch_store()->STORE_NAME." :: Dashboard";
 		$data['dailyReport']=$this->daily_sales_reports_dashboard();
 		$data['monthReport']=$this->monthly_sales_reports_dashboard();
-		$data['dailyOrders']=$this->cafeteria_model->fetch_no_order();
 		$this->load->view('supervisor/parts/head', $data);
 		$this->load->view('supervisor/dashboard', $data);
 		$this->load->view('supervisor/parts/bottom', $data);
 	}
+
+
 	
+
+	
+
+	//==============================
+    //==============================
+    //PROFILE
+    //==============================
+    //==============================
+
+	public function profile(){
+		$this->verify();
+		$data['title']=$this->supervisor_model->fetch_store()->STORE_NAME." :: My Profile";
+		$data['profile']=$this->supervisor_model->fetch_staff_info($_SESSION['staff_id']);
+		$this->load->view('supervisor/parts/head',$data);
+		$this->load->view('supervisor/profile',$data);
+		$this->load->view('supervisor/parts/bottom',$data);
+	}
+
+	//UPDATE PROFILE
+	public function update_profile(){
+		$this->verify();
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules('name', 'Name', 'required');
+		$this->form_validation->set_rules('username', 'Username', 'required');
+		$this->form_validation->set_rules('password', 'Password', 'required');
+		$this->form_validation->set_rules('cpassword', 'Password', 'required|matches[password]');
+		if($this->form_validation->run()){
+			$staff=array(
+				'NAME'=>trim($this->input->post('name')),
+				'USERNAME'=>strtolower(trim($this->input->post('username'))),
+				'PASSWORD'=>md5(strtolower(trim($this->input->post('password')))),
+				'STAFF_ID'=>$_SESSION['staff_id']
+			);
+
+			if($this->supervisor_model->update_profile($staff)){
+				
+					$session_data=array(
+						'username' => $staff['USERNAME'], 
+						'password' => $staff['PASSWORD'], 
+						'name'=> $staff['NAME']
+					);
+					$this->session->set_userdata($session_data);
+				echo "Your profile has been updated";
+			}
+		}
+		else{
+			$error="";
+			if(form_error('username')){
+				$error.=form_error('username');
+			}
+			if(form_error('password')){
+				$error.=form_error('password');
+			}
+			if(form_error('cpassword')){
+				$error.=form_error('cpassword');
+			}
+		}
+	}
+
+
+
+	
+	//==============================
+    //==============================
+    //STAFF
+    //==============================
+    //==============================
+
+	public function staff(){
+		$this->verify();
+		$data['title']=$this->supervisor_model->fetch_store()->STORE_NAME." :: Staff";
+		$this->load->view('supervisor/parts/head',$data);
+		$this->load->view('supervisor/staff/staff',$data);
+		$this->load->view('supervisor/parts/bottom',$data);
+	}
+
+
+	//FETCH THE LIST OF STAFF
+	public function fetch_staff_list(){
+		$data['staff_list']=$this->supervisor_model->fetch_staff_list();
+		$this->load->view('supervisor/staff/staffList', $data);
+	}
+
+	
+		
+	//ADD STAFF
+	public function add_staff(){
+		$this->verify();
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules('username', 'Username', 'required|is_unique[staff.USERNAME]', array('is_unique' => 'Username has been taken'));
+		$this->form_validation->set_rules('password', 'Password', 'required');
+		$this->form_validation->set_rules('name', 'Name', 'required');
+		$this->form_validation->set_rules('cpassword', 'Password', 'required|matches[password]');
+		$this->form_validation->set_rules('role', 'Role', 'required');
+		if($this->form_validation->run()){
+			$staff_info=array(
+				'NAME'=>trim($this->input->post('name')),
+				'USERNAME'=>strtolower(trim($this->input->post('username'))),
+				'PASSWORD'=>md5(strtolower(trim($this->input->post('password')))),
+				'ROLE'=>$this->input->post('role')
+			);
+			if($this->supervisor_model->add_staff($staff_info)){
+				echo "Staff has been added";
+			}
+		}
+		else{
+
+			$error="";
+
+			if(form_error('name')){
+				$error.=form_error('name');
+			}
+
+			if(form_error('role')){
+				$error.=form_error('role');
+			}
+
+			if(form_error('username')){
+				$error.=form_error('username');
+			}
+
+			if(form_error('password')){
+				$error.=form_error('password');
+			}
+
+			if(form_error('cpassword')){
+				$error.=form_error('cpassword');
+			}
+			echo $error;
+		}
+	}
+
+	//UPDATE STAFF
+	public function update_staff(){
+		$this->verify();
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules('name', 'Name', 'required');
+		$this->form_validation->set_rules('staff_id', 'Staff ID', 'required|numeric');
+		$this->form_validation->set_rules('username', 'Username', 'required');
+		$this->form_validation->set_rules('role', 'Role', 'required');
+		$this->form_validation->set_rules('password', 'Password', 'required');
+		$this->form_validation->set_rules('cpassword', 'Password', 'required|matches[password]');
+		if($this->form_validation->run()){
+			$staff=array(
+				'NAME'=>trim($this->input->post('name')),
+				'USERNAME'=>strtolower(trim($this->input->post('username'))),
+				'PASSWORD'=>md5(strtolower(trim($this->input->post('password')))),
+				'STAFF_ID'=>$this->input->post('staff_id'),
+				'ROLE'=>$this->input->post('role')
+			);
+
+			if($this->supervisor_model->update_staff($staff)){
+				if($_SESSION['staff_id']==$this->input->post('staff_id')){
+					$session_data=array('role' => $staff['ROLE'], 'username' => $staff['USERNAME'], 'password' => $staff['PASSWORD'], 'name'=> $staff['NAME']);
+					$this->session->set_userdata($session_data);
+				}
+				echo "Staff's Record has been updated";
+			}
+		}
+		else{
+			$error="";
+			if(form_error('username')){
+				$error.=form_error('username');
+			}
+			if(form_error('password')){
+				$error.=form_error('password');
+			}
+			if(form_error('cpassword')){
+				$error.=form_error('cpassword');
+			}
+			if(form_error('staff_id')){
+				$error.=form_error('staff_id');
+			}
+			if(form_error('role')){
+				$error.=form_error('role');
+			}
+		}
+	}
+
+	
+	//FETCH STAFF INFO
+	public function fetch_staff_info(){
+		$this->verify();
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules('staff_id', 'Staff ID', 'required|numeric');
+		if($this->form_validation->run()){
+			$data['staff']= $this->supervisor_model->fetch_staff_info($this->input->post('staff_id'));
+			$this->load->view('supervisor/staff/staffInfo', $data);
+		}
+	}
+
+
+	
+	//==============================
+    //==============================
+    //DRINK STOCK LOGS
+    //==============================
+    //==============================
+
+	public function drinkstocklogs(){
+		$this->verify();
+		$data['title']=$this->supervisor_model->fetch_store()->NAME." :: Drinks Stock Logs";
+		$this->load->view('administrator/parts/head',$data);
+		$this->load->view('administrator/logs/drinkStocklogs',$data);
+		$this->load->view('administrator/parts/bottom',$data);
+	}
+
+	//FETCH DRINK STOCK LOGS
+	public function fetch_drink_stock_logs(){
+		$data['logs']=$this->supervisor_model->fetch_drinkstock_logs();
+		$this->load->view('administrator/logs/stock_log', $data);
+	}
+
+	
+
+	
+	//==============================
+    //==============================
+    //STOCK DRINKS
+    //==============================
+    //==============================
+
+	public function stock(){
+		$this->verify();
+		$data['title']=$this->supervisor_model->fetch_store()->STORE_NAME." :: Stock";
+		$data['staffList']=$this->staff_list();
+		$this->load->view('supervisor/parts/head',$data);
+		$this->load->view('supervisor/stock/stock',$data);
+		$this->load->view('supervisor/parts/bottom',$data);
+	}
+	public function staff_list(){
+		$staff=$this->supervisor_model->fetch_staff_list();
+		$staffList='<option value="">Select Staff</option>';
+		foreach ($staff as $person) {
+			$staffList.="<option value='$person->STAFF_ID'>$person->NAME</option>";
+		}
+		return $staffList;
+	}
+
+	//FETCH LIST OF DRINKS TO ADD TO STOCK
+	public function fetchDrinktoStock(){
+		$data['staffList']=$this->staff_list();
+		$data['drinks']=$this->supervisor_model->fetch_drink_list();
+		$this->load->view('supervisor/stock/drinksToStock', $data);
+	}
+
+	//FETCH LIST OF DRINKS IN STOCK
+	public function fetchDrinksStock(){
+		$data['drinks']=$this->supervisor_model->fetch_drinks_in_stock();
+		$this->load->view('supervisor/stock/stockedDrinks', $data);
+	}
+
+	
+	
+	//ADD DRINKS TO STOCK
+	public function add_drinks_stock(){
+		$this->verify();
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules('staff', 'Staff', 'numeric');
+		$this->form_validation->set_rules('product[]', 'Product', 'numeric');
+		$this->form_validation->set_rules('quantity[]', 'Quantity', 'numeric');
+		if($this->form_validation->run()){
+			for ($i=0; $i <count($this->input->post('product')) ; $i++) { 
+				$product=$_POST['product'][$i];
+				$quantity=$_POST['quantity'][$i];
+				if(	$quantity==''){
+					continue;
+				}
+				else{
+					$product=array(
+						'STAFF_ID'=>$this->input->post('staff'),
+						'PRODUCT_ID'=>$product,
+						'QUANTITY'=>$quantity,
+						'DATE_ADDED'=>date('Y-m-d')
+					);					
+					$this->supervisor_model->add_drink_stock($product);
+				}
+			}
+			echo "Products has been added to stock";
+		}
+		else{
+
+			$error="";
+
+			if(form_error('product[]')){
+				$error.=form_error('product[]');
+			}
+
+			if(form_error('staff')){
+				$error.=form_error('staff');
+			}
+
+			if(form_error('quantity[]')){
+				$error.=form_error('quantity[]');
+			}
+			echo $error;
+		}
+	}
+
 
 	//==============================
     //==============================
@@ -44,28 +342,27 @@ class Supervisor extends CI_Controller {
 
 	public function products(){
 		$this->verify();
-		$data['title']=$this->cafeteria_model->fetch_cafeteria()->NAME." :: Products";
+		$data['title']=$this->supervisor_model->fetch_store()->STORE_NAME."| Products";
 		$this->load->view('supervisor/parts/head',$data);
 		$this->load->view('supervisor/products/products',$data);
 		$this->load->view('supervisor/parts/bottom',$data);
 	}
 
+
 	//ADD PRODUCT
 	public function add_product(){
 		$this->verify();
 		$this->load->library('form_validation');
-		$this->form_validation->set_rules('product', 'Product', 'required|is_unique[products.PRODUCT]', array('is_unique' => 'Product has been added before.'));
-		$this->form_validation->set_rules('labelname', 'Label Name', 'required');
-		$this->form_validation->set_rules('costPrice', 'Cost Price', 'required|numeric');
-		$this->form_validation->set_rules('salesPrice', 'Sales Price', 'required|numeric');
+		$this->form_validation->set_rules('product', 'Product', 'required|is_unique[products.PRODUCT_NAME]', array('is_unique' => 'Product has been added before.'));
+		$this->form_validation->set_rules('costPrice', 'Cost Price', 'required');
+		$this->form_validation->set_rules('salesPrice', 'Sales Price', 'required');
 		if($this->form_validation->run()){
 			$product=array(
-				'PRODUCT'=>ucwords(trim($this->input->post('product'))),
-				'LABEL_NAME'=>ucwords(trim($this->input->post('labelname'))),
-				'COST_PRICE'=>trim($this->input->post('costPrice')),
-				'SALES_PRICE'=>trim($this->input->post('salesPrice'))
+				'PRODUCT_NAME'=>ucwords(trim($this->input->post('product'))),
+				'COST_PRICE'=>str_replace(',', '', trim($this->input->post('costPrice'))),
+				'SALES_PRICE'=>str_replace(',', '', trim($this->input->post('salesPrice')))
 			);
-			if($this->cafeteria_model->add_product($product)){
+			if($this->supervisor_model->add_product($product)){
 				echo "Product has been added";
 			}
 		}
@@ -77,10 +374,6 @@ class Supervisor extends CI_Controller {
 				$error.=form_error('product');
 			}
 
-			if(form_error('labelname')){
-				$error.=form_error('labelname');
-			}
-
 			if(form_error('costPrice')){
 				$error.=form_error('costPrice');
 			}
@@ -88,15 +381,20 @@ class Supervisor extends CI_Controller {
 			if(form_error('salesPrice')){
 				$error.=form_error('salesPrice');
 			}
+
+			
+
 			echo $error;
 		}
 	}
 
+
 	//FETCH PRODUCTS LIST
 	public function fetch_product_list(){
-		$data['product_list']=$this->cafeteria_model->fetch_product_list();
+		$data['product_list']=$this->supervisor_model->fetch_product_list();
 		$this->load->view('supervisor/products/productList', $data);
 	}
+
 
 	//FETCH PRODUCT INFO
 	public function fetch_product_info(){
@@ -104,10 +402,11 @@ class Supervisor extends CI_Controller {
 		$this->load->library('form_validation');
 		$this->form_validation->set_rules('product_id', 'Product ID', 'required|numeric');
 		if($this->form_validation->run()){
-			$data['product']= $this->cafeteria_model->fetch_product_info($this->input->post('product_id'));
-			$this->load->view('administrator/products/productInfo', $data);
+			$data['product']= $this->supervisor_model->fetch_product_info($this->input->post('product_id'));
+			$this->load->view('supervisor/products/productInfo', $data);
 		}
 	}
+
 
 	//UPDATE PRODUCT INFO
 	public function update_product_info(){
@@ -115,18 +414,18 @@ class Supervisor extends CI_Controller {
 		$this->load->library('form_validation');
 		$this->form_validation->set_rules('product_id', 'Product', 'required|numeric');
 		$this->form_validation->set_rules('product', 'Product', 'required');
-		$this->form_validation->set_rules('labelname', 'Label Name', 'required');
-		$this->form_validation->set_rules('costPrice', 'Cost Price', 'required|numeric');
-		$this->form_validation->set_rules('salesPrice', 'Sales Price', 'required|numeric');
+		$this->form_validation->set_rules('costPrice', 'Cost Price', 'required');
+		$this->form_validation->set_rules('salesPrice', 'Sales Price', 'required');
 		if($this->form_validation->run()){
 			$product=array(
 				'PRODUCT_ID'=>$this->input->post('product_id'),
-				'PRODUCT'=>ucwords(trim($this->input->post('product'))),
-				'LABEL_NAME'=>ucwords(trim($this->input->post('labelname'))),
-				'COST_PRICE'=>trim($this->input->post('costPrice')),
-				'SALES_PRICE'=>trim($this->input->post('salesPrice'))
+				'PRODUCT_NAME'=>ucwords(trim($this->input->post('product'))),
+				'COST_PRICE'=>str_replace(',', '', trim($this->input->post('costPrice'))),
+				'SALES_PRICE'=>str_replace(',', '', trim($this->input->post('salesPrice')))
 			);
-			if($this->cafeteria_model->update_product($product)){
+
+
+			if($this->supervisor_model->update_product($product)){
 				echo "Product Information has been updated";
 			}
 		}
@@ -142,10 +441,7 @@ class Supervisor extends CI_Controller {
 				$error.=form_error('product_id');
 			}
 
-			if(form_error('labelname')){
-				$error.=form_error('labelname');
-			}
-
+			
 			if(form_error('costPrice')){
 				$error.=form_error('costPrice');
 			}
@@ -158,57 +454,86 @@ class Supervisor extends CI_Controller {
 		}
 	}
 	
-
 	//==============================
     //==============================
-    //SALES PRODUCTS
+    //SALES
     //==============================
     //==============================
 
-	public function sales_product(){
+	public function sales(){
 		$this->verify();
-		$data['title']=$this->cafeteria_model->fetch_cafeteria()->NAME." :: Sales Products";
-		$data['products']=$this->cafeteria_model->fetch_product_list();
+		$data['title']=$this->supervisor_model->fetch_store()->STORE_NAME." :: Sales";
+		$data['year']=$this->list_year();
+		$data['month']=$this->list_month();
+		$data['staffList']=$this->staff_list();
 		$this->load->view('supervisor/parts/head',$data);
-		$this->load->view('supervisor/products/salesProduct',$data);
+		$this->load->view('supervisor/sales/sales',$data);
 		$this->load->view('supervisor/parts/bottom',$data);
 	}
 
-	//FETCH PRODUCT LIST [TO BE USED IN SELECT2 PLUGIN]
-	public function get_product_list_plugin(){
-		$this->verify();
-		$products=$this->cafeteria_model->fetch_product_list_select($_GET['search']);
-		foreach ($products as $key => $value) {
-			$data[] = array('id' => $value['PRODUCT_ID'], 'text' => $value['PRODUCT']);			 	
-   		}
-		echo json_encode($data);
-	}
 
-	//ADD SALES PRODUCTS
-	public function add_sales_products(){
+	//FETCH PRODUCTS ALLOCATED TO CASHIER
+	public function fetch_allocated_stock(){
 		$this->verify();
 		$this->load->library('form_validation');
+		$this->form_validation->set_rules('staff', 'Staff', 'required|numeric');
+		if($this->form_validation->run()){
+			$data['products']=$this->supervisor_model->fetch_allocated_stock($this->input->post('staff'));
+			
+			if($data['products']==1){
+
+				echo "<div class='alert alert-info'><h3 class='text-center'>Sales has been posted before for this staff</h3></div>";
+			}
+			elseif ($data['products']==2) {
+				echo "<div class='alert alert-info'><h3 class='text-center'>No products was allocated to this staff today</h3></div>";
+			}
+			else{
+				$this->load->view('supervisor/sales/allocated', $data);
+
+			}
+
+
+			
+		}
+		else{
+
+		}
+	}
+
+
+	//POST SALES RECORD
+	public function post_sales(){
+		$this->verify();
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules('staff', 'Staff', 'numeric');
 		$this->form_validation->set_rules('product[]', 'Product', 'numeric');
-		$this->form_validation->set_rules('quantity[]', 'Quantity', 'numeric');
+		$this->form_validation->set_rules('leftover[]', 'Leftover', 'numeric');
 		if($this->form_validation->run()){
 			for ($i=0; $i <count($this->input->post('product')) ; $i++) { 
 				$product=$_POST['product'][$i];
-				$quantity=$_POST['quantity'][$i];
-				if(	$quantity==''){
+				$leftover=$_POST['leftover'][$i];
+				$initial_stock=$_POST['initial_stock'][$i];
+				$sales_price=$_POST['sales_price'][$i];
+				$cost_price=$_POST['cost_price'][$i];
+				if(	$leftover==''){
 					continue;
 				}
 				else{
 
-					$product=array(
+					$quantity_sold=$initial_stock-$leftover;
+					$sales=array(
+						'STAFF_ID'=>$this->input->post('staff'),
 						'PRODUCT_ID'=>$product,
-						'QUANTITY'=>$quantity,
-						'STAFF_ID'=>$_SESSION['staff_id'],
-						'DATE_ADDED'=> date('Y-m-d')
-					);
-					$this->cafeteria_model->add_sales_products($product);
+						'QUANTITY_SOLD'=>$quantity_sold,
+						'DATE_ADDED'=>date('Y-m-d'),
+						'SALES_PRICE'=>$sales_price,
+						'COST_PRICE'=>$cost_price,
+						'LEFTOVER'=>$leftover
+					);					
+					$this->supervisor_model->post_sales($sales);
 				}
 			}
-			echo "Product has been added";
+			echo "Sales has been posted";
 		}
 		else{
 
@@ -218,78 +543,16 @@ class Supervisor extends CI_Controller {
 				$error.=form_error('product[]');
 			}
 
-			if(form_error('quantity[]')){
-				$error.=form_error('quantity[]');
+			if(form_error('staff')){
+				$error.=form_error('staff');
+			}
+
+			if(form_error('leftover[]')){
+				$error.=form_error('leftover[]');
 			}
 			echo $error;
 		}
 	}
-
-	//FETCH SALES PRODUCTS LIST FOR A PARTICULAR DATE
-	public function fetch_sales_product_list(){
-		$this->load->library('form_validation');
-		$this->form_validation->set_rules('date', 'Date', 'required');
-		if($this->form_validation->run()){
-			$date=date('Y-m-d', strtotime($this->input->post('date')));
-			$data['products']=$this->cafeteria_model->fetch_sales_product_list($date);
-			$this->load->view('supervisor/products/salesproductList', $data);
-		}
-		
-	}
-
-	//FETCH SALES PRODUCTS LIST FOR THE CURRENT DATE
-	public function fetch_sales_product_list_current(){
-		$data['products']=$this->cafeteria_model->fetch_sales_product_list(date('Y-m-d'));
-		$this->load->view('supervisor/products/salesproductList', $data);	
-	}
-
-	//FETCH SALES PRODUCT INFO
-	public function fetch_sales_product_info(){
-		$this->verify();
-		$this->load->library('form_validation');
-		$this->form_validation->set_rules('id', 'ID', 'required|numeric');
-		if($this->form_validation->run()){
-			$data['product']= $this->cafeteria_model->fetch_sales_product_info($this->input->post('id'));
-			$this->load->view('supervisor/products/salesproductInfo', $data);
-		}
-	}
-
-	//UPDATE SALES PRODUCTS INFO
-	public function update_sales_products(){
-		$this->verify();
-		$this->load->library('form_validation');
-		$this->form_validation->set_rules('product', 'Product', 'required|numeric');
-		$this->form_validation->set_rules('id', 'ID', 'required|numeric');
-		$this->form_validation->set_rules('quantity', 'Quantity', 'required|numeric');
-		if($this->form_validation->run()){
-			$product=array(
-				'PRODUCT_ID'=>$this->input->post('product'),
-				'QUANTITY'=>trim($this->input->post('quantity')),
-				'ID'=>$this->input->post('id')
-			);
-			if($this->cafeteria_model->update_sales_product($product)){
-				echo "Product has been updated";
-			}
-		}
-		else{
-
-			$error="";
-
-			if(form_error('product')){
-				$error.=form_error('product');
-			}
-
-			if(form_error('quantity')){
-				$error.=form_error('quantity');
-			}
-
-			if(form_error('id')){
-				$error.=form_error('id');
-			}
-			echo $error;
-		}
-	}
-
 
 	//==============================
     //==============================
@@ -299,20 +562,17 @@ class Supervisor extends CI_Controller {
 
 	public function reports(){
 		$this->verify();
-		$data['title']=$this->cafeteria_model->fetch_cafeteria()->NAME." :: Financial Reports";
+		$data['title']=$this->supervisor_model->fetch_store()->STORE_NAME." :: Financial Reports";
+		$data['daily_report']=$this->supervisor_model->fetch_daily_sales_report();
 		$data['year']=$this->list_year();
 		$data['month']=$this->list_month();
+		$data['staffList']=$this->staff_list();
 		$this->load->view('supervisor/parts/head',$data);
 		$this->load->view('supervisor/reports/reports',$data);
 		$this->load->view('supervisor/parts/bottom',$data);
 	}
 
-	//GENERATE DAILY SALES REPORT
-	public function daily_sales_reports(){
-		$data['daily_sales']=$this->cafeteria_model->fetch_daily_sales_report();
-		$this->load->view('supervisor/reports/dailysales',$data);
-	}
-
+	
 
 	//GENERATE SALES RECORDS BASED ON SALES DATE
 	public function sales_reports_day(){
@@ -320,10 +580,11 @@ class Supervisor extends CI_Controller {
 		$this->load->library('form_validation');
 		$this->form_validation->set_rules('date', 'Sales date', 'required');
 		if($this->form_validation->run()){
-			$data['cafeteria']=$this->cafeteria_model->fetch_cafeteria()->NAME;
+			$data['cafeteria']=$this->supervisor_model->fetch_store()->STORE_NAME;
 			$date=date('Y-m-d', strtotime($this->input->post('date')));
 			$data['date']=$date;
-			$data['report']=$this->cafeteria_model->sales_report_day($date);
+			$data['report']=$this->supervisor_model->sales_report_day($date);
+			
 			$this->load->view('supervisor/reports/generalDailysales',$data);
 		}
 	}
@@ -340,9 +601,9 @@ class Supervisor extends CI_Controller {
 				'MONTH'=>date('m',strtotime($this->input->post('month'))),
 				'YEAR'=>$this->input->post('year')
 			);
-			$data['cafeteria']=$this->cafeteria_model->fetch_cafeteria()->NAME;
+			$data['cafeteria']=$this->supervisor_model->fetch_store()->STORE_NAME;
 			$data['date']=$this->input->post('month')." ".$this->input->post('year');
-			$data['report']=$this->cafeteria_model->sales_report_month($month_report);
+			$data['report']=$this->supervisor_model->sales_report_month($month_report);
 			$this->load->view('supervisor/reports/generalMonthsales',$data);
 		}
 	}
@@ -353,9 +614,9 @@ class Supervisor extends CI_Controller {
 		$this->load->library('form_validation');
 		$this->form_validation->set_rules('year', 'Sales Year', 'required');
 		if($this->form_validation->run()){
-			$data['cafeteria']=$this->cafeteria_model->fetch_cafeteria()->NAME;
+			$data['cafeteria']=$this->supervisor_model->fetch_store()->STORE_NAME;
 			$data['date']=$this->input->post('year');
-			$data['report']=$this->cafeteria_model->sales_report_annual($this->input->post('year'));
+			$data['report']=$this->supervisor_model->sales_report_annual($this->input->post('year'));
 			$this->load->view('supervisor/reports/generalYearsales',$data);
 		}
 	}
@@ -382,12 +643,46 @@ class Supervisor extends CI_Controller {
 	    return $month_list;		
 	}
 
+	//GENERATE SALES RECORDS BASED ON SALES DATE FOR A PARTICULAR STAFFs
+	public function sales_reports_day_staff(){
+		$this->verify();
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules('staff', 'Staff', 'required|numeric');
+		$this->form_validation->set_rules('date', 'Sales Date', 'required');
+		if($this->form_validation->run()){
+			$data['cafeteria']=$this->supervisor_model->fetch_store()->STORE_NAME;
+			$report=array(
+				'DATE'=> $this->input->post('date'),
+				'STAFF_ID'=>$this->input->post('staff')
+			);
+			$data['report']=$this->supervisor_model->sales_report_day_staff($report);
+			$this->load->view('supervisor/reports/staffDailySales',$data);
+		}
+	}
+
+
+	//GENERATE SALES SHEET
+	public function sales_sheet(){
+		$this->verify();
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules('date', 'Sales Date', 'required');
+		if($this->form_validation->run()){
+			$data['cafeteria']=$this->supervisor_model->fetch_store()->STORE_NAME;
+			$report=array(
+				'DATE'=> $this->input->post('date'),
+				'STAFF_ID'=>$this->input->post('staff')
+			);
+			$data['date']=$this->input->post('date');
+			$data['report']=$this->supervisor_model->sales_sheet($report);
+			$this->load->view('supervisor/reports/saleSheet',$data);
+		}
+	}
 
 
 	//REPORTS ON DASHBOARD
 
 	public function daily_sales_reports_dashboard(){
-		$report=$this->cafeteria_model->sales_report_day(date('Y-m-d'));
+		$report=$this->supervisor_model->sales_report_day(date('Y-m-d'));
 
 		$total_amt=0;
         $total_profit=0;
@@ -421,7 +716,7 @@ class Supervisor extends CI_Controller {
 			'MONTH'=>date('m'),
 			'YEAR'=> date('Y')
 		);
-		$report=$this->cafeteria_model->sales_report_month($month);
+		$report=$this->supervisor_model->sales_report_month($month);
 
 		$total_amt=0;
         $total_profit=0;
@@ -449,162 +744,13 @@ class Supervisor extends CI_Controller {
         }                        
 	}
 
-
-	//==============================
-    //==============================
-    //SALES
-    //==============================
-    //==============================
-
-	public function sales(){
-		$this->verify();
-		$data['title']=$this->cafeteria_model->fetch_cafeteria()->NAME." :: Sales";
-		$data['year']=$this->list_year();
-		$data['month']=$this->list_month();
-		$data['staffList']=$this->staff_list();
-		$this->load->view('supervisor/parts/head',$data);
-		$this->load->view('supervisor/sales/sales',$data);
-		$this->load->view('supervisor/parts/bottom',$data);
-	}
-
-	public function staff_list(){
-		$staff=$this->cafeteria_model->fetch_staff_list();
-		$staffList="";
-		foreach ($staff as $person) {
-			$staffList.="<option value='$person->STAFF_ID'>$person->NAME</option>";
-		}
-		return $staffList;
-	}
-
-
-	//GENERATE SALES RECORDS BASED ON SALES DATE FOR A PARTICULAR STAFFs
-	public function sales_reports_day_staff(){
-		$this->verify();
-		$this->load->library('form_validation');
-		$this->form_validation->set_rules('staff', 'Staff', 'required|numeric');
-		if($this->form_validation->run()){
-			$data['cafeteria']=$this->cafeteria_model->fetch_cafeteria()->NAME;
-			$data['year']=$this->list_year();
-			$data['month']=$this->list_month();
-
-			if($this->input->post('month')!=''){
-				$month=date('m',strtotime($this->input->post('month')));
-			}
-			else{
-				$month="";
-			}
-
-
-			if($this->input->post('date')!=''){
-				$date=date('Y-m-d', strtotime($this->input->post('date')));
-			}
-			else{
-				$date="";
-			}
-			$report=array(
-				'MONTH'=>   $month,
-				'SALES_DATE'=> $date,
-				'STAFF_ID'=>$this->input->post('staff')
-			);
-			$data['date']=$date;
-			$data['month']=$month;
-			$data['report']=$this->cafeteria_model->sales_report_day_staff($report);
-			$this->load->view('administrator/sales/staffDailysales',$data);
-		}
-	}
-
-
-	//GENERATE GENERAL SALES RECORDS BASED ON SALES DATE
-	public function sales_reports_day_general(){
-		$this->verify();
-		$this->load->library('form_validation');
-			$data['cafeteria']=$this->cafeteria_model->fetch_cafeteria()->NAME;
-			$data['month']=$this->list_month();
-
-			if($this->input->post('month')!=''){
-				$month=date('m',strtotime($this->input->post('month')));
-			}
-			else{
-				$month="";
-			}
-
-
-			if($this->input->post('date')!=''){
-				$date=date('Y-m-d', strtotime($this->input->post('date')));
-			}
-			else{
-				$date="";
-			}
-			$report=array(
-				'MONTH'=>   $month,
-				'SALES_DATE'=> $date
-			);
-			$data['date']=$date;
-			$data['month']=$month;
-			$data['report']=$this->cafeteria_model->sales_report_day_general($report);
-			$this->load->view('administrator/sales/generalDailysales',$data);
-
-			//var_dump($report);
-	}
-
-
-	//GENERATE SALES RECORD BASED ON ORDER NO
-	public function sales_records_order_no(){
-		$this->verify();
-		$this->load->library('form_validation');
-			$this->form_validation->set_rules('search', 'Search', 'required|numeric');
-		if($this->form_validation->run()){
-			$data['sales']=$this->cafeteria_model->sales_records_order_no(trim($this->input->post('search')));
-			$this->load->view('administrator/sales/salesdetails',$data);
-		}
-			
-			
-	}
-
-
-	//CANCEL ALL ORDERS
-	public function cancel_all_orders(){
-		$this->verify();
-		$this->load->library('form_validation');
-			$this->form_validation->set_rules('order_no', 'Order NO', 'required|numeric');
-		if($this->form_validation->run()){
-			if($this->cafeteria_model->cancel_orders_all($this->input->post('order_no'))){
-				echo "Orders has been canceled";
-			}
-		}		
-	}
-
-
-	//CANCEL SPECIFIC PRODUCT ORDER
-	public function cancel_product_order(){
-		$this->verify();
-		$this->load->library('form_validation');
-			$this->form_validation->set_rules('sales_id', 'Sales ID', 'required|numeric');
-		if($this->form_validation->run()){
-			if($this->cafeteria_model->cancel_specific_order($this->input->post('sales_id'))){
-				echo "Order has been canceled";
-			}
-		}		
-	}
-
-
-	 //DASHBOARD
-	public function order_page(){
-		$this->verify();
-		$data['title']=$this->cafeteria_model->fetch_cafeteria()->NAME." :: Take Order";
-		$data['cafeteria']=$this->cafeteria_model->fetch_cafeteria()->NAME;
-		$this->load->view('supervisor/parts/head', $data);
-		$this->load->view('supervisor/order/order', $data);
-		$this->load->view('supervisor/parts/bottom', $data);
-	}
-	
 	
 
 
 	
 
 
-
+	
 
 	
 	

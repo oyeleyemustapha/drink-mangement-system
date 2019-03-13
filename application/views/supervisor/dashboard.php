@@ -17,7 +17,7 @@
 
 
                 <div class="row">
-                    <div class="col-md-6 col-xl-4">
+                    <div class="col-md-6 col-xl-6">
                         <div class="mini-stat clearfix bg-white">
                             <span class="mini-stat-icon bg-light"><i class="fa fa-money text-danger"></i></span>
                             <div class="mini-stat-info text-right text-muted">
@@ -26,16 +26,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6 col-xl-4">
-                        <div class="mini-stat clearfix bg-info">
-                            <span class="mini-stat-icon bg-light"><i class="fa fa-money text-success"></i></span>
-                            <div class="mini-stat-info text-right text-white">
-                                <span class="counter text-white"><?php echo $dailyOrders; ?> Orders</span>
-                                <?php echo date('F d, Y');?>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-xl-4">
+                    
+                    <div class="col-md-6 col-xl-6">
                         <div class="mini-stat clearfix bg-white">
                             <span class="mini-stat-icon bg-light"><i class="fa fa-money text-warning"></i></span>
                             <div class="mini-stat-info text-right text-muted">
@@ -48,6 +40,7 @@
                 </div>
 
                 
+              
 
             </div> <!-- end container -->
         </div>

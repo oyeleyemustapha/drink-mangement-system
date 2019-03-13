@@ -7,7 +7,7 @@ echo'
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
-        <title>'.$title.'</title>
+        <title>'.$title.' | Drinks Management System</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <link href="'.base_url().'assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
         <link href="'.base_url().'assets/css/icons.css" rel="stylesheet" type="text/css" />
@@ -49,6 +49,9 @@ echo'
                                     '.$_SESSION["name"].'
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right profile-dropdown ">
+
+                                <a class="dropdown-item" href="'.base_url().'supervisor/profile"><i class="dripicons-user text-muted"></i> Profile</a>
+                                
                                     
                                    <a class="dropdown-item" href="'.base_url().'logout"><i class="dripicons-exit text-muted"></i> Logout</a>
                                 </div>
@@ -89,27 +92,25 @@ echo'
                             </li>
 
                             <li class="has-submenu">
-                                <a href="'.base_url().'supervisor/order_page"><i class="ti-shopping-cart-full"></i>Order</a>
+                                <a href="'.base_url().'supervisor/products"><i class="ti-money"></i>Products</a>
                             </li>
 
                             <li class="has-submenu">
-                                <a href="'.base_url().'supervisor/sales"><i class="ti-shopping-cart-full"></i>Sales</a>
+                                <a href="'.base_url().'supervisor/stock"><i class="ti-shopping-cart-full"></i>Stock</a>
+                            </li>
+
+                            <li class="has-submenu">
+                                <a href="'.base_url().'supervisor/sales"><i class="ti-money"></i>Sales</a>
                             </li>
 
                             <li class="has-submenu">
                                 <a href="'.base_url().'supervisor/reports"><i class="ti-bar-chart"></i>Reports</a>
                             </li>
 
-                           
                             <li class="has-submenu">
-                                <a href="#"><i class="ti-package"></i>Products</a>
-                                <ul class="submenu">
-                                 <li><a href="'.base_url().'supervisor/products">Product List</a></li>
-                                 <li><a href="'.base_url().'supervisor/sales_product">Sales Product</a></li>
-                                </ul>
+                                <a href="'.base_url().'supervisor/staff"><i class="ti-id-badge"></i>Staff</a>
                             </li>
 
-                           
 
                             
 

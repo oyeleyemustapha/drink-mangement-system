@@ -10,7 +10,7 @@ $route['translate_uri_dashes'] = FALSE;
 $route['login']='drinks/login';
 $route['logout']='drinks/logout';
 
-
+$route['supervisor']="supervisor/index";
 
 //STOTE SETTINGS
 $route['settings']="administrator/settings";

@@ -1,11 +1,16 @@
 <?php
 
-if($products){
+if($drinks){
     echo'
+    <form method="post" id="addStockForm" autocomplete="off">
 
-    <h4 class="text-center">'.date('F d, Y', strtotime($products[0]->DATE_ADDED)).'</h4>
+        <select name="staff" required class="form-control form-control-lg">
+            '.$staffList.'
 
-        <table class="table table-bordered table-condensed table-hover">
+        </select>
+        <br>
+        <table class="table table-bordered table-condensed table-hover drinkList">
+        
                                     <thead>
                                         <tr>
                                             <th>ID</th>
@@ -16,12 +21,17 @@ if($products){
                                     </thead>
                                     <tbody>';
                                     $counter=1;
-                                    foreach ($products as $product) {
+                                    foreach ($drinks as $drink) {
                                         echo"
                                             <tr>
                                                 <td>$counter</td>
-                                                <td><a href='#' class='editSalesProduct' id='$product->ID'>$product->PRODUCT</a></td>
-                                                <td>$product->QUANTITY</td>
+                                                <td>$drink->PRODUCT_NAME</td>
+                                              
+                                                <td>
+                                                <input type='number' name='quantity[]' class='form-control form-control-lg' autocomplete='off'>
+
+<input type='hidden' name='product[]' value='$drink->PRODUCT_ID' class='form-control form-control-lg'>
+                                                </td>
                                                
                                             </tr>
                                         ";
@@ -32,16 +42,16 @@ if($products){
                                         
                                     echo'</tbody>
                                 </table>
+                                <button class="btn btn-info btn-lg addBtn">Add</button>
+
+                                </form>
 
 
 
     ';
 }
 else{
-
-    echo "<div class='alert alert-info'>
-<h3 class='text-center'><i class='fa fa-info-circle fa-2x'></i><br>No record found</h3>
-    </div>";
+    echo'<div class="alert alert-info text-center"><h3>No Record Found</h3></div>';
 }
 
 

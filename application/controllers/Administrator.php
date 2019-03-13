@@ -25,9 +25,8 @@ class Administrator extends CI_Controller {
 	public function index(){
 		$this->verify();
 		$data['title']=$this->administrator_model->fetch_store()->STORE_NAME." :: Dashboard";
-		//$data['dailyReport']=$this->daily_sales_reports_dashboard();
-		//$data['monthReport']=$this->monthly_sales_reports_dashboard();
-		//$data['dailyOrders']=$this->administrator_model->fetch_no_order();
+		$data['dailyReport']=$this->daily_sales_reports_dashboard();
+		$data['monthReport']=$this->monthly_sales_reports_dashboard();
 		$this->load->view('administrator/parts/head', $data);
 		$this->load->view('administrator/dashboard', $data);
 		$this->load->view('administrator/parts/bottom', $data);
@@ -797,6 +796,70 @@ class Administrator extends CI_Controller {
 	}
 
 
+	//REPORTS ON DASHBOARD
+
+	public function daily_sales_reports_dashboard(){
+		$report=$this->administrator_model->sales_report_day(date('Y-m-d'));
+
+		$total_amt=0;
+        $total_profit=0;
+
+        if($report){
+        	foreach ($report as $product) {
+	            $cost_price_sum=$product->SALES*$product->COST_PRICE;
+	            $amount=$product->SALES*$product->SALES_PRICE;
+	            $profit=$amount-$cost_price_sum;
+	            $total_profit+=$profit;
+	            $total_amt+=$amount;                        
+	        }
+
+
+	        return $daily_report=array(
+	        	'SALES'=>$total_amt,
+	        	'PROFIT'=>$total_profit
+	        );
+        }
+        else{
+        	return $daily_report=array(
+	        	'SALES'=>0,
+	        	'PROFIT'=>0
+	        );
+        }                        
+	}
+
+
+	public function monthly_sales_reports_dashboard(){
+		$month=array(
+			'MONTH'=>date('m'),
+			'YEAR'=> date('Y')
+		);
+		$report=$this->administrator_model->sales_report_month($month);
+
+		$total_amt=0;
+        $total_profit=0;
+
+        if($report){
+        	foreach ($report as $product) {
+	            $cost_price_sum=$product->SALES*$product->COST_PRICE;
+	            $amount=$product->SALES*$product->SALES_PRICE;
+	            $profit=$amount-$cost_price_sum;
+	            $total_profit+=$profit;
+	            $total_amt+=$amount;                        
+	        }
+
+
+	        return $daily_report=array(
+	        	'SALES'=>$total_amt,
+	        	'PROFIT'=>$total_profit
+	        );
+        }
+        else{
+        	return $daily_report=array(
+	        	'SALES'=>0,
+	        	'PROFIT'=>0
+	        );
+        }                        
+	}
 
 	
 

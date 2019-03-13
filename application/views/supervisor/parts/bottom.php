@@ -8,7 +8,7 @@ echo'
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12">
-                       &copy; Cafeteria Management System.
+                       &copy; Drink Management System.
                     </div>
                 </div>
             </div>
@@ -29,7 +29,6 @@ echo'
         <script src="'.base_url().'assets/plugins/datatables/js/dataTables.bootstrap4.min.js"></script>
         <script src="'.base_url().'assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
         <script src="'.base_url().'assets/js/app.js"></script>
-        <script src="'.base_url().'assets/js/cashier.js"></script>
         <script src="'.base_url().'assets/js/supervisor.js"></script>
 
     </body>

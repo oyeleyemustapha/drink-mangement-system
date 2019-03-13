@@ -3,7 +3,7 @@
 <head>
     <?php
         echo'
-             <title>Sales Report : '.date('F d, Y',strtotime($date)).'</title>
+             <title>Staff Sales Report</title>
             <link href="'.base_url().'assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
             <link href="'.base_url().'assets/css/style.css" rel="stylesheet" type="text/css" />
 
@@ -44,7 +44,7 @@
                  <h2 class="text-center">'.strtoupper($cafeteria).'</h2>
                  <hr>
 
-    <h4 class="text-center">Sales Reports for '.date('F d, Y',strtotime($report[0]->DATE)).'</h4>
+    <h4 class="text-center">Sales Reports for '.date('F d, Y',strtotime($report[0]->DATE)).' ['.$report[0]->NAME.']</h4>
 
         <table class="table table-bordered table-condensed table-hover productList">
                                     <thead>
@@ -89,7 +89,7 @@
                                 </table>
 
                                 <h5>TOTAL AMOUNT : &#8358; '.number_format($total_amt).' </h5>
-                               <h5>PROFIT : &#8358; '.number_format($total_profit).' </h5>
+                                <h5>PROFIT : &#8358; '.number_format($total_profit).' </h5>
 
 
 

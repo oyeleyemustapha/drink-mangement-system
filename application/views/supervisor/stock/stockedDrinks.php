@@ -1,14 +1,16 @@
 <?php
 
-if($product_list){
+if($drinks){
     echo'
-
-        <table class="table table-bordered table-condensed table-hover productList">
+<br>
+        <table class="table table-bordered table-condensed table-hover stockList">
                                     <thead>
                                         <tr>
                                             <th>ID</th>
+                                            <th>STAFF</th>
                                             <th>PRODUCT</th>
-                                            
+                                            <th>INITIAL STOCK</th>
+                                            <th>QUANTITY AVAILABLE</th>
                                             <th>COST PRICE</th>
                                             <th>SALES PRICE</th>
                                            
@@ -16,13 +18,17 @@ if($product_list){
                                     </thead>
                                     <tbody>';
                                     $counter=1;
-                                    foreach ($product_list as $product) {
+                                    foreach ($drinks as $drink) {
+                                        $quantity_available=$drink->QUANTITY-$drink->QUANTITY_SOLD;
                                         echo"
                                             <tr>
                                                 <td>$counter</td>
-                                                <td><a href='#' class='editProduct' id='$product->PRODUCT_ID'>$product->PRODUCT_NAME</a></td>
-                                                <td>&#8358; ".number_format($product->COST_PRICE)."</td>
-                                                <td>&#8358; ".number_format($product->SALES_PRICE)."</td>
+                                                <td>$drink->NAME</td>
+                                                <td>$drink->PRODUCT_NAME</td>
+                                                <td>$drink->QUANTITY</td>
+                                                <td>$quantity_available</td>
+                                                <td>&#8358; $drink->COST_PRICE</td>
+                                                <td>&#8358; $drink->SALES_PRICE</td>
                                 
                                             </tr>
                                         ";
