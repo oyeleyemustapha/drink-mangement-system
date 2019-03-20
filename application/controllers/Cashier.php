@@ -141,8 +141,7 @@ class Cashier extends CI_Controller {
 	public function sales(){
 		$this->verify();
 		$data['title']=$this->cashier_model->fetch_store()->STORE_NAME." :: Sales";
-		$data['year']=$this->list_year();
-		$data['month']=$this->list_month();
+		
 		$this->load->view('cashier/parts/head',$data);
 		$this->load->view('cashier/sales/sales',$data);
 		$this->load->view('cashier/parts/bottom',$data);

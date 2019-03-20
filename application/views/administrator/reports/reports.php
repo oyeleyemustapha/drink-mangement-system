@@ -50,7 +50,7 @@
                                     echo'
                                       <div class="table-responsive">
                                         <h4 class="text-center mb-3 mt-5">Sales Report for '.date("F d, Y", strtotime($daily_report[0]->DATE)).'</h4>
-                                        <table class="table table-striped table-bordered">
+                                        <table class="table table-striped table-bordered salesTable">
                                             <thead>
                                               <tr>
                                                 <th>ID</th>
@@ -82,14 +82,22 @@
 
 
                                     echo'
-                                    <tr>
-
-                                      <td colspan="3"><strong>TOTAL</strong></td>
-                                      <td>&#8358; '.number_format( $total_amt).'</td>
-                                    </tr>
+                                    
 
                                     </tbody>
                                   </table>
+
+                                  <div class="col-lg-8 offset-lg-2 mt-4">
+                                  <table class="table table-striped">
+                                  <tbody>
+                                  <tr>
+
+                                      <td colspan="3"><strong>TOTAL SALES</strong></td>
+                                      <td>&#8358; '.number_format( $total_amt).'</td>
+                                    </tr>
+                                  </tbody>
+                                  </table>
+                                  </div>
                                 </div>';
                                   }
 

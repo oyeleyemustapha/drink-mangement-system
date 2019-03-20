@@ -3,7 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 
 $config['base_url'] = 'http://localhost/drinks';
-//$config['base_url'] = 'https:///cafeteria'; 
+//$config['base_url'] = 'https://chowexpress.com.ng/drinks'; 
 
 /*
 |--------------------------------------------------------------------------

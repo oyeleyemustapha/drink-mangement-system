@@ -59,7 +59,7 @@
 
  	//FETCH STAFF LOGS
  	function fetch_staff_logs(){
- 		$this->db->select('STAFF.NAME, STAFF.ROLE, staff_logs.TIME_LOGGED');
+ 		$this->db->select('staff.NAME, staff.ROLE, staff_logs.TIME_LOGGED');
  		$this->db->from('staff_logs');
  		$this->db->join('staff', 'staff.STAFF_ID=staff_logs.STAFF_ID', 'left');
  		$this->db->order_by('staff_logs.TIME_LOGGED', 'DESC');

@@ -27,7 +27,7 @@
                                   
                                 </h4>
 
-                                <div class="productListDiv">
+                                <div class="productListDiv table-responsive">
                                     
 
                                    <h1 class="text-center"> <i class="fa fa-spin fa-spinner fa-3x"></i><br> LOADING</h1>
