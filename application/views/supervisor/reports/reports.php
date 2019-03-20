@@ -9,7 +9,7 @@
                     <div class="col-sm-12">
                         <div class="page-title-box">
                            
-                            <h4 class="page-title">Products</h4>
+                            <h4 class="page-title">Sales Report</h4>
                         </div>
                     </div>
                 </div>
@@ -51,7 +51,7 @@
                                     echo'
                                       <div class="table-responsive">
                                         <h4 class="text-center mb-3 mt-5">Sales Report for '.date("F d, Y", strtotime($daily_report[0]->DATE)).'</h4>
-                                        <table class="table table-striped table-bordered">
+                                        <table class="table table-striped table-bordered reportTable">
                                             <thead>
                                               <tr>
                                                 <th>ID</th>
@@ -83,15 +83,22 @@
 
 
                                     echo'
-                                    <tr>
-
-                                      <td colspan="3"><strong>TOTAL</strong></td>
-                                      <td>&#8358; '.number_format( $total_amt).'</td>
-                                    </tr>
-
+                                    
                                     </tbody>
                                   </table>
-                                </div>';
+                                </div>
+
+                                <div class="col-lg-8 offset-lg-2 mt-4">
+                                  <table class="table table-striped">
+                                  <tbody>
+                                  <tr>
+
+                                      <td colspan="3"><strong>TOTAL SALES</strong></td>
+                                      <td>&#8358; '.number_format( $total_amt).'</td>
+                                    </tr>
+                                  </tbody>
+                                  </table>
+                                  </div>';
                                   }
 
                                 ?>
@@ -126,11 +133,7 @@
                                                     <div class="modal-body">
                                                        <form method="post" action="<?php echo base_url(); ?>supervisor/sales_sheet" target="_blank">
 
-                                                        <div class="form-group">
-                                                          <select class="form-control" name="staff">
-                                                            <?php echo $staffList; ?>
-                                                          </select>
-                                                        </div>
+                                                        
                                                             <div class="form-group">
                                                                  <div class="input-group">
                                                              <div class="input-group-addon">Date</div>

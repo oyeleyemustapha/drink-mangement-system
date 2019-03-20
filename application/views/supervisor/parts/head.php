@@ -23,7 +23,12 @@ echo'
     <body>
 
         <!-- Loader -->
-        <div id="preloader"><div id="status"><div class="spinner"></div></div></div>
+         <!-- Loader -->
+        <div id="preloader" class="preloader">
+        <h2 class="text-center" style="margin-top: 20%;"><i class="fa fa-spinner fa-spin fa-2x"></i><br> Please Wait</h2>
+
+        </div>
+
 
         <!-- Navigation Bar-->
         <header id="topnav">

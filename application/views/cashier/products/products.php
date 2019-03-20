@@ -25,7 +25,7 @@
                             <div class="card-body">
                                 
 
-                                <div class="productListDiv"></div>
+                                <div class="productListDiv"><h1 class="text-center"><i class="fa fa-spin fa-spinner"></i><br>Loading</h1></div>
                                 
                             </div>
                         </div>

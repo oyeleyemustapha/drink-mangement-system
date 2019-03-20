@@ -46,12 +46,14 @@
                                                            
                                                             </div>
 
-                                                            <div class="allocatedProducts"></div>
+                                                            <div class="allocatedProducts">
+                                                              
+                                                            </div>
 
                                                             
                                                            
 
-                                                           <button class="btn btn-danger">Post</button>
+                                                           
                                                        </form>
                                   </div>
                                 </div>

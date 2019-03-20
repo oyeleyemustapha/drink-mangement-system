@@ -33,11 +33,7 @@
                                       <button class="btn btn-success btn-sm" data-toggle="modal" data-target="#myModal">Daily Sales Report</button>
 
 
-                                 
-
-
-                                  <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#myModal4">Staff Sales Report</button>
-                                   
+                              
                                   
                                 </div>
 
@@ -49,7 +45,7 @@
                                     echo'
                                       <div class="table-responsive">
                                         <h4 class="text-center mb-3 mt-5">Sales Report for '.date("F d, Y", strtotime($daily_report[0]->DATE)).'</h4>
-                                        <table class="table table-striped table-bordered">
+                                        <table class="table table-striped table-bordered salesTable">
                                             <thead>
                                               <tr>
                                                 <th>ID</th>
@@ -81,14 +77,21 @@
 
 
                                     echo'
-                                    <tr>
-
-                                      <td colspan="3"><strong>TOTAL</strong></td>
-                                      <td>&#8358; '.number_format( $total_amt).'</td>
-                                    </tr>
+                                    
 
                                     </tbody>
                                   </table>
+                                  <div class="col-lg-8 offset-lg-2 mt-4">
+                                  <table class="table table-striped">
+                                  <tbody>
+                                  <tr>
+
+                                      <td colspan="3"><strong>TOTAL SALES</strong></td>
+                                      <td>&#8358; '.number_format( $total_amt).'</td>
+                                    </tr>
+                                  </tbody>
+                                  </table>
+                                  </div>
                                 </div>';
                                   }
 
@@ -161,31 +164,6 @@
                                         </div><!-- /.modal -->
 
 
- <div id="myModal4" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title mt-0" id="myModalLabel">Staff Sales Reports</h5>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                       <form method="post" action="<?php echo base_url(); ?>cashier/sales_reports_day_staff" target="_blank">
-
-                                                       
-                                                            <div class="form-group">
-                                                                 <div class="input-group">
-                                                             <div class="input-group-addon">Date</div>
-                                                             <input type="date" name="date" class="form-control" required="">
-                                                           </div>
-                                                           </div>
-
-                                                           
-                                                           <button class="btn btn-danger">Generate</button>
-                                                       </form>
-                                                    </div>
-                                                </div><!-- /.modal-content -->
-                                            </div><!-- /.modal-dialog -->
-                                        </div><!-- /.modal -->
 <!-- sample modal content -->
                                         <div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                                             <div class="modal-dialog">

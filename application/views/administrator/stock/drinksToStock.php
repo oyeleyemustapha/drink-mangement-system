@@ -42,7 +42,7 @@ if($drinks){
                                         
                                     echo'</tbody>
                                 </table>
-                                <button class="btn btn-info btn-lg addBtn">Add</button>
+                                <button class="btn btn-info btn-lg addBtn addStockbtn">Add</button>
 
                                 </form>
 

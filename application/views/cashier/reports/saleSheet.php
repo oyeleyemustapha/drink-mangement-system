@@ -52,6 +52,8 @@
                                             <th>ID</th>
                                             <th>PRODUCT</th>
                                             <th>INITIAL STOCK</th>
+                                            <th>ADDED STOCK</th>
+                                            <th>TOTAL STOCK</th>
                                             <th>QUANTITY SOLD</th>
                                             <th>LEFTOVER</th>
                                             
@@ -65,8 +67,8 @@
                                     $total_amt=0;
                                     $total_profit=0;
                                     foreach ($report as $product) {
-                                        $leftover=$product->QUANTITY-$product->QUANTITY_SOLD;
-
+                                        $leftover=($product->QUANTITY+$product->ADDED_STOCK)-$product->QUANTITY_SOLD;
+                                        $total_stock=$product->QUANTITY+$product->ADDED_STOCK;
                                         $cost_price_sum=$product->QUANTITY_SOLD*$product->COST_PRICE;
 
                                         $amount=$product->QUANTITY_SOLD*$product->SALES_PRICE;
@@ -79,6 +81,8 @@
                                                 <td>$counter</td>
                                                 <td>$product->PRODUCT_NAME</td>
                                                 <td>$product->QUANTITY</td>
+                                                <td>$product->ADDED_STOCK</td>
+                                                <td>$total_stock</td>
                                                 <td>$product->QUANTITY_SOLD</td>
                                                 <td>$leftover</td>
                                                 
@@ -95,7 +99,7 @@
                                 </table>
 
                                 <h5>TOTAL AMOUNT : &#8358; '.number_format($total_amt).' </h5>
-                                
+                                <h5>PROFIT : &#8358; '.number_format($total_profit).' </h5>
 
 
 

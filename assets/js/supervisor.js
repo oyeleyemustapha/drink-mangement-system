@@ -12,6 +12,16 @@ $(document).ready(function(){
 	 	autoclose: true
 	 });
 
+$('.reportTable').DataTable();
+  function disbleBtn(Selector){
+      $(Selector).prop('disabled', true);
+  }
+
+  function enableBtn(Selector){
+      $(Selector).prop('disabled', false);
+  }
+
+
 
   //UPDATE PROFILE
   $('#updateProfile').submit(function(){
@@ -272,8 +282,8 @@ $(document).ready(function(){
                     products();
                 }
             );
-             $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
-             $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});
+             $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn(); disbleBtn('.addProductBtn');});
+             $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut(); enableBtn('.addProductBtn')});
              return false;          
   });
 
@@ -332,8 +342,8 @@ $(document).ready(function(){
               drinksToallocate();
             }
           );
-          $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
-          $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});
+          $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn(); disbleBtn('.addStockBtn')});
+          $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut(); enableBtn('.addStockBtn')});
           return false;          
         });
      });
@@ -419,12 +429,12 @@ $(document).ready(function(){
                       });            
             }
         );
-          $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
-          $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});
+          $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn(); disbleBtn('.PostSales')});
+          $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut(); enableBtn('.PostSales')});
       });
                               
-        $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
-        $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});
+         $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn(); disbleBtn('.PostSales')});
+          $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut(); enableBtn('.PostSales')});
         return false;          
     });
 

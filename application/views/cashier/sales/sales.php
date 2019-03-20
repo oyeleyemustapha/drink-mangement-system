@@ -36,7 +36,10 @@
 
                                                             
 
-                                                            <div class="allocatedProducts"></div>
+                                                            <div class="allocatedProducts table-responsive">
+                                                                
+                                                                <h1 class="text-center"><i class="fa fa-spin fa-spinner"></i><br> Loading</h1>
+                                                            </div>
 
                                                             
                                                            

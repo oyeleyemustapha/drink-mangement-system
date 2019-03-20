@@ -13,6 +13,18 @@ $(document).ready(function(){
 	 });
 
 
+
+  function disbleBtn(Selector){
+      $(Selector).prop('disabled', true);
+  }
+
+  function enableBtn(Selector){
+      $(Selector).prop('disabled', false);
+  }
+
+  
+
+
   //UPDATE PROFILE
   $('#updateProfile').submit(function(){
     $.post( 
@@ -29,8 +41,8 @@ $(document).ready(function(){
             }); 
         }
     );
-      $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
-      $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});
+      $(document).ajaxSend(function(event, xhr, settings) {$("#preloader").fadeIn();});
+      $(document).ajaxComplete(function(event, xhr, settings) {$("#preloader").fadeOut();});
       return false;          
   });
 
@@ -57,8 +69,8 @@ $(document).ready(function(){
             }); 
         }
     );
-      $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
-      $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});
+      $(document).ajaxSend(function(event, xhr, settings) {$("#preloader").fadeIn();});
+      $(document).ajaxComplete(function(event, xhr, settings) {$("#preloader").fadeOut();});
       return false;          
   });
 
@@ -104,8 +116,8 @@ $(document).ready(function(){
                        STAFF_LOGS();
                   }
               );
-               $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
-               $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});
+               $(document).ajaxSend(function(event, xhr, settings) {$("#preloader").fadeIn();});
+               $(document).ajaxComplete(function(event, xhr, settings) {$("#preloader").fadeOut();});
                return false;
       });                  
     });
@@ -164,8 +176,8 @@ $(document).ready(function(){
                                     }
                                 }
                               );
-                            $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
-                           $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});
+                            $(document).ajaxSend(function(event, xhr, settings) {$("#preloader").fadeIn();});
+                           $(document).ajaxComplete(function(event, xhr, settings) {$("#preloader").fadeOut();});
                              
                           }); 
                   });
@@ -199,14 +211,14 @@ $(document).ready(function(){
                                                  staff();
                                             }
                                         );
-                                         $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
-                                         $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});
+                                         $(document).ajaxSend(function(event, xhr, settings) {$("#preloader").fadeIn();});
+                                         $(document).ajaxComplete(function(event, xhr, settings) {$("#preloader").fadeOut();});
                                          return false;          
                                 }); 
                             }
                         );
-                    $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
-                    $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});       
+                    $(document).ajaxSend(function(event, xhr, settings) {$("#preloader").fadeIn();});
+                    $(document).ajaxComplete(function(event, xhr, settings) {$("#preloader").fadeOut();});       
                   });
              }
 
@@ -233,8 +245,8 @@ $(document).ready(function(){
                         staff();
                   }
               );
-               $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
-               $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});
+               $(document).ajaxSend(function(event, xhr, settings) {$("#preloader").fadeIn();});
+               $(document).ajaxComplete(function(event, xhr, settings) {$("#preloader").fadeOut();});
                return false;          
     });
 
@@ -255,7 +267,7 @@ $(document).ready(function(){
         //ADD DRINKS TO STOCK
         $('#addStockForm').submit(function(){
           $.post( 
-            base_url+"add-drink-stock", 
+            base_url+"add-drinks-to-stock", 
             $(this).serialize(), 
             function(data){
               $.notify({
@@ -268,8 +280,8 @@ $(document).ready(function(){
               drinksToallocate();
             }
           );
-          $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
-          $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});
+          $(document).ajaxSend(function(event, xhr, settings) {$("#preloader").fadeIn(); disbleBtn('.addStockbtn');});
+          $(document).ajaxComplete(function(event, xhr, settings) {$("#preloader").fadeOut(); enableBtn('.addStockbtn');});
           return false;          
         });
      });
@@ -302,8 +314,8 @@ $(document).ready(function(){
               drinksToallocate();
             }
           );
-          $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
-          $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});
+          $(document).ajaxSend(function(event, xhr, settings) {$("#preloader").fadeIn();});
+          $(document).ajaxComplete(function(event, xhr, settings) {$("#preloader").fadeOut();});
           return false;          
         });
 
@@ -328,9 +340,7 @@ $(document).ready(function(){
   function products(){
     var product_cb=function(){
     $('.productList').DataTable({
-        
          "drawCallback": function( settings ) {
-
               //EDIT PRODUCT INFO
               $('.editProduct').click(function(){
                     $.post( 
@@ -365,8 +375,8 @@ $(document).ready(function(){
                             }); 
                         }
                     );
-                $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
-                $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});       
+                $(document).ajaxSend(function(event, xhr, settings) {$("#preloader").fadeIn();});
+                $(document).ajaxComplete(function(event, xhr, settings) {$("#preloader").fadeOut();});       
               });
         }
 
@@ -374,7 +384,7 @@ $(document).ready(function(){
   }
   $('.productListDiv').load(base_url+'fetch-products', product_cb);
   }
-	
+
 	//ADD PRODUCT
 	$('#addProductForm').submit(function(){
             $.post( 
@@ -387,16 +397,13 @@ $(document).ready(function(){
                     },{
                         
                         type: "success",
-                       
                     }); 
-
-
                     $('#addProductForm')[0].reset();
                     products();
                 }
             );
-             $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
-             $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});
+             $(document).ajaxSend(function(event, xhr, settings) {disbleBtn('.addProductBtn'); $("#preloader").fadeIn();});
+             $(document).ajaxComplete(function(event, xhr, settings) {$("#preloader").fadeOut(); enableBtn('.addProductBtn');});
              return false;          
   });
 
@@ -455,8 +462,8 @@ $(document).ready(function(){
               drinksToallocate();
             }
           );
-          $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
-          $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});
+          $(document).ajaxSend(function(event, xhr, settings) {$("#preloader").fadeIn();});
+          $(document).ajaxComplete(function(event, xhr, settings) {$("#preloader").fadeOut();});
           return false;          
         });
      });
@@ -506,8 +513,8 @@ $(document).ready(function(){
              })                         
           }
       );
-        $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
-        $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});
+        $(document).ajaxSend(function(event, xhr, settings) {$("#preloader").fadeIn();});
+        $(document).ajaxComplete(function(event, xhr, settings) {$("#preloader").fadeOut();});
         return false;          
     });
 
@@ -542,12 +549,12 @@ $(document).ready(function(){
                       });            
             }
         );
-          $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
-          $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});
+          $(document).ajaxSend(function(event, xhr, settings) {$("#preloader").fadeIn(); disbleBtn('.PostSales');});
+          $(document).ajaxComplete(function(event, xhr, settings) {$("#preloader").fadeOut(); enableBtn('.PostSales');});
       });
                               
-        $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
-        $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});
+        $(document).ajaxSend(function(event, xhr, settings) {$("#preloader").fadeIn(); disbleBtn('.PostSales');});
+          $(document).ajaxComplete(function(event, xhr, settings) {$("#preloader").fadeOut(); enableBtn('.PostSales');});
         return false;          
     });
 

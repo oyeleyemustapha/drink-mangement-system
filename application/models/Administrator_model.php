@@ -264,7 +264,7 @@
  		$query=$this->db->get();
  		if($query->num_rows()==1){
  			$quantity=$product['QUANTITY'];
-	 		$this->db->set('QUANTITY', "QUANTITY+$quantity", FALSE);
+	 		$this->db->set('ADDED_STOCK', "ADDED_STOCK+$quantity", FALSE);
 	 		$this->db->where('PRODUCT_ID', $product['PRODUCT_ID']);
 	 		$this->db->where('STAFF_ID', $product['STAFF_ID']);
 			$this->db->update('stock');	
@@ -281,7 +281,7 @@
 
  	//FETCH LIST OF DRINKS IN STOCK
  	function fetch_drinks_in_stock(){
- 		$this->db->select('products.PRODUCT_NAME, stock.QUANTITY, products.COST_PRICE, products.SALES_PRICE, stock.QUANTITY_SOLD, staff.NAME');
+ 		$this->db->select('products.PRODUCT_NAME, stock.QUANTITY, stock.ADDED_STOCK, products.COST_PRICE, products.SALES_PRICE, stock.QUANTITY_SOLD, staff.NAME');
  		$this->db->from('stock');
  		$this->db->join('products', 'stock.PRODUCT_ID=products.PRODUCT_ID', 'left');
  		$this->db->join('staff', 'staff.STAFF_ID=stock.STAFF_ID', 'left');
@@ -316,7 +316,7 @@
  			return 1;
  		}
  		else{
- 			$this->db->select('products.PRODUCT_NAME, stock.QUANTITY, products.SALES_PRICE, products.COST_PRICE, stock.PRODUCT_ID');
+ 			$this->db->select('products.PRODUCT_NAME, stock.QUANTITY, stock.ADDED_STOCK, products.SALES_PRICE, products.COST_PRICE, stock.PRODUCT_ID');
 	 		$this->db->from('stock');
 	 		$this->db->join('products', 'stock.PRODUCT_ID=products.PRODUCT_ID', 'left');
 	 		$this->db->where('stock.STAFF_ID', $staff);
@@ -540,7 +540,7 @@
  	function sales_sheet($report){
 
 
- 		$this->db->select('products.PRODUCT_NAME, sum(stock.QUANTITY) QUANTITY, sum(stock.QUANTITY_SOLD) QUANTITY_SOLD, products.COST_PRICE, products.SALES_PRICE');
+ 		$this->db->select('products.PRODUCT_NAME, sum(stock.QUANTITY) QUANTITY, sum(ADDED_STOCK) ADDED_STOCK, sum(stock.QUANTITY_SOLD) QUANTITY_SOLD, products.COST_PRICE, products.SALES_PRICE');
  		$this->db->from('stock');
  		$this->db->join('products', 'products.PRODUCT_ID=stock.PRODUCT_ID', 'left');
  		$this->db->where('stock.DATE_ADDED', $report['DATE']);

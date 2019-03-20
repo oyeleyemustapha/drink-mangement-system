@@ -51,7 +51,7 @@
                                                             
                                                            
 
-                                                           <button class="btn btn-danger">Post</button>
+                                                           
                                                        </form>
                                   </div>
                                 </div>

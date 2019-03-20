@@ -9,7 +9,7 @@
                     <div class="col-sm-12">
                         <div class="page-title-box">
                            
-                            <h4 class="page-title">Products</h4>
+                            <h4 class="page-title">Sales Reports</h4>
                         </div>
                     </div>
                 </div>
@@ -125,11 +125,7 @@
                                                     <div class="modal-body">
                                                        <form method="post" action="<?php echo base_url(); ?>sales-sheet" target="_blank">
 
-                                                        <div class="form-group">
-                                                          <select class="form-control" name="staff">
-                                                            <?php echo $staffList; ?>
-                                                          </select>
-                                                        </div>
+                                                        
                                                             <div class="form-group">
                                                                  <div class="input-group">
                                                              <div class="input-group-addon">Date</div>

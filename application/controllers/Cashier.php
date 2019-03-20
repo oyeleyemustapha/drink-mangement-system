@@ -32,11 +32,6 @@ class Cashier extends CI_Controller {
 		$this->load->view('cashier/parts/bottom', $data);
 	}
 
-
-	
-
-	
-
 	//==============================
     //==============================
     //PROFILE
@@ -90,34 +85,9 @@ class Cashier extends CI_Controller {
 			if(form_error('cpassword')){
 				$error.=form_error('cpassword');
 			}
+			echo $error;
 		}
 	}
-
-
-
-	
-	//==============================
-    //==============================
-    //DRINK STOCK LOGS
-    //==============================
-    //==============================
-
-	public function drinkstocklogs(){
-		$this->verify();
-		$data['title']=$this->cashier_model->fetch_store()->NAME." :: Drinks Stock Logs";
-		$this->load->view('administrator/parts/head',$data);
-		$this->load->view('administrator/logs/drinkStocklogs',$data);
-		$this->load->view('administrator/parts/bottom',$data);
-	}
-
-	//FETCH DRINK STOCK LOGS
-	public function fetch_drink_stock_logs(){
-		$data['logs']=$this->cashier_model->fetch_drinkstock_logs();
-		$this->load->view('administrator/logs/stock_log', $data);
-	}
-
-	
-
 	
 	//==============================
     //==============================
@@ -133,8 +103,6 @@ class Cashier extends CI_Controller {
 		$this->load->view('cashier/parts/bottom',$data);
 	}
 	
-
-
 	//FETCH LIST OF DRINKS IN STOCK
 	public function fetchDrinksStock(){
 		$data['drinks']=$this->cashier_model->fetch_drinks_in_stock();
@@ -184,19 +152,15 @@ class Cashier extends CI_Controller {
 	//FETCH PRODUCTS ALLOCATED TO CASHIER
 	public function fetch_allocated_stock(){
 		$this->verify();
-		
 			$data['products']=$this->cashier_model->fetch_allocated_stock($_SESSION['staff_id']);
-			
 			if($data['products']==1){
-
 				echo "<div class='alert alert-info'><h3 class='text-center'>Sales has been posted before for this staff</h3></div>";
 			}
 			elseif ($data['products']==2) {
 				echo "<div class='alert alert-info'><h3 class='text-center'>No products was allocated to this staff today</h3></div>";
 			}
 			else{
-				$this->load->view('supervisor/sales/allocated', $data);
-
+				$this->load->view('cashier/sales/allocated', $data);
 			}
 	}
 
@@ -263,8 +227,6 @@ class Cashier extends CI_Controller {
 		$this->verify();
 		$data['title']=$this->cashier_model->fetch_store()->STORE_NAME." :: Financial Reports";
 		$data['daily_report']=$this->cashier_model->fetch_daily_sales_report();
-		$data['year']=$this->list_year();
-		$data['month']=$this->list_month();
 		$this->load->view('cashier/parts/head',$data);
 		$this->load->view('cashier/reports/reports',$data);
 		$this->load->view('cashier/parts/bottom',$data);
@@ -287,48 +249,6 @@ class Cashier extends CI_Controller {
 		}
 	}
 
-
-
-
-	public function list_year(){
-		$year="";
-		$date=date('Y');
-	    $count=1;
-	    while($count<=10){
-	    	$year.="<option value='$date'>$date</option>\n";
-	        $date++;
-	        $count++;
-	    }
-	    return $year;
-	}
-
-
-	public function list_month(){
-		$month_list="<option value='' selected>Select Month</option>";
-		for ($m=1; $m<=12; $m++) {
-	     $month = date('F', mktime(0,0,0,$m, 1, date('Y')));
-	     $month_list.="<option value='$month'>$month</option>";
-	    }
-	    return $month_list;		
-	}
-
-	//GENERATE SALES RECORDS BASED ON SALES DATE FOR A PARTICULAR STAFFs
-	public function sales_reports_day_staff(){
-		$this->verify();
-		$this->load->library('form_validation');
-		$this->form_validation->set_rules('date', 'Sales Date', 'required');
-		if($this->form_validation->run()){
-			$data['cafeteria']=$this->cashier_model->fetch_store()->STORE_NAME;
-			$report=array(
-				'DATE'=> $this->input->post('date'),
-				'STAFF_ID'=>$_SESSION['staff_id']
-			);
-			$data['report']=$this->cashier_model->sales_report_day_staff($report);
-			$this->load->view('cashier/reports/staffDailySales',$data);
-		}
-	}
-
-
 	//GENERATE SALES SHEET
 	public function sales_sheet(){
 		$this->verify();
@@ -348,10 +268,8 @@ class Cashier extends CI_Controller {
 
 
 	//REPORTS ON DASHBOARD
-
 	public function daily_sales_reports_dashboard(){
 		$report=$this->cashier_model->sales_report_day(date('Y-m-d'));
-
 		$total_amt=0;
         $total_profit=0;
 

@@ -9,7 +9,7 @@
                     <div class="col-sm-12">
                         <div class="page-title-box">
                            
-                            <h4 class="page-title">Products (Drinks)</h4>
+                            <h4 class="page-title">Products</h4>
                         </div>
                     </div>
                 </div>
@@ -27,7 +27,12 @@
                                   
                                 </h4>
 
-                                <div class="productListDiv"></div>
+                                <div class="productListDiv table-responsive">
+                                    
+                                    <h1 class="text-center">
+                                        <i class="fa fa-spin fa-spinner"></i><br> Loading
+                                    </h1>
+                                </div>
                                 
                             </div>
                         </div>
@@ -65,7 +70,7 @@
 
                                                             
 
-                                                           <button class="btn btn-danger">Add</button>
+                                                           <button class="btn btn-danger addProductBtn">Add</button>
                                                        </form>
                                                     </div>
                                                 </div><!-- /.modal-content -->

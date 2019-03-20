@@ -46,7 +46,9 @@
                                             <div class="stock"></div>
                                         </div>
                                         <div role="tabpanel" class="tab-pane" id="drinkStock">
-                                             <div class="Drinkstock"></div>
+                                             <div class="Drinkstock table-responsive">
+                                                 <h1><i class="fa fa-spin fa-spinner"></i><br>Loading</h1>
+                                             </div>
                                         </div>
                                     
                                     </div>
@@ -67,18 +69,4 @@
 
 
 
-
-<div id="productInfoModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title mt-0" id="myModalLabel">Product Information</h5>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                      
-                                                    </div>
-                                                </div><!-- /.modal-content -->
-                                            </div><!-- /.modal-dialog -->
-                                        </div><!-- /.modal -->
 

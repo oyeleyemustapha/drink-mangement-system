@@ -25,7 +25,12 @@
                             <div class="card-body">
                                 <h4 class="mt-0 header-title"><button class="btn btn-success btn-sm" data-toggle="modal" data-target="#myModal">Add Staff</button></h4>
 
-                                <div class="staffListDiv"></div>
+                                <div class="staffListDiv  table-responsive">
+                                  
+                                  <h1 class="text-center">
+                                    <i class="fa fa-spin fa-spinner"></i><br>Loading
+                                  </h1>
+                                </div>
                                 
                             </div>
                         </div>

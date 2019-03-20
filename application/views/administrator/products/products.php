@@ -27,7 +27,11 @@
                                   
                                 </h4>
 
-                                <div class="productListDiv"></div>
+                                <div class="productListDiv">
+                                    
+
+                                   <h1 class="text-center"> <i class="fa fa-spin fa-spinner fa-3x"></i><br> LOADING</h1>
+                                </div>
                                 
                             </div>
                         </div>
@@ -65,7 +69,7 @@
 
                                                             
 
-                                                           <button class="btn btn-danger">Add</button>
+                                                           <button class="btn btn-danger addProductBtn">Add</button>
                                                        </form>
                                                     </div>
                                                 </div><!-- /.modal-content -->

@@ -17,6 +17,13 @@
 
 
                 <div class="row">
+
+
+                    <?php
+
+                 
+
+                    ?>
                     <div class="col-md-6 col-xl-6">
                         <div class="mini-stat clearfix bg-white">
                             <span class="mini-stat-icon bg-light"><i class="fa fa-money text-danger"></i></span>

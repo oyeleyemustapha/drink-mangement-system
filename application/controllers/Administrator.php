@@ -398,8 +398,6 @@ class Administrator extends CI_Controller {
 		$data['drinks']=$this->administrator_model->fetch_drinks_in_stock();
 		$this->load->view('administrator/stock/stockedDrinks', $data);
 	}
-
-	
 	
 	//ADD DRINKS TO STOCK
 	public function add_drinks_stock(){

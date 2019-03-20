@@ -13,6 +13,17 @@ $(document).ready(function(){
 	 });
 
 
+   function disbleBtn(Selector){
+      $(Selector).prop('disabled', true);
+  }
+
+  function enableBtn(Selector){
+      $(Selector).prop('disabled', false);
+  }
+
+  
+
+
   //UPDATE PROFILE
   $('#updateProfile').submit(function(){
     $.post( 
@@ -66,6 +77,7 @@ $(document).ready(function(){
   //====SALES
   //=========================
   //=========================
+  $('.salesTable').DataTable();
 
   $('.allocatedProducts').load(base_url+'fetch_allocated_stock',function(){
     //CHECK IF LEFTOVER IS NOT MORE THAN THE INITIAL STOCK
@@ -93,7 +105,6 @@ $(document).ready(function(){
     //POST SALES FOR THE DAY
     $('#PostSales').submit(function(){
         let salesdata= $(this).serialize();
-
       swal({
         title: 'Are you sure of this?',
         text: "Cross Check Sales before posting it !",
@@ -121,12 +132,12 @@ $(document).ready(function(){
                       });            
             }
         );
-          $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
-          $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});
+           $(document).ajaxSend(function(event, xhr, settings) {$("#preloader").fadeIn(); disbleBtn('.PostSales');});
+          $(document).ajaxComplete(function(event, xhr, settings) {$("#preloader").fadeOut(); enableBtn('.PostSales');});
       });
                               
-        $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
-        $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});
+        $(document).ajaxSend(function(event, xhr, settings) {$("#preloader").fadeIn(); disbleBtn('.PostSales');});
+          $(document).ajaxComplete(function(event, xhr, settings) {$("#preloader").fadeOut(); enableBtn('.PostSales');});
         return false;          
     });
 
