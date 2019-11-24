@@ -2,6 +2,8 @@
 
 if($drinks){
     echo'
+
+    <h3 class="text-center mb-3 mt-2">Drinks for sale on '.date("F d, Y").'</h3>
 <br>
         <table class="table table-bordered table-condensed table-hover stockList">
                                     <thead>

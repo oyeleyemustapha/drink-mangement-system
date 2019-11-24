@@ -27,7 +27,7 @@
 
                                 <div class="reports">
                                   
-                                  <h4 class="text-center mb-3">Post Sales</h4>
+                                  <h4 class="text-center mb-3">POST SALES FOR THE DAY</h4>
 
 
                                   <div class="col-lg-8 offset-lg-2">

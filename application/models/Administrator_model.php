@@ -261,12 +261,14 @@
  		$this->db->from('stock');
  		$this->db->where('PRODUCT_ID', $product['PRODUCT_ID']);
  		$this->db->where('STAFF_ID', $product['STAFF_ID']);
+ 		$this->db->where('DATE_ADDED', date('Y-m-d'));
  		$query=$this->db->get();
  		if($query->num_rows()==1){
  			$quantity=$product['QUANTITY'];
 	 		$this->db->set('ADDED_STOCK', "ADDED_STOCK+$quantity", FALSE);
 	 		$this->db->where('PRODUCT_ID', $product['PRODUCT_ID']);
 	 		$this->db->where('STAFF_ID', $product['STAFF_ID']);
+	 		$this->db->where('DATE_ADDED', date('Y-m-d'));
 			$this->db->update('stock');	
  		}      
  		else{
@@ -286,7 +288,7 @@
  		$this->db->join('products', 'stock.PRODUCT_ID=products.PRODUCT_ID', 'left');
  		$this->db->join('staff', 'staff.STAFF_ID=stock.STAFF_ID', 'left');
  		$this->db->where('stock.DATE_ADDED', date('Y-m-d'));
- 		$this->db->order_by('products.PRODUCT_NAME', 'ASC');
+ 		$this->db->order_by('staff.NAME', 'ASC');
  		$query=$this->db->get();
  		if($query->num_rows()>0){
  			return $query->result();
@@ -372,28 +374,6 @@
  		
  	}
 
-
- 	
- 	
- 	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	//UPDATE PASSWORD
 	public function update_password($password){
 		$this->db->set('PASSWORD', $password);
@@ -412,8 +392,6 @@
  	//SALES REPORT
  	//================
  	//=================
-
-
 
 	//FETCH DAILY SALES FOR THE CURRENT DAY
  	function fetch_daily_sales_report(){
@@ -538,8 +516,6 @@
 
  	//SALES SHEET
  	function sales_sheet($report){
-
-
  		$this->db->select('products.PRODUCT_NAME, sum(stock.QUANTITY) QUANTITY, sum(ADDED_STOCK) ADDED_STOCK, sum(stock.QUANTITY_SOLD) QUANTITY_SOLD, products.COST_PRICE, products.SALES_PRICE');
  		$this->db->from('stock');
  		$this->db->join('products', 'products.PRODUCT_ID=stock.PRODUCT_ID', 'left');

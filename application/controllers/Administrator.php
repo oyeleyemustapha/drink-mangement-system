@@ -492,9 +492,6 @@ class Administrator extends CI_Controller {
 			if(form_error('salesPrice')){
 				$error.=form_error('salesPrice');
 			}
-
-			
-
 			echo $error;
 		}
 	}
@@ -602,12 +599,7 @@ class Administrator extends CI_Controller {
 				$this->load->view('administrator/sales/allocated', $data);
 
 			}
-
-
 			
-		}
-		else{
-
 		}
 	}
 

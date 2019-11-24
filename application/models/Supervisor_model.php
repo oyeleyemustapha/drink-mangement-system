@@ -210,12 +210,14 @@
  		$this->db->from('stock');
  		$this->db->where('PRODUCT_ID', $product['PRODUCT_ID']);
  		$this->db->where('STAFF_ID', $product['STAFF_ID']);
+ 		$this->db->where('DATE_ADDED', date('Y-m-d'));
  		$query=$this->db->get();
  		if($query->num_rows()==1){
  			$quantity=$product['QUANTITY'];
 	 		$this->db->set('ADDED_STOCK', "ADDED_STOCK+$quantity", FALSE);
 	 		$this->db->where('PRODUCT_ID', $product['PRODUCT_ID']);
 	 		$this->db->where('STAFF_ID', $product['STAFF_ID']);
+	 		$this->db->where('DATE_ADDED', date('Y-m-d'));
 			$this->db->update('stock');	
  		}      
  		else{
