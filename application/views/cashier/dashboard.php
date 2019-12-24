@@ -24,7 +24,7 @@
                  
 
                     ?>
-                    <div class="col-md-6 col-xl-6">
+                    <div class="col-md-12 col-xl-12">
                         <div class="mini-stat clearfix bg-white">
                             <span class="mini-stat-icon bg-light"><i class="fa fa-money text-danger"></i></span>
                             <div class="mini-stat-info text-right text-muted">
@@ -34,7 +34,7 @@
                         </div>
                     </div>
                     
-                    <div class="col-md-6 col-xl-6">
+                    <!-- <div class="col-md-6 col-xl-6">
                         <div class="mini-stat clearfix bg-white">
                             <span class="mini-stat-icon bg-light"><i class="fa fa-money text-warning"></i></span>
                             <div class="mini-stat-info text-right text-muted">
@@ -43,7 +43,7 @@
                             </div>
                         </div>
                     </div>
-                   
+                    -->
                 </div>
 
                 

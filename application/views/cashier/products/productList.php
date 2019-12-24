@@ -9,7 +9,7 @@ if($product_list){
                                             <th>ID</th>
                                             <th>PRODUCT</th>
                                             
-                                            <th>COST PRICE</th>
+                                            
                                             <th>SALES PRICE</th>
                                            
                                         </tr>
@@ -21,7 +21,7 @@ if($product_list){
                                             <tr>
                                                 <td>$counter</td>
                                                 <td>$product->PRODUCT_NAME</td>
-                                                <td>&#8358; ".number_format($product->COST_PRICE)."</td>
+                                              
                                                 <td>&#8358; ".number_format($product->SALES_PRICE)."</td>
                                 
                                             </tr>

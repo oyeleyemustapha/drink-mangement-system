@@ -103,7 +103,7 @@ echo'
                             </li>
 
                             <li class="has-submenu">
-                                <a href="'.base_url().'cashier/sales"><i class="ti-money"></i>Sales</a>
+                                <a href="'.base_url().'cashier/sales"><i class="ti-pencil"></i>Post Closing Stock</a>
                             </li>
 
                             <li class="has-submenu">

@@ -23,10 +23,10 @@
                     <div class="col-md-12">
                         <div class="card m-b-30">
                             <div class="card-body">
-                                <h4 class="mt-0 header-title"><button class="btn btn-success btn-sm" data-toggle="modal" data-target="#myModal">Add Products</button>
+                              <!--   <h4 class="mt-0 header-title"><button class="btn btn-success btn-sm" data-toggle="modal" data-target="#myModal">Add Products</button>
                                   
                                 </h4>
-
+ -->
                                 <div class="productListDiv table-responsive">
                                     
                                     <h1 class="text-center">

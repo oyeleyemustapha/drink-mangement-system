@@ -9,7 +9,7 @@
                     <div class="col-sm-12">
                         <div class="page-title-box">
                            
-                            <h4 class="page-title">Sales</h4>
+                            <h4 class="page-title">Closing Stock</h4>
                         </div>
                     </div>
                 </div>
@@ -27,7 +27,7 @@
 
                                 <div class="reports">
                                   
-                                  <h4 class="text-center mb-3">Post Sales</h4>
+                                  <h4 class="text-center mb-3">POST CLOSING STOCK</h4>
 
 
                                   <div class="col-lg-8 offset-lg-2">

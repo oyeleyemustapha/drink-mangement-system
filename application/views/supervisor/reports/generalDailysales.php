@@ -89,7 +89,7 @@
                                 </table>
 
                                 <h5>TOTAL AMOUNT : &#8358; '.number_format($total_amt).' </h5>
-                               <h5>PROFIT : &#8358; '.number_format($total_profit).' </h5>
+            
 
 
 

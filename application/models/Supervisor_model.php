@@ -237,7 +237,7 @@
  		$this->db->join('products', 'stock.PRODUCT_ID=products.PRODUCT_ID', 'left');
  		$this->db->join('staff', 'staff.STAFF_ID=stock.STAFF_ID', 'left');
  		$this->db->where('stock.DATE_ADDED', date('Y-m-d'));
- 		$this->db->order_by('products.PRODUCT_NAME', 'ASC');
+ 		$this->db->order_by('staff.NAME', 'ASC');
  		$query=$this->db->get();
  		if($query->num_rows()>0){
  			return $query->result();

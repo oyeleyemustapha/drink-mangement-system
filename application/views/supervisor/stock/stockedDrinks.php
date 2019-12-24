@@ -12,7 +12,7 @@ if($drinks){
                                             <th>INITIAL STOCK</th>
                                             <th>ADDED STOCK</th>
                                             <th>QUANTITY AVAILABLE</th>
-                                            <th>COST PRICE</th>
+                                       
                                             <th>SALES PRICE</th>
                                            
                                         </tr>
@@ -29,7 +29,7 @@ if($drinks){
                                                 <td>$drink->QUANTITY</td>
                                                 <td>$drink->ADDED_STOCK</td>
                                                 <td>$quantity_available</td>
-                                                <td>&#8358; $drink->COST_PRICE</td>
+                                      
                                                 <td>&#8358; $drink->SALES_PRICE</td>
                                 
                                             </tr>

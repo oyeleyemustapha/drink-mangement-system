@@ -131,8 +131,11 @@
                                                             <div class="form-group">
                                                                  <div class="input-group">
                                                              <div class="input-group-addon">Date</div>
-                                                             <input type="date" name="date" class="form-control" required="">
+                                                              <input type="text" class="form-control"value="<?php echo date('F d, Y'); ?>" disabled="">
                                                            </div>
+
+                                                          
+                                                           <input type="hidden" name="date" class="form-control" required="" value="<?php echo date('Y-m-d'); ?>">
                                                            </div>
 
                                                            
@@ -153,8 +156,11 @@
                                                     <div class="modal-body">
                                                        <form method="post" action="<?php echo base_url(); ?>cashier/sales_reports_day" target="_blank">
                                                            <div class="form-group">
-                                                               <input type="text" name="date" class="form-control date" required="" autocomplete="off">
+                                                               <input type="text" class="form-control"value="<?php echo date('F d, Y'); ?>" disabled="">
                                                            </div>
+
+                                                           <input type="hidden" name="date" class="form-control" required="" value="<?php echo date('Y-m-d'); ?>">
+
 
                                                            <button class="btn btn-danger">Generate</button>
                                                        </form>
@@ -162,29 +168,6 @@
                                                 </div><!-- /.modal-content -->
                                             </div><!-- /.modal-dialog -->
                                         </div><!-- /.modal -->
-
-
-<!-- sample modal content -->
-                                        <div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title mt-0" id="myModalLabel">Daily Sales Reports</h5>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                       <form method="post" action="<?php echo base_url(); ?>daily-sales-reports" target="_blank">
-                                                           <div class="form-group">
-                                                               <input type="text" name="date" class="form-control date" required="" autocomplete="off">
-                                                           </div>
-
-                                                           <button class="btn btn-danger">Generate</button>
-                                                       </form>
-                                                    </div>
-                                                </div><!-- /.modal-content -->
-                                            </div><!-- /.modal-dialog -->
-                                        </div><!-- /.modal -->
-
 
 
 

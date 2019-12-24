@@ -102,128 +102,128 @@ class Supervisor extends CI_Controller {
     //==============================
     //==============================
 
-	public function staff(){
-		$this->verify();
-		$data['title']=$this->supervisor_model->fetch_store()->STORE_NAME." :: Staff";
-		$this->load->view('supervisor/parts/head',$data);
-		$this->load->view('supervisor/staff/staff',$data);
-		$this->load->view('supervisor/parts/bottom',$data);
-	}
+	// public function staff(){
+	// 	$this->verify();
+	// 	$data['title']=$this->supervisor_model->fetch_store()->STORE_NAME." :: Staff";
+	// 	$this->load->view('supervisor/parts/head',$data);
+	// 	$this->load->view('supervisor/staff/staff',$data);
+	// 	$this->load->view('supervisor/parts/bottom',$data);
+	// }
 
 
-	//FETCH THE LIST OF STAFF
-	public function fetch_staff_list(){
-		$data['staff_list']=$this->supervisor_model->fetch_staff_list();
-		$this->load->view('supervisor/staff/staffList', $data);
-	}
+	// //FETCH THE LIST OF STAFF
+	// public function fetch_staff_list(){
+	// 	$data['staff_list']=$this->supervisor_model->fetch_staff_list();
+	// 	$this->load->view('supervisor/staff/staffList', $data);
+	// }
 
 	
 		
-	//ADD STAFF
-	public function add_staff(){
-		$this->verify();
-		$this->load->library('form_validation');
-		$this->form_validation->set_rules('username', 'Username', 'required|is_unique[staff.USERNAME]', array('is_unique' => 'Username has been taken'));
-		$this->form_validation->set_rules('password', 'Password', 'required');
-		$this->form_validation->set_rules('name', 'Name', 'required');
-		$this->form_validation->set_rules('cpassword', 'Password', 'required|matches[password]');
-		$this->form_validation->set_rules('role', 'Role', 'required');
-		if($this->form_validation->run()){
-			$staff_info=array(
-				'NAME'=>trim($this->input->post('name')),
-				'USERNAME'=>strtolower(trim($this->input->post('username'))),
-				'PASSWORD'=>md5(strtolower(trim($this->input->post('password')))),
-				'ROLE'=>$this->input->post('role')
-			);
-			if($this->supervisor_model->add_staff($staff_info)){
-				echo "Staff has been added";
-			}
-		}
-		else{
+	// //ADD STAFF
+	// public function add_staff(){
+	// 	$this->verify();
+	// 	$this->load->library('form_validation');
+	// 	$this->form_validation->set_rules('username', 'Username', 'required|is_unique[staff.USERNAME]', array('is_unique' => 'Username has been taken'));
+	// 	$this->form_validation->set_rules('password', 'Password', 'required');
+	// 	$this->form_validation->set_rules('name', 'Name', 'required');
+	// 	$this->form_validation->set_rules('cpassword', 'Password', 'required|matches[password]');
+	// 	$this->form_validation->set_rules('role', 'Role', 'required');
+	// 	if($this->form_validation->run()){
+	// 		$staff_info=array(
+	// 			'NAME'=>trim($this->input->post('name')),
+	// 			'USERNAME'=>strtolower(trim($this->input->post('username'))),
+	// 			'PASSWORD'=>md5(strtolower(trim($this->input->post('password')))),
+	// 			'ROLE'=>$this->input->post('role')
+	// 		);
+	// 		if($this->supervisor_model->add_staff($staff_info)){
+	// 			echo "Staff has been added";
+	// 		}
+	// 	}
+	// 	else{
 
-			$error="";
+	// 		$error="";
 
-			if(form_error('name')){
-				$error.=form_error('name');
-			}
+	// 		if(form_error('name')){
+	// 			$error.=form_error('name');
+	// 		}
 
-			if(form_error('role')){
-				$error.=form_error('role');
-			}
+	// 		if(form_error('role')){
+	// 			$error.=form_error('role');
+	// 		}
 
-			if(form_error('username')){
-				$error.=form_error('username');
-			}
+	// 		if(form_error('username')){
+	// 			$error.=form_error('username');
+	// 		}
 
-			if(form_error('password')){
-				$error.=form_error('password');
-			}
+	// 		if(form_error('password')){
+	// 			$error.=form_error('password');
+	// 		}
 
-			if(form_error('cpassword')){
-				$error.=form_error('cpassword');
-			}
-			echo $error;
-		}
-	}
+	// 		if(form_error('cpassword')){
+	// 			$error.=form_error('cpassword');
+	// 		}
+	// 		echo $error;
+	// 	}
+	// }
 
-	//UPDATE STAFF
-	public function update_staff(){
-		$this->verify();
-		$this->load->library('form_validation');
-		$this->form_validation->set_rules('name', 'Name', 'required');
-		$this->form_validation->set_rules('staff_id', 'Staff ID', 'required|numeric');
-		$this->form_validation->set_rules('username', 'Username', 'required');
-		$this->form_validation->set_rules('role', 'Role', 'required');
-		$this->form_validation->set_rules('password', 'Password', 'required');
-		$this->form_validation->set_rules('cpassword', 'Password', 'required|matches[password]');
-		if($this->form_validation->run()){
-			$staff=array(
-				'NAME'=>trim($this->input->post('name')),
-				'USERNAME'=>strtolower(trim($this->input->post('username'))),
-				'PASSWORD'=>md5(strtolower(trim($this->input->post('password')))),
-				'STAFF_ID'=>$this->input->post('staff_id'),
-				'ROLE'=>$this->input->post('role')
-			);
+	// //UPDATE STAFF
+	// public function update_staff(){
+	// 	$this->verify();
+	// 	$this->load->library('form_validation');
+	// 	$this->form_validation->set_rules('name', 'Name', 'required');
+	// 	$this->form_validation->set_rules('staff_id', 'Staff ID', 'required|numeric');
+	// 	$this->form_validation->set_rules('username', 'Username', 'required');
+	// 	$this->form_validation->set_rules('role', 'Role', 'required');
+	// 	$this->form_validation->set_rules('password', 'Password', 'required');
+	// 	$this->form_validation->set_rules('cpassword', 'Password', 'required|matches[password]');
+	// 	if($this->form_validation->run()){
+	// 		$staff=array(
+	// 			'NAME'=>trim($this->input->post('name')),
+	// 			'USERNAME'=>strtolower(trim($this->input->post('username'))),
+	// 			'PASSWORD'=>md5(strtolower(trim($this->input->post('password')))),
+	// 			'STAFF_ID'=>$this->input->post('staff_id'),
+	// 			'ROLE'=>$this->input->post('role')
+	// 		);
 
-			if($this->supervisor_model->update_staff($staff)){
-				if($_SESSION['staff_id']==$this->input->post('staff_id')){
-					$session_data=array('role' => $staff['ROLE'], 'username' => $staff['USERNAME'], 'password' => $staff['PASSWORD'], 'name'=> $staff['NAME']);
-					$this->session->set_userdata($session_data);
-				}
-				echo "Staff's Record has been updated";
-			}
-		}
-		else{
-			$error="";
-			if(form_error('username')){
-				$error.=form_error('username');
-			}
-			if(form_error('password')){
-				$error.=form_error('password');
-			}
-			if(form_error('cpassword')){
-				$error.=form_error('cpassword');
-			}
-			if(form_error('staff_id')){
-				$error.=form_error('staff_id');
-			}
-			if(form_error('role')){
-				$error.=form_error('role');
-			}
-		}
-	}
+	// 		if($this->supervisor_model->update_staff($staff)){
+	// 			if($_SESSION['staff_id']==$this->input->post('staff_id')){
+	// 				$session_data=array('role' => $staff['ROLE'], 'username' => $staff['USERNAME'], 'password' => $staff['PASSWORD'], 'name'=> $staff['NAME']);
+	// 				$this->session->set_userdata($session_data);
+	// 			}
+	// 			echo "Staff's Record has been updated";
+	// 		}
+	// 	}
+	// 	else{
+	// 		$error="";
+	// 		if(form_error('username')){
+	// 			$error.=form_error('username');
+	// 		}
+	// 		if(form_error('password')){
+	// 			$error.=form_error('password');
+	// 		}
+	// 		if(form_error('cpassword')){
+	// 			$error.=form_error('cpassword');
+	// 		}
+	// 		if(form_error('staff_id')){
+	// 			$error.=form_error('staff_id');
+	// 		}
+	// 		if(form_error('role')){
+	// 			$error.=form_error('role');
+	// 		}
+	// 	}
+	// }
 
 	
-	//FETCH STAFF INFO
-	public function fetch_staff_info(){
-		$this->verify();
-		$this->load->library('form_validation');
-		$this->form_validation->set_rules('staff_id', 'Staff ID', 'required|numeric');
-		if($this->form_validation->run()){
-			$data['staff']= $this->supervisor_model->fetch_staff_info($this->input->post('staff_id'));
-			$this->load->view('supervisor/staff/staffInfo', $data);
-		}
-	}
+	// //FETCH STAFF INFO
+	// public function fetch_staff_info(){
+	// 	$this->verify();
+	// 	$this->load->library('form_validation');
+	// 	$this->form_validation->set_rules('staff_id', 'Staff ID', 'required|numeric');
+	// 	if($this->form_validation->run()){
+	// 		$data['staff']= $this->supervisor_model->fetch_staff_info($this->input->post('staff_id'));
+	// 		$this->load->view('supervisor/staff/staffInfo', $data);
+	// 	}
+	// }
 
 
 	
@@ -350,43 +350,43 @@ class Supervisor extends CI_Controller {
 
 
 	//ADD PRODUCT
-	public function add_product(){
-		$this->verify();
-		$this->load->library('form_validation');
-		$this->form_validation->set_rules('product', 'Product', 'required|is_unique[products.PRODUCT_NAME]', array('is_unique' => 'Product has been added before.'));
-		$this->form_validation->set_rules('costPrice', 'Cost Price', 'required');
-		$this->form_validation->set_rules('salesPrice', 'Sales Price', 'required');
-		if($this->form_validation->run()){
-			$product=array(
-				'PRODUCT_NAME'=>ucwords(trim($this->input->post('product'))),
-				'COST_PRICE'=>str_replace(',', '', trim($this->input->post('costPrice'))),
-				'SALES_PRICE'=>str_replace(',', '', trim($this->input->post('salesPrice')))
-			);
-			if($this->supervisor_model->add_product($product)){
-				echo "Product has been added";
-			}
-		}
-		else{
+	// public function add_product(){
+	// 	$this->verify();
+	// 	$this->load->library('form_validation');
+	// 	$this->form_validation->set_rules('product', 'Product', 'required|is_unique[products.PRODUCT_NAME]', array('is_unique' => 'Product has been added before.'));
+	// 	$this->form_validation->set_rules('costPrice', 'Cost Price', 'required');
+	// 	$this->form_validation->set_rules('salesPrice', 'Sales Price', 'required');
+	// 	if($this->form_validation->run()){
+	// 		$product=array(
+	// 			'PRODUCT_NAME'=>ucwords(trim($this->input->post('product'))),
+	// 			'COST_PRICE'=>str_replace(',', '', trim($this->input->post('costPrice'))),
+	// 			'SALES_PRICE'=>str_replace(',', '', trim($this->input->post('salesPrice')))
+	// 		);
+	// 		if($this->supervisor_model->add_product($product)){
+	// 			echo "Product has been added";
+	// 		}
+	// 	}
+	// 	else{
 
-			$error="";
+	// 		$error="";
 
-			if(form_error('product')){
-				$error.=form_error('product');
-			}
+	// 		if(form_error('product')){
+	// 			$error.=form_error('product');
+	// 		}
 
-			if(form_error('costPrice')){
-				$error.=form_error('costPrice');
-			}
+	// 		if(form_error('costPrice')){
+	// 			$error.=form_error('costPrice');
+	// 		}
 
-			if(form_error('salesPrice')){
-				$error.=form_error('salesPrice');
-			}
+	// 		if(form_error('salesPrice')){
+	// 			$error.=form_error('salesPrice');
+	// 		}
 
 			
 
-			echo $error;
-		}
-	}
+	// 		echo $error;
+	// 	}
+	// }
 
 
 	//FETCH PRODUCTS LIST
@@ -397,62 +397,62 @@ class Supervisor extends CI_Controller {
 
 
 	//FETCH PRODUCT INFO
-	public function fetch_product_info(){
-		$this->verify();
-		$this->load->library('form_validation');
-		$this->form_validation->set_rules('product_id', 'Product ID', 'required|numeric');
-		if($this->form_validation->run()){
-			$data['product']= $this->supervisor_model->fetch_product_info($this->input->post('product_id'));
-			$this->load->view('supervisor/products/productInfo', $data);
-		}
-	}
+	// public function fetch_product_info(){
+	// 	$this->verify();
+	// 	$this->load->library('form_validation');
+	// 	$this->form_validation->set_rules('product_id', 'Product ID', 'required|numeric');
+	// 	if($this->form_validation->run()){
+	// 		$data['product']= $this->supervisor_model->fetch_product_info($this->input->post('product_id'));
+	// 		$this->load->view('supervisor/products/productInfo', $data);
+	// 	}
+	// }
 
 
 	//UPDATE PRODUCT INFO
-	public function update_product_info(){
-		$this->verify();
-		$this->load->library('form_validation');
-		$this->form_validation->set_rules('product_id', 'Product', 'required|numeric');
-		$this->form_validation->set_rules('product', 'Product', 'required');
-		$this->form_validation->set_rules('costPrice', 'Cost Price', 'required');
-		$this->form_validation->set_rules('salesPrice', 'Sales Price', 'required');
-		if($this->form_validation->run()){
-			$product=array(
-				'PRODUCT_ID'=>$this->input->post('product_id'),
-				'PRODUCT_NAME'=>ucwords(trim($this->input->post('product'))),
-				'COST_PRICE'=>str_replace(',', '', trim($this->input->post('costPrice'))),
-				'SALES_PRICE'=>str_replace(',', '', trim($this->input->post('salesPrice')))
-			);
+	// public function update_product_info(){
+	// 	$this->verify();
+	// 	$this->load->library('form_validation');
+	// 	$this->form_validation->set_rules('product_id', 'Product', 'required|numeric');
+	// 	$this->form_validation->set_rules('product', 'Product', 'required');
+	// 	$this->form_validation->set_rules('costPrice', 'Cost Price', 'required');
+	// 	$this->form_validation->set_rules('salesPrice', 'Sales Price', 'required');
+	// 	if($this->form_validation->run()){
+	// 		$product=array(
+	// 			'PRODUCT_ID'=>$this->input->post('product_id'),
+	// 			'PRODUCT_NAME'=>ucwords(trim($this->input->post('product'))),
+	// 			'COST_PRICE'=>str_replace(',', '', trim($this->input->post('costPrice'))),
+	// 			'SALES_PRICE'=>str_replace(',', '', trim($this->input->post('salesPrice')))
+	// 		);
 
 
-			if($this->supervisor_model->update_product($product)){
-				echo "Product Information has been updated";
-			}
-		}
-		else{
+	// 		if($this->supervisor_model->update_product($product)){
+	// 			echo "Product Information has been updated";
+	// 		}
+	// 	}
+	// 	else{
 
-			$error="";
+	// 		$error="";
 
-			if(form_error('product')){
-				$error.=form_error('product');
-			}
+	// 		if(form_error('product')){
+	// 			$error.=form_error('product');
+	// 		}
 
-			if(form_error('product_id')){
-				$error.=form_error('product_id');
-			}
+	// 		if(form_error('product_id')){
+	// 			$error.=form_error('product_id');
+	// 		}
 
 			
-			if(form_error('costPrice')){
-				$error.=form_error('costPrice');
-			}
+	// 		if(form_error('costPrice')){
+	// 			$error.=form_error('costPrice');
+	// 		}
 
-			if(form_error('salesPrice')){
-				$error.=form_error('salesPrice');
-			}
+	// 		if(form_error('salesPrice')){
+	// 			$error.=form_error('salesPrice');
+	// 		}
 
-			echo $error;
-		}
-	}
+	// 		echo $error;
+	// 	}
+	// }
 	
 	//==============================
     //==============================
