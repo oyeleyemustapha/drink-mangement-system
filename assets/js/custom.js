@@ -511,7 +511,18 @@ $(document).ready(function(){
                        $(this).val('');     
                 }
               }
-             })                         
+             }) 
+
+             //UPDATE SALES
+             $('#updateSalesForm').submit(function(){
+
+              alert('hhhh');
+              return false;
+
+             });
+
+
+
           }
       );
         $(document).ajaxSend(function(event, xhr, settings) {$("#preloader").fadeIn();});
@@ -558,6 +569,8 @@ $(document).ready(function(){
           $(document).ajaxComplete(function(event, xhr, settings) {$("#preloader").fadeOut(); enableBtn('.PostSales');});
         return false;          
     });
+
+
 
 
 

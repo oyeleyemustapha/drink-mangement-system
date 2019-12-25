@@ -50,6 +50,7 @@ $route['fetch-drinks-stock']="administrator/fetchDrinksStock";
 $route['sales']="administrator/sales";
 $route['fetch-allocated-stock']="administrator/fetch_allocated_stock";
 $route['post-record']="administrator/post_sales";
+$route['update-sales']="administrator/update_sales";
 
 //REPORTS
 $route['reports']="administrator/reports";

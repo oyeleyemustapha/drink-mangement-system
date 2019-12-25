@@ -15,8 +15,9 @@ if($products){
     ';
 
     $counter=1;
-    foreach ($products as $product) {
+    foreach ($sales as $product) {
         $stock=$product->QUANTITY+$product->ADDED_STOCK;
+        $quantityRemain=$stock-$product->QUANTITY_SOLD;
         echo"
 
         <tr>
@@ -28,7 +29,7 @@ if($products){
             <input type='hidden' name='sales_price[]' value='$product->SALES_PRICE'>
             <input type='hidden' name='cost_price[]' value='$product->COST_PRICE'>
             <input type='hidden' name='initial_stock[]' value='$stock'>
-             <input type='number' class='form-control form-control-lg leftOverform' name='leftover[]' data-initial-stock='$stock' required>
+            <input type='number' class='form-control form-control-lg leftOverform' name='leftOver[]' data-initial-stock='$stock' value='$quantityRemain' required>
 
 
 
@@ -47,7 +48,7 @@ if($products){
 
 </tbody>
 </table>
-<button class="btn btn-danger PostSales">Post</button>
+<button class="btn btn-danger PostSales">Update</button>
 
     ';
 }

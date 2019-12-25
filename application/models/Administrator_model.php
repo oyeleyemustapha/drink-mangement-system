@@ -334,6 +334,20 @@
  		}	
  	}
 
+ 	//FETCH THE POSTED SALES FOR EDITING
+ 	function fetch_posted_sales($staff){
+ 			$this->db->select('products.PRODUCT_NAME, stock.QUANTITY, stock.ADDED_STOCK, stock.QUANTITY_SOLD, stock.PRODUCT_ID, stock.STAFF_ID, products.SALES_PRICE, products.COST_PRICE');
+	 		$this->db->from('stock');
+	 		$this->db->join('products', 'stock.PRODUCT_ID=products.PRODUCT_ID', 'left');
+	 		$this->db->where('stock.STAFF_ID', $staff);
+	 		$this->db->where('stock.DATE_ADDED', date('Y-m-d'));
+	 		$this->db->order_by('products.PRODUCT_NAME', 'ASC');
+	 		$query=$this->db->get();
+	 		if($query->num_rows()>0){
+	 			return $query->result();
+	 		}	
+ 	}
+
 
  	//POST SALES
  	function post_sales($sales){
@@ -372,6 +386,36 @@
 				return false;
 			}
  		
+ 	}
+
+ 	//UPDATE SALES
+ 	function update_sales($sales){
+ 			$quantity_sold=$sales['QUANTITY_SOLD'];
+	 		$this->db->set('QUANTITY_SOLD', $sales['QUANTITY_SOLD']);
+	 		$this->db->where('PRODUCT_ID', $sales['PRODUCT_ID']);
+	 		$this->db->where('STAFF_ID', $sales['STAFF_ID']);
+	 		$this->db->where('DATE_ADDED', $sales['DATE_ADDED']);
+			if($this->db->update('stock')){
+
+
+				//UPDATE LEFTOVER ADDED TO THE NEXT DAY STOCK
+				$this->db->set('QUANTITY', $sales['LEFTOVER']);
+		 		$this->db->where('PRODUCT_ID', $sales['PRODUCT_ID']);
+		 		$this->db->where('STAFF_ID', $sales['STAFF_ID']);
+		 		$this->db->where('DATE_ADDED', date('Y-m-d', strtotime('+1 day')));
+		 		$this->db->update('stock');
+
+		 		//UPDATE SALES 
+		 		$this->db->set('QUANTITY', $sales['QUANTITY_SOLD']);
+		 		$this->db->where('PRODUCT_ID', $sales['PRODUCT_ID']);
+		 		$this->db->where('STAFF_ID', $sales['STAFF_ID']);
+		 		$this->db->where('DATE', date('Y-m-d'));
+		 		$this->db->update('sales');
+				return true;
+			}
+			else{
+				return false;
+			}	
  	}
 
 	//UPDATE PASSWORD
