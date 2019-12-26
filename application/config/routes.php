@@ -46,6 +46,15 @@ $route['drinks-to-stock']="administrator/fetchDrinktoStock";
 $route['add-drinks-to-stock']="administrator/add_drinks_stock";
 $route['fetch-drinks-stock']="administrator/fetchDrinksStock";
 
+
+//EXPENSES
+$route['expenses']="administrator/expenses";
+$route['add-expenses']="administrator/add_expenses";
+$route['fetch-expenses']="administrator/fetch_expenses";
+$route['delete-expense']="administrator/delete_expense";
+$route['fetch-expense']="administrator/fetch_expense";
+$route['update-expense']="administrator/update_expense";
+
 //SALES
 $route['sales']="administrator/sales";
 $route['fetch-allocated-stock']="administrator/fetch_allocated_stock";

@@ -561,6 +561,140 @@ class Administrator extends CI_Controller {
 			echo $error;
 		}
 	}
+
+
+	//==============================
+    //==============================
+    //EXPENSES
+    //==============================
+    //==============================
+
+	public function expenses(){
+		$this->verify();
+		$data['title']=$this->administrator_model->fetch_store()->STORE_NAME." :: Expenses";
+		$data['staffList']=$this->staff_list();
+		$this->load->view('administrator/parts/head',$data);
+		$this->load->view('administrator/expenses/expenses',$data);
+		$this->load->view('administrator/parts/bottom',$data);
+	}
+
+	//ADD EXPENSES
+	public function add_expenses(){
+		$this->verify();
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules('title', 'Expenses Title', 'required');
+		$this->form_validation->set_rules('amount', 'Amount', 'required');
+		$this->form_validation->set_rules('date', 'Date', 'required');
+		$this->form_validation->set_rules('staff', 'Staff', 'required|numeric');
+		if($this->form_validation->run()){
+
+			$expenses=array(
+				'TITLE'=>trim($this->input->post('title')),
+				'DESCRIPTION'=>trim($this->input->post('description')),
+				'AMOUNT'=>trim($this->input->post('amount')),
+				'DATE'=>date('Y-m-d', strtotime($this->input->post('date'))),
+				'STAFF'=>$this->input->post('staff')
+			);
+
+			if($this->administrator_model->add_expenses($expenses)){
+				echo "Expenses has been added";
+			}
+		}
+		else{
+
+			$error="";
+			if(form_error('title')){
+				$error.=form_error('title');
+			}
+			if(form_error('amount')){
+				$error.=form_error('amount');
+			}
+			if(form_error('date')){
+				$error.=form_error('date');
+			}
+			if(form_error('staff')){
+				$error.=form_error('staff');
+			}
+
+			echo $error;
+		}
+	}
+
+	//UPDATE EXPENSE
+	public function update_expense(){
+		$this->verify();
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules('title', 'Expenses Title', 'required');
+		$this->form_validation->set_rules('amount', 'Amount', 'required');
+		$this->form_validation->set_rules('date', 'Date', 'required');
+		$this->form_validation->set_rules('staff', 'Staff', 'required|numeric');
+		$this->form_validation->set_rules('expense_id', 'Expense ID', 'required|numeric');
+		if($this->form_validation->run()){
+
+			$expenses=array(
+				'TITLE'=>trim($this->input->post('title')),
+				'DESCRIPTION'=>trim($this->input->post('description')),
+				'AMOUNT'=>trim($this->input->post('amount')),
+				'DATE'=>date('Y-m-d', strtotime($this->input->post('date'))),
+				'STAFF'=>$this->input->post('staff'),
+				'EXPENSE_ID'=>$this->input->post('expense_id')
+			);
+
+			if($this->administrator_model->update_expense($expenses)){
+				echo "Expenses has been updated";
+			}
+		}
+		else{
+
+			$error="";
+			if(form_error('title')){
+				$error.=form_error('title');
+			}
+			if(form_error('amount')){
+				$error.=form_error('amount');
+			}
+			if(form_error('date')){
+				$error.=form_error('date');
+			}
+			if(form_error('staff')){
+				$error.=form_error('staff');
+			}
+
+			echo $error;
+		}
+	}
+
+	//FETCH EXPENSES
+	public function fetch_expenses(){
+		$this->verify();
+		$data['expenses']=$this->administrator_model->fetch_expenses();
+		$this->load->view('administrator/expenses/list', $data);
+	}
+
+	//DELETE EXPENSES
+	public function delete_expense(){
+		$this->verify();
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules('expense_id', 'Expenses ID', 'required|numeric');
+		if($this->form_validation->run()){
+			if($this->administrator_model->delete_expense($this->input->post('expense_id'))){
+				echo "Expenses has been deleted";
+			}
+		}
+	}
+
+	//FETCH EXPENSE RECORD
+	public function fetch_expense(){
+		$this->verify();
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules('expense_id', 'Expenses ID', 'required|numeric');
+		if($this->form_validation->run()){
+			$data['expense']=$this->administrator_model->fetch_expense($this->input->post('expense_id'));
+			$data['staffList']=$this->staff_list();
+			$this->load->view('administrator/expenses/info', $data);
+		}
+	}
+
 	
 	//==============================
     //==============================
@@ -678,7 +812,6 @@ class Administrator extends CI_Controller {
 					$sales_price=$_POST['sales_price'][$i];
 					$cost_price=$_POST['cost_price'][$i];
 					$leftover=$_POST['leftOver'][$i];
-
 						$sales=array(
 							'STAFF_ID'=>$this->input->post('staff'),
 							'PRODUCT_ID'=>$product,
@@ -687,9 +820,7 @@ class Administrator extends CI_Controller {
 							'SALES_PRICE'=>$sales_price,
 							'COST_PRICE'=>$cost_price,
 							'LEFTOVER'=>$leftover
-						);	
-
-									
+						);				
 						$this->administrator_model->update_sales($sales);
 				}
 				echo "Sales has been Updated";

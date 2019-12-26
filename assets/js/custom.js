@@ -327,11 +327,117 @@ $(document).ready(function(){
     $('.stocklog').DataTable();
    });
 
+   //=========================
+  //=========================
+  //====EXPENSES
+  //=========================
+  //=========================
+
+  //ADD EXPENSES
+  $('#expensesForm').submit(function(){
+          $.post( 
+            base_url+"add-expenses", 
+            $(this).serialize(), 
+            function(data){
+              $.notify({
+                message: data
+              },{
+                type: "success", 
+                z_index:9999         
+              }); 
+              $('#expensesForm')[0].reset();
+               expenses();
+            }
+          );
+          $(document).ajaxSend(function(event, xhr, settings) {$("#preloader").fadeIn();});
+          $(document).ajaxComplete(function(event, xhr, settings) {$("#preloader").fadeOut();});
+          return false;          
+        });
+
+
+  expenses();
+  function expenses(){
+    $('.expensesDiv').load(base_url+'fetch-expenses', function(){
+      $('.expensesTable').DataTable({
+         "drawCallback": function( settings ) {
+
+
+          //DELETE EXPENSE
+          $('.deleteExpenses').click(function(){
+            var expense_id=$(this).attr('id');
+            swal({
+              title: 'Are you sure of this ?',
+              text: "This can't be reverted!",
+              type: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#D62C1A',
+              cancelButtonColor: '#2C3E50',
+              confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+
+              $.post( 
+                  base_url+"delete-expense", 
+                  {expense_id:expense_id}, 
+                  function(data){
+                      $.notify({
+                          message: data
+                      },{
+                        type: "success" 
+                      }); 
+                      expenses();
+                  }
+              );
+              $(document).ajaxSend(function(event, xhr, settings) {$("#preloader").fadeIn();});
+              $(document).ajaxComplete(function(event, xhr, settings) {$("#preloader").fadeOut();});    
+            });   
+          });
+
+          //EDIT EXPENSES
+          $('.editExpenses').click(function(){
+                    $.post( 
+                        base_url+"fetch-expense", 
+                        {expense_id:$(this).attr('id')}, 
+                        function(data){
+                          $('#modal-id2').modal('show');
+                          $('#modal-id2 .modal-body').html(data);
+
+                            
+                          //UPDATE EXPENSE
+                          $('#UpdateExpensesForm').submit(function(){
+                                    $.post( 
+                                        base_url+"update-expense", 
+                                        $(this).serialize(), 
+                                        function(data){
+                                           $('#modal-id2').modal('hide');
+                                             $.notify({
+                                                message: data
+                                            },{
+                                                
+                                                type: "success",
+                                               
+                                            }); 
+
+                                            expenses();
+                                        }
+                                    );
+                                     $(document).ajaxSend(function(event, xhr, settings) {$(".preloader").fadeIn();});
+                                     $(document).ajaxComplete(function(event, xhr, settings) {$(".preloader").fadeOut();});
+                                     return false;          
+                            }); 
+                        }
+                    );
+                $(document).ajaxSend(function(event, xhr, settings) {$("#preloader").fadeIn();});
+                $(document).ajaxComplete(function(event, xhr, settings) {$("#preloader").fadeOut();});       
+              });
+
+        }
+      });
+    });
+  }
   
 
 
-
-	//=========================
+  //=========================
 	//=========================
 	//====PRODUCTS
 	//=========================
@@ -512,14 +618,6 @@ $(document).ready(function(){
                 }
               }
              }) 
-
-             //UPDATE SALES
-             $('#updateSalesForm').submit(function(){
-
-              alert('hhhh');
-              return false;
-
-             });
 
 
 

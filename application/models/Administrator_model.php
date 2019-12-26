@@ -163,6 +163,73 @@
 		}
  	}
 
+ 	//===================
+ 	//===================
+ 	//EXPENSES
+ 	//===================
+ 	//===================
+
+ 	//ADD EXPENSES
+ 	function add_expenses($expenses){
+ 		if($this->db->insert('expenses', $expenses)){
+ 			return true;
+ 		}
+ 		else{
+ 			return false;
+ 		}
+ 	}
+ 	//FETCH EXPENSES
+ 	function fetch_expenses(){
+ 		$this->db->select('*');
+ 		$this->db->from('expenses');
+ 		$this->db->join('staff', 'staff.STAFF_ID=expenses.STAFF', 'left');
+ 		$this->db->order_by('DATE', 'ASC');
+ 		$query=$this->db->get();
+ 		if($query->num_rows()>0){
+ 			return $query->result();
+ 		}
+ 		else{
+ 			return false;
+ 		}
+ 	}
+
+ 	//DELETE EXPENSE
+ 	function delete_expense($expense_id){
+ 		$this->db->where('EXPENSE_ID', $expense_id);
+ 		if($this->db->delete('expenses')){
+ 			return true;
+ 		}
+ 		else{
+ 			return false;
+ 		}
+ 	}
+
+ 	//FETCH EXPENSE
+ 	function fetch_expense($expense_id){
+ 		$this->db->select('*');
+ 		$this->db->from('expenses');
+ 		$this->db->join('staff', 'staff.STAFF_ID=expenses.STAFF', 'left');
+ 		$this->db->where('EXPENSE_ID', $expense_id);
+ 		$query=$this->db->get();
+ 		if($query->num_rows()==1){
+ 			return $query->row();
+ 		}
+ 		else{
+ 			return false;
+ 		}
+ 	}
+
+ 	//UPDATE EXPENSE
+ 	function update_expense($expense){
+ 		$this->db->where('EXPENSE_ID', $expense['EXPENSE_ID']);
+		if($this->db->update('expenses', $expense)){
+			return true;
+		}
+		else{
+			return false;
+		}
+ 	}
+
 
 
  	//===================
@@ -396,7 +463,6 @@
 	 		$this->db->where('STAFF_ID', $sales['STAFF_ID']);
 	 		$this->db->where('DATE_ADDED', $sales['DATE_ADDED']);
 			if($this->db->update('stock')){
-
 
 				//UPDATE LEFTOVER ADDED TO THE NEXT DAY STOCK
 				$this->db->set('QUANTITY', $sales['LEFTOVER']);

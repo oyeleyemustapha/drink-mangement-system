@@ -28,7 +28,7 @@ if($products){
             <input type='hidden' name='sales_price[]' value='$product->SALES_PRICE'>
             <input type='hidden' name='cost_price[]' value='$product->COST_PRICE'>
             <input type='hidden' name='initial_stock[]' value='$stock'>
-             <input type='number' class='form-control form-control-lg leftOverform' name='leftover[]' data-initial-stock='$stock'>
+             <input type='number' class='form-control form-control-lg leftOverform' name='leftover[]' data-initial-stock='$stock' required>
 
 
 
