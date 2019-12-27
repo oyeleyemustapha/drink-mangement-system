@@ -106,6 +106,10 @@ echo'
                                 <a href="'.base_url().'cashier/sales"><i class="ti-pencil"></i>Post Closing Stock</a>
                             </li>
 
+                             <li class="has-submenu">
+                                <a href="'.base_url().'cashier/expenses"><i class="ti-money"></i>Expenses</a>
+                            </li>
+
                             <li class="has-submenu">
                                 <a href="'.base_url().'cashier/reports"><i class="ti-bar-chart"></i>Reports</a>
                             </li>

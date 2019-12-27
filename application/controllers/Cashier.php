@@ -243,7 +243,7 @@ class Cashier extends CI_Controller {
 			$date=date('Y-m-d', strtotime($this->input->post('date')));
 			$data['date']=$date;
 			$data['report']=$this->cashier_model->sales_report_day($date);
-			
+			$data['expenses']=$this->cashier_model->general_expense_report_day($date);
 			$this->load->view('cashier/reports/generalDailysales',$data);
 		}
 	}
@@ -328,6 +328,130 @@ class Cashier extends CI_Controller {
 	        );
         }                        
 	}
+
+
+	//==============================
+    //==============================
+    //EXPENSES
+    //==============================
+    //==============================
+
+	public function expenses(){
+		$this->verify();
+		$data['title']=$this->cashier_model->fetch_store()->STORE_NAME." :: Expenses";
+		$this->load->view('cashier/parts/head',$data);
+		$this->load->view('cashier/expenses/expenses',$data);
+		$this->load->view('cashier/parts/bottom',$data);
+	}
+
+	//ADD EXPENSES
+	public function add_expenses(){
+		$this->verify();
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules('title', 'Expenses Title', 'required');
+		$this->form_validation->set_rules('amount', 'Amount', 'required');
+		$this->form_validation->set_rules('date', 'Date', 'required');
+
+		if($this->form_validation->run()){
+
+			$expenses=array(
+				'TITLE'=>trim($this->input->post('title')),
+				'DESCRIPTION'=>trim($this->input->post('description')),
+				'AMOUNT'=>trim($this->input->post('amount')),
+				'DATE'=>date('Y-m-d', strtotime($this->input->post('date'))),
+				'STAFF'=>$_SESSION['staff_id']
+			);
+
+			if($this->cashier_model->add_expenses($expenses)){
+				echo "Expenses has been added";
+			}
+		}
+		else{
+
+			$error="";
+			if(form_error('title')){
+				$error.=form_error('title');
+			}
+			if(form_error('amount')){
+				$error.=form_error('amount');
+			}
+			if(form_error('date')){
+				$error.=form_error('date');
+			}
+
+			echo $error;
+		}
+	}
+
+	//UPDATE EXPENSE
+	public function update_expense(){
+		$this->verify();
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules('title', 'Expenses Title', 'required');
+		$this->form_validation->set_rules('amount', 'Amount', 'required');
+		$this->form_validation->set_rules('date', 'Date', 'required');
+		$this->form_validation->set_rules('expense_id', 'Expense ID', 'required|numeric');
+		if($this->form_validation->run()){
+
+			$expenses=array(
+				'TITLE'=>trim($this->input->post('title')),
+				'DESCRIPTION'=>trim($this->input->post('description')),
+				'AMOUNT'=>trim($this->input->post('amount')),
+				'DATE'=>date('Y-m-d', strtotime($this->input->post('date'))),
+				'STAFF'=>$_SESSION['staff_id'],
+				'EXPENSE_ID'=>$this->input->post('expense_id')
+			);
+
+			if($this->cashier_model->update_expense($expenses)){
+				echo "Expenses has been updated";
+			}
+		}
+		else{
+
+			$error="";
+			if(form_error('title')){
+				$error.=form_error('title');
+			}
+			if(form_error('amount')){
+				$error.=form_error('amount');
+			}
+			if(form_error('date')){
+				$error.=form_error('date');
+			}
+			echo $error;
+		}
+	}
+
+	//FETCH EXPENSES
+	public function fetch_expenses(){
+		$this->verify();
+		$data['expenses']=$this->cashier_model->fetch_expenses();
+		$this->load->view('cashier/expenses/list', $data);
+	}
+
+	//DELETE EXPENSES
+	public function delete_expense(){
+		$this->verify();
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules('expense_id', 'Expenses ID', 'required|numeric');
+		if($this->form_validation->run()){
+			if($this->cashier_model->delete_expense($this->input->post('expense_id'))){
+				echo "Expenses has been deleted";
+			}
+		}
+	}
+
+	//FETCH EXPENSE RECORD
+	public function fetch_expense(){
+		$this->verify();
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules('expense_id', 'Expenses ID', 'required|numeric');
+		if($this->form_validation->run()){
+			$data['expense']=$this->cashier_model->fetch_expense($this->input->post('expense_id'));
+			$this->load->view('cashier/expenses/info', $data);
+		}
+	}
+
 
 	
 
