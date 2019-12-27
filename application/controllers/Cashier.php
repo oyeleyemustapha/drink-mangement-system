@@ -153,7 +153,8 @@ class Cashier extends CI_Controller {
 		$this->verify();
 			$data['products']=$this->cashier_model->fetch_allocated_stock($_SESSION['staff_id']);
 			if($data['products']==1){
-				echo "<div class='alert alert-info'><h3 class='text-center'>Sales has been posted before for this staff</h3></div>";
+				$data['sales']=$this->cashier_model->fetch_posted_sales($_SESSION['staff_id']);
+				$this->load->view('cashier/sales/edit', $data);
 			}
 			elseif ($data['products']==2) {
 				echo "<div class='alert alert-info'><h3 class='text-center'>No products was allocated to this staff today</h3></div>";
@@ -167,52 +168,92 @@ class Cashier extends CI_Controller {
 	//POST SALES RECORD
 	public function post_sales(){
 		$this->verify();
-		$this->load->library('form_validation');
-		$this->form_validation->set_rules('product[]', 'Product', 'numeric');
-		$this->form_validation->set_rules('leftover[]', 'Leftover', 'numeric');
-		if($this->form_validation->run()){
-			for ($i=0; $i <count($this->input->post('product')) ; $i++) { 
-				$product=$_POST['product'][$i];
-				$leftover=$_POST['leftover'][$i];
-				$initial_stock=$_POST['initial_stock'][$i];
-				$sales_price=$_POST['sales_price'][$i];
-				$cost_price=$_POST['cost_price'][$i];
-				if(	$leftover==''){
-					continue;
-				}
-				else{
 
-					$quantity_sold=$initial_stock-$leftover;
-					$sales=array(
-						'STAFF_ID'=>$_SESSION['staff_id'],
-						'PRODUCT_ID'=>$product,
-						'QUANTITY_SOLD'=>$quantity_sold,
-						'DATE_ADDED'=>date('Y-m-d'),
-						'SALES_PRICE'=>$sales_price,
-						'COST_PRICE'=>$cost_price,
-						'LEFTOVER'=>$leftover
-					);					
-					$this->cashier_model->post_sales($sales);
+		//POST SALES
+		if($this->input->post('leftover[]')!=null){
+			$this->load->library('form_validation');
+			$this->form_validation->set_rules('product[]', 'Product', 'numeric');
+			$this->form_validation->set_rules('leftover[]', 'Leftover', 'numeric');
+			if($this->form_validation->run()){
+				for ($i=0; $i <count($this->input->post('product')) ; $i++) { 
+					$product=$_POST['product'][$i];
+					$leftover=$_POST['leftover'][$i];
+					$initial_stock=$_POST['initial_stock'][$i];
+					$sales_price=$_POST['sales_price'][$i];
+					$cost_price=$_POST['cost_price'][$i];
+					if(	$leftover==''){
+						continue;
+					}
+					else{
+
+						$quantity_sold=$initial_stock-$leftover;
+						$sales=array(
+							'STAFF_ID'=>$_SESSION['staff_id'],
+							'PRODUCT_ID'=>$product,
+							'QUANTITY_SOLD'=>$quantity_sold,
+							'DATE_ADDED'=>date('Y-m-d'),
+							'SALES_PRICE'=>$sales_price,
+							'COST_PRICE'=>$cost_price,
+							'LEFTOVER'=>$leftover
+						);					
+						$this->cashier_model->post_sales($sales);
+					}
 				}
+				echo "Sales has been posted";
 			}
-			echo "Sales has been posted";
+			else{
+
+				$error="";
+
+				if(form_error('product[]')){
+					$error.=form_error('product[]');
+				}
+
+				if(form_error('leftover[]')){
+					$error.=form_error('leftover[]');
+				}
+				echo $error;
+			}
 		}
+		//UPDATE SALES
 		else{
-
-			$error="";
-
-			if(form_error('product[]')){
-				$error.=form_error('product[]');
+			$this->verify();
+			$this->load->library('form_validation');
+			$this->form_validation->set_rules('product[]', 'Product', 'numeric');
+			$this->form_validation->set_rules('leftOver[]', 'Leftover', 'numeric');
+			$this->form_validation->set_rules('initial_stock[]', 'Initial Stock', 'numeric');
+			if($this->form_validation->run()){
+				for ($i=0; $i <count($this->input->post('product')) ; $i++) { 
+					$product=$_POST['product'][$i];
+					$quantitySold=$_POST['initial_stock'][$i]-$_POST['leftOver'][$i];
+					$sales_price=$_POST['sales_price'][$i];
+					$cost_price=$_POST['cost_price'][$i];
+					$leftover=$_POST['leftOver'][$i];
+						$sales=array(
+							'STAFF_ID'=>$_SESSION['staff_id'],
+							'PRODUCT_ID'=>$product,
+							'QUANTITY_SOLD'=>$quantitySold,
+							'DATE_ADDED'=> date('Y-m-d'),
+							'SALES_PRICE'=>$sales_price,
+							'COST_PRICE'=>$cost_price,
+							'LEFTOVER'=>$leftover
+						);				
+						$this->cashier_model->update_sales($sales);
+				}
+				echo "Sales has been Updated";
 			}
+			else{
 
-			if(form_error('staff')){
-				$error.=form_error('staff');
-			}
+				$error="";
 
-			if(form_error('leftover[]')){
-				$error.=form_error('leftover[]');
+				if(form_error('product[]')){
+					$error.=form_error('product[]');
+				}
+				if(form_error('quantitySold[]')){
+					$error.=form_error('quantitySold[]');
+				}
+				echo $error;
 			}
-			echo $error;
 		}
 	}
 

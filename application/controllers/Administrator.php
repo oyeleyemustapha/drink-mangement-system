@@ -728,7 +728,7 @@ class Administrator extends CI_Controller {
 
 				$this->load->view('administrator/sales/edit', $data);
 
-				//echo "<div class='alert alert-info'><h3 class='text-center'>Sales has been posted before for this staff</h3></div>";
+				
 			}
 			elseif ($data['products']==2) {
 				echo "<div class='alert alert-info'><h3 class='text-center'>No products was allocated to this staff today</h3></div>";
