@@ -105,6 +105,56 @@
                 </div>';
             }
 
+            if($expenses){
+                 echo'
+                 
+
+    <h4 class="text-center">Annual Expenses Report for '.$date.'</h4>
+
+        <table class="table table-bordered table-condensed table-hover productList">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>MONTH</th>
+                                            <th>AMOUNT</th>
+                                            
+                                         
+                                            
+                                           
+                                        </tr>
+                                    </thead>
+                                    <tbody>';
+                                    $counter=1;
+                                    $total_expenditure=0;
+                                   
+                                    foreach ($expenses as $expense) {
+
+                                        echo"
+                                            <tr>
+                                                <td>$counter</td>
+                                                <td>".$expense->month."</td>
+                                                <td>&#8358; ".number_format($expense->amount)."</td>
+                                                
+                                            </tr>
+                                        ";
+                                         $total_expenditure+=$expense->amount;
+                                        $counter++;
+                                    }
+
+                                    
+                                        
+                                    echo'</tbody>
+                                </table>
+
+                                <h5>TOTAL EXPENDITURE : &#8358; '.number_format($total_expenditure).' </h5>
+                                
+
+
+
+
+    ';
+            }
+
 
         ?>
        

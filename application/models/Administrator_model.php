@@ -538,6 +538,40 @@
  		}
  	}
 
+ 	//FETCH DAILY EXPENSES FOR THE CURRENT DAY
+ 	function general_expense_report_day($date){
+ 		$this->db->select('*');
+ 		$this->db->from('expenses');
+ 		$this->db->join('staff', 'staff.STAFF_ID=expenses.STAFF', 'left');
+ 		$this->db->where('DATE', $date);
+ 		$this->db->order_by('EXPENSE_ID', 'DESC');
+ 		$query=$this->db->get();
+ 		if($query->num_rows()>0){
+ 			return $query->result();
+ 		}
+ 		else{
+ 			return false;
+ 		}
+ 	}
+
+
+ 	//FETCH DAILY EXPENSES FOR A STAFF
+ 	function general_expense_report_staff($report){
+ 		$this->db->select('*');
+ 		$this->db->from('expenses');
+ 		$this->db->join('staff', 'staff.STAFF_ID=expenses.STAFF', 'left');
+ 		$this->db->where('DATE', $report['DATE']);
+ 		$this->db->where('staff.STAFF_ID', $report['STAFF_ID']);
+ 		$this->db->order_by('EXPENSE_ID', 'DESC');
+ 		$query=$this->db->get();
+ 		if($query->num_rows()>0){
+ 			return $query->result();
+ 		}
+ 		else{
+ 			return false;
+ 		}
+ 	}
+
 
  	//FETCH MONTHLY SALES FOR A PARTICULAR MONTH AND YEAR
  	function sales_report_month($month){
@@ -548,6 +582,40 @@
  		$this->db->where('YEAR(sales.DATE)', $month['YEAR']);
  		$this->db->group_by(array('sales.PRODUCT_ID', 'sales.COST_PRICE', 'sales.SALES_PRICE'));
  		$this->db->order_by('products.PRODUCT_NAME', 'ASC');
+ 		$query=$this->db->get();
+ 		if($query->num_rows()>0){
+ 			return $query->result();
+ 		}
+ 		else{
+ 			return false;
+ 		}
+ 	}
+
+ 	//FETCH MONTHLY EXPENSES FOR A PARTICULAR MONTH AND YEAR
+ 	function general_expense_report_month($month){
+ 		$this->db->select('*');
+ 		$this->db->from('expenses');
+ 		$this->db->join('staff', 'staff.STAFF_ID=expenses.STAFF', 'left');
+ 		$this->db->where('MONTH(expenses.DATE)', $month['MONTH']);
+ 		$this->db->where('YEAR(expenses.DATE)', $month['YEAR']);
+ 		$this->db->order_by('expenses.DATE', 'ASC');
+ 		$query=$this->db->get();
+ 		if($query->num_rows()>0){
+ 			return $query->result();
+ 		}
+ 		else{
+ 			return false;
+ 		}
+ 	}
+
+ 	//FETCH ANNUAL EXPENSES FOR A PARTICULAR YEAR
+ 	function general_expense_report_annual($year){
+ 		$this->db->select('sum(expenses.AMOUNT) amount, MONTHNAME(expenses.DATE) month');
+ 		$this->db->from('expenses');
+ 		$this->db->join('staff', 'staff.STAFF_ID=expenses.STAFF', 'left');
+ 		$this->db->where('YEAR(expenses.DATE)', $year);
+ 		$this->db->group_by(array('MONTH(expenses.DATE)'));
+ 		$this->db->order_by('expenses.DATE', 'ASC');
  		$query=$this->db->get();
  		if($query->num_rows()>0){
  			return $query->result();

@@ -883,7 +883,7 @@ class Administrator extends CI_Controller {
 			$date=date('Y-m-d', strtotime($this->input->post('date')));
 			$data['date']=$date;
 			$data['report']=$this->administrator_model->sales_report_day($date);
-			
+			$data['expenses']=$this->administrator_model->general_expense_report_day($date);
 			$this->load->view('administrator/reports/generalDailysales',$data);
 		}
 	}
@@ -903,6 +903,7 @@ class Administrator extends CI_Controller {
 			$data['cafeteria']=$this->administrator_model->fetch_store()->STORE_NAME;
 			$data['date']=$this->input->post('month')." ".$this->input->post('year');
 			$data['report']=$this->administrator_model->sales_report_month($month_report);
+			$data['expenses']=$this->administrator_model->general_expense_report_month($month_report);
 			$this->load->view('administrator/reports/generalMonthsales',$data);
 		}
 	}
@@ -916,6 +917,7 @@ class Administrator extends CI_Controller {
 			$data['cafeteria']=$this->administrator_model->fetch_store()->STORE_NAME;
 			$data['date']=$this->input->post('year');
 			$data['report']=$this->administrator_model->sales_report_annual($this->input->post('year'));
+			$data['expenses']=$this->administrator_model->general_expense_report_annual($this->input->post('year'));
 			$this->load->view('administrator/reports/generalYearsales',$data);
 		}
 	}
@@ -955,6 +957,7 @@ class Administrator extends CI_Controller {
 				'STAFF_ID'=>$this->input->post('staff')
 			);
 			$data['report']=$this->administrator_model->sales_report_day_staff($report);
+			$data['expenses']=$this->administrator_model->general_expense_report_staff($report);
 			$this->load->view('administrator/reports/staffDailySales',$data);
 		}
 	}
