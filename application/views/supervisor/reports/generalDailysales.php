@@ -103,6 +103,60 @@
                 </div>';
             }
 
+            
+                  if($expenses){
+                 echo'
+                 
+
+    <h4 class="text-center">Expenses for '.date('F d, Y',strtotime($report[0]->DATE)).'</h4>
+
+        <table class="table table-bordered table-condensed table-hover productList">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>TITLE</th>
+                                            <th>AMOUNT</th>
+                                            <th>STAFF</th>
+                                            <th>DESCRIPTION</th>
+
+                                         
+                                            
+                                           
+                                        </tr>
+                                    </thead>
+                                    <tbody>';
+                                    $counter=1;
+                                    $total_expenditure=0;
+                                   
+                                    foreach ($expenses as $expense) {
+
+                                        echo"
+                                            <tr>
+                                                <td>$counter</td>
+                                                <td>$expense->TITLE</td>
+                                                <td>&#8358; ".number_format($expense->AMOUNT)."</td>
+                                                <td>$expense->NAME</td>
+                                               <td>$expense->DESCRIPTION</td>
+                                            </tr>
+                                        ";
+                                         $total_expenditure+=$expense->AMOUNT;
+                                        $counter++;
+                                    }
+
+                                    
+                                        
+                                    echo'</tbody>
+                                </table>
+
+                                <h5>TOTAL EXPENDITURE : &#8358; '.number_format($total_expenditure).' </h5>
+                                
+
+
+
+
+    ';
+            }
+
 
         ?>
        

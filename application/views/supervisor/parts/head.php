@@ -109,6 +109,10 @@ echo'
                             </li>
 
                             <li class="has-submenu">
+                                <a href="'.base_url().'supervisor/expenses"><i class="ti-money"></i>Expenses</a>
+                            </li>
+
+                            <li class="has-submenu">
                                 <a href="'.base_url().'supervisor/reports"><i class="ti-bar-chart"></i>Reports</a>
                             </li>
 

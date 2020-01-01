@@ -506,6 +506,76 @@
  	}
 
 
+ 	//===================
+ 	//===================
+ 	//EXPENSES
+ 	//===================
+ 	//===================
+
+ 	//ADD EXPENSES
+ 	function add_expenses($expenses){
+ 		if($this->db->insert('expenses', $expenses)){
+ 			return true;
+ 		}
+ 		else{
+ 			return false;
+ 		}
+ 	}
+ 	//FETCH EXPENSES
+ 	function fetch_expenses(){
+ 		$this->db->select('*');
+ 		$this->db->from('expenses');
+ 		$this->db->join('staff', 'staff.STAFF_ID=expenses.STAFF', 'left');
+ 		$this->db->order_by('DATE', 'ASC');
+ 		$query=$this->db->get();
+ 		if($query->num_rows()>0){
+ 			return $query->result();
+ 		}
+ 		else{
+ 			return false;
+ 		}
+ 	}
+
+ 	//DELETE EXPENSE
+ 	function delete_expense($expense_id){
+ 		$this->db->where('EXPENSE_ID', $expense_id);
+ 		if($this->db->delete('expenses')){
+ 			return true;
+ 		}
+ 		else{
+ 			return false;
+ 		}
+ 	}
+
+ 	//FETCH EXPENSE
+ 	function fetch_expense($expense_id){
+ 		$this->db->select('*');
+ 		$this->db->from('expenses');
+ 		$this->db->join('staff', 'staff.STAFF_ID=expenses.STAFF', 'left');
+ 		$this->db->where('EXPENSE_ID', $expense_id);
+ 		$query=$this->db->get();
+ 		if($query->num_rows()==1){
+ 			return $query->row();
+ 		}
+ 		else{
+ 			return false;
+ 		}
+ 	}
+
+ 	//UPDATE EXPENSE
+ 	function update_expense($expense){
+ 		$this->db->where('EXPENSE_ID', $expense['EXPENSE_ID']);
+		if($this->db->update('expenses', $expense)){
+			return true;
+		}
+		else{
+			return false;
+		}
+ 	}
+
+
+
+
 
  
 
@@ -515,17 +585,124 @@
  	
 
  	
+ 	//FETCH ANNUAL EXPENSES FOR A PARTICULAR YEAR
+ 	function general_expense_report_annual($year){
+ 		$this->db->select('sum(expenses.AMOUNT) amount, MONTHNAME(expenses.DATE) month');
+ 		$this->db->from('expenses');
+ 		$this->db->join('staff', 'staff.STAFF_ID=expenses.STAFF', 'left');
+ 		$this->db->where('YEAR(expenses.DATE)', $year);
+ 		$this->db->group_by(array('MONTH(expenses.DATE)'));
+ 		$this->db->order_by('expenses.DATE', 'ASC');
+ 		$query=$this->db->get();
+ 		if($query->num_rows()>0){
+ 			return $query->result();
+ 		}
+ 		else{
+ 			return false;
+ 		}
+ 	}
+
+
+ 	//FETCH DAILY EXPENSES FOR A STAFF
+ 	function general_expense_report_staff($report){
+ 		$this->db->select('*');
+ 		$this->db->from('expenses');
+ 		$this->db->join('staff', 'staff.STAFF_ID=expenses.STAFF', 'left');
+ 		$this->db->where('DATE', $report['DATE']);
+ 		$this->db->where('staff.STAFF_ID', $report['STAFF_ID']);
+ 		$this->db->order_by('EXPENSE_ID', 'DESC');
+ 		$query=$this->db->get();
+ 		if($query->num_rows()>0){
+ 			return $query->result();
+ 		}
+ 		else{
+ 			return false;
+ 		}
+ 	}
+
+ 	//FETCH THE POSTED SALES FOR EDITING
+ 	function fetch_posted_sales($staff){
+ 			$this->db->select('products.PRODUCT_NAME, stock.QUANTITY, stock.ADDED_STOCK, stock.QUANTITY_SOLD, stock.PRODUCT_ID, stock.STAFF_ID, products.SALES_PRICE, products.COST_PRICE');
+	 		$this->db->from('stock');
+	 		$this->db->join('products', 'stock.PRODUCT_ID=products.PRODUCT_ID', 'left');
+	 		$this->db->where('stock.STAFF_ID', $staff);
+	 		$this->db->where('stock.DATE_ADDED', date('Y-m-d'));
+	 		$this->db->order_by('products.PRODUCT_NAME', 'ASC');
+	 		$query=$this->db->get();
+	 		if($query->num_rows()>0){
+	 			return $query->result();
+	 		}	
+ 	}
+
+ 	//UPDATE SALES
+ 	function update_sales($sales){
+ 			$quantity_sold=$sales['QUANTITY_SOLD'];
+	 		$this->db->set('QUANTITY_SOLD', $sales['QUANTITY_SOLD']);
+	 		$this->db->where('PRODUCT_ID', $sales['PRODUCT_ID']);
+	 		$this->db->where('STAFF_ID', $sales['STAFF_ID']);
+	 		$this->db->where('DATE_ADDED', $sales['DATE_ADDED']);
+			if($this->db->update('stock')){
+
+				//UPDATE LEFTOVER ADDED TO THE NEXT DAY STOCK
+				$this->db->set('QUANTITY', $sales['LEFTOVER']);
+		 		$this->db->where('PRODUCT_ID', $sales['PRODUCT_ID']);
+		 		$this->db->where('STAFF_ID', $sales['STAFF_ID']);
+		 		$this->db->where('DATE_ADDED', date('Y-m-d', strtotime('+1 day')));
+		 		$this->db->update('stock');
+
+		 		//UPDATE SALES 
+		 		$this->db->set('QUANTITY', $sales['QUANTITY_SOLD']);
+		 		$this->db->where('PRODUCT_ID', $sales['PRODUCT_ID']);
+		 		$this->db->where('STAFF_ID', $sales['STAFF_ID']);
+		 		$this->db->where('DATE', date('Y-m-d'));
+		 		$this->db->update('sales');
+				return true;
+			}
+			else{
+				return false;
+			}	
+ 	}
 
 
 
  	
 	
-	
+	//FETCH MONTHLY EXPENSES FOR A PARTICULAR MONTH AND YEAR
+ 	function general_expense_report_month($month){
+ 		$this->db->select('*');
+ 		$this->db->from('expenses');
+ 		$this->db->join('staff', 'staff.STAFF_ID=expenses.STAFF', 'left');
+ 		$this->db->where('MONTH(expenses.DATE)', $month['MONTH']);
+ 		$this->db->where('YEAR(expenses.DATE)', $month['YEAR']);
+ 		$this->db->order_by('expenses.DATE', 'ASC');
+ 		$query=$this->db->get();
+ 		if($query->num_rows()>0){
+ 			return $query->result();
+ 		}
+ 		else{
+ 			return false;
+ 		}
+ 	}
+
 	
 
 
  	
- 	
+ 	//FETCH DAILY EXPENSES FOR THE CURRENT DAY
+ 	function general_expense_report_day($date){
+ 		$this->db->select('*');
+ 		$this->db->from('expenses');
+ 		$this->db->join('staff', 'staff.STAFF_ID=expenses.STAFF', 'left');
+ 		$this->db->where('DATE', $date);
+ 		$this->db->order_by('EXPENSE_ID', 'DESC');
+ 		$query=$this->db->get();
+ 		if($query->num_rows()>0){
+ 			return $query->result();
+ 		}
+ 		else{
+ 			return false;
+ 		}
+ 	}
  	
 
 

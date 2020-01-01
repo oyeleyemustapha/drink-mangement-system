@@ -482,7 +482,9 @@ class Supervisor extends CI_Controller {
 			
 			if($data['products']==1){
 
-				echo "<div class='alert alert-info'><h3 class='text-center'>Sales has been posted before for this staff</h3></div>";
+				$data['sales']=$this->supervisor_model->fetch_posted_sales($this->input->post('staff'));
+
+				$this->load->view('supervisor/sales/edit', $data);
 			}
 			elseif ($data['products']==2) {
 				echo "<div class='alert alert-info'><h3 class='text-center'>No products was allocated to this staff today</h3></div>";
@@ -504,55 +506,110 @@ class Supervisor extends CI_Controller {
 	//POST SALES RECORD
 	public function post_sales(){
 		$this->verify();
-		$this->load->library('form_validation');
-		$this->form_validation->set_rules('staff', 'Staff', 'numeric');
-		$this->form_validation->set_rules('product[]', 'Product', 'numeric');
-		$this->form_validation->set_rules('leftover[]', 'Leftover', 'numeric');
-		if($this->form_validation->run()){
-			for ($i=0; $i <count($this->input->post('product')) ; $i++) { 
-				$product=$_POST['product'][$i];
-				$leftover=$_POST['leftover'][$i];
-				$initial_stock=$_POST['initial_stock'][$i];
-				$sales_price=$_POST['sales_price'][$i];
-				$cost_price=$_POST['cost_price'][$i];
-				if(	$leftover==''){
-					continue;
-				}
-				else{
 
-					$quantity_sold=$initial_stock-$leftover;
-					$sales=array(
-						'STAFF_ID'=>$this->input->post('staff'),
-						'PRODUCT_ID'=>$product,
-						'QUANTITY_SOLD'=>$quantity_sold,
-						'DATE_ADDED'=>date('Y-m-d'),
-						'SALES_PRICE'=>$sales_price,
-						'COST_PRICE'=>$cost_price,
-						'LEFTOVER'=>$leftover
-					);					
-					$this->supervisor_model->post_sales($sales);
+		//POST SALES
+		if($this->input->post('leftover[]')!=null){
+			$this->load->library('form_validation');
+			$this->form_validation->set_rules('staff', 'Staff', 'numeric');
+			$this->form_validation->set_rules('product[]', 'Product', 'numeric');
+			$this->form_validation->set_rules('leftover[]', 'Leftover', 'numeric');
+			if($this->form_validation->run()){
+				for ($i=0; $i <count($this->input->post('product')) ; $i++) { 
+					$product=$_POST['product'][$i];
+					$leftover=$_POST['leftover'][$i];
+					$initial_stock=$_POST['initial_stock'][$i];
+					$sales_price=$_POST['sales_price'][$i];
+					$cost_price=$_POST['cost_price'][$i];
+					if(	$leftover==''){
+						continue;
+					}
+					else{
+
+						$quantity_sold=$initial_stock-$leftover;
+						$sales=array(
+							'STAFF_ID'=>$this->input->post('staff'),
+							'PRODUCT_ID'=>$product,
+							'QUANTITY_SOLD'=>$quantity_sold,
+							'DATE_ADDED'=>date('Y-m-d'),
+							'SALES_PRICE'=>$sales_price,
+							'COST_PRICE'=>$cost_price,
+							'LEFTOVER'=>$leftover
+						);					
+						$this->supervisor_model->post_sales($sales);
+					}
 				}
+				echo "Sales has been posted";
 			}
-			echo "Sales has been posted";
+			else{
+
+				$error="";
+
+				if(form_error('product[]')){
+					$error.=form_error('product[]');
+				}
+
+				if(form_error('staff')){
+					$error.=form_error('staff');
+				}
+
+				if(form_error('leftover[]')){
+					$error.=form_error('leftover[]');
+				}
+				echo $error;
+			}
 		}
+		//UPDATE SALES
 		else{
-
-			$error="";
-
-			if(form_error('product[]')){
-				$error.=form_error('product[]');
+			$this->verify();
+			$this->load->library('form_validation');
+			$this->form_validation->set_rules('staff', 'Staff', 'numeric');
+			$this->form_validation->set_rules('product[]', 'Product', 'numeric');
+			$this->form_validation->set_rules('leftOver[]', 'Leftover', 'numeric');
+			$this->form_validation->set_rules('initial_stock[]', 'Initial Stock', 'numeric');
+			if($this->form_validation->run()){
+				for ($i=0; $i <count($this->input->post('product')) ; $i++) { 
+					$product=$_POST['product'][$i];
+					$quantitySold=$_POST['initial_stock'][$i]-$_POST['leftOver'][$i];
+					$sales_price=$_POST['sales_price'][$i];
+					$cost_price=$_POST['cost_price'][$i];
+					$leftover=$_POST['leftOver'][$i];
+						$sales=array(
+							'STAFF_ID'=>$this->input->post('staff'),
+							'PRODUCT_ID'=>$product,
+							'QUANTITY_SOLD'=>$quantitySold,
+							'DATE_ADDED'=> date('Y-m-d'),
+							'SALES_PRICE'=>$sales_price,
+							'COST_PRICE'=>$cost_price,
+							'LEFTOVER'=>$leftover
+						);				
+						$this->supervisor_model->update_sales($sales);
+				}
+				echo "Sales has been Updated";
 			}
+			else{
 
-			if(form_error('staff')){
-				$error.=form_error('staff');
-			}
+				$error="";
 
-			if(form_error('leftover[]')){
-				$error.=form_error('leftover[]');
+				if(form_error('product[]')){
+					$error.=form_error('product[]');
+				}
+
+				if(form_error('staff')){
+					$error.=form_error('staff');
+				}
+
+				if(form_error('quantitySold[]')){
+					$error.=form_error('quantitySold[]');
+				}
+				echo $error;
 			}
-			echo $error;
 		}
+		
+		
+
 	}
+
+	
 
 	//==============================
     //==============================
@@ -584,7 +641,7 @@ class Supervisor extends CI_Controller {
 			$date=date('Y-m-d', strtotime($this->input->post('date')));
 			$data['date']=$date;
 			$data['report']=$this->supervisor_model->sales_report_day($date);
-			
+			$data['expenses']=$this->supervisor_model->general_expense_report_day($date);
 			$this->load->view('supervisor/reports/generalDailysales',$data);
 		}
 	}
@@ -604,6 +661,7 @@ class Supervisor extends CI_Controller {
 			$data['cafeteria']=$this->supervisor_model->fetch_store()->STORE_NAME;
 			$data['date']=$this->input->post('month')." ".$this->input->post('year');
 			$data['report']=$this->supervisor_model->sales_report_month($month_report);
+			$data['expenses']=$this->supervisor_model->general_expense_report_month($month_report);
 			$this->load->view('supervisor/reports/generalMonthsales',$data);
 		}
 	}
@@ -617,6 +675,7 @@ class Supervisor extends CI_Controller {
 			$data['cafeteria']=$this->supervisor_model->fetch_store()->STORE_NAME;
 			$data['date']=$this->input->post('year');
 			$data['report']=$this->supervisor_model->sales_report_annual($this->input->post('year'));
+			$data['expenses']=$this->supervisor_model->general_expense_report_annual($this->input->post('year'));
 			$this->load->view('supervisor/reports/generalYearsales',$data);
 		}
 	}
@@ -656,6 +715,7 @@ class Supervisor extends CI_Controller {
 				'STAFF_ID'=>$this->input->post('staff')
 			);
 			$data['report']=$this->supervisor_model->sales_report_day_staff($report);
+			$data['expenses']=$this->supervisor_model->general_expense_report_staff($report);
 			$this->load->view('supervisor/reports/staffDailySales',$data);
 		}
 	}
@@ -743,6 +803,142 @@ class Supervisor extends CI_Controller {
 	        );
         }                        
 	}
+
+
+
+
+	//==============================
+    //==============================
+    //EXPENSES
+    //==============================
+    //==============================
+
+	public function expenses(){
+		$this->verify();
+		$data['title']=$this->supervisor_model->fetch_store()->STORE_NAME." :: Expenses";
+		$data['staffList']=$this->staff_list();
+		$this->load->view('supervisor/parts/head',$data);
+		$this->load->view('supervisor/expenses/expenses',$data);
+		$this->load->view('supervisor/parts/bottom',$data);
+	}
+
+	//ADD EXPENSES
+	public function add_expenses(){
+		$this->verify();
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules('title', 'Expenses Title', 'required');
+		$this->form_validation->set_rules('amount', 'Amount', 'required');
+		$this->form_validation->set_rules('date', 'Date', 'required');
+		$this->form_validation->set_rules('staff', 'Staff', 'required|numeric');
+		if($this->form_validation->run()){
+
+			$expenses=array(
+				'TITLE'=>trim($this->input->post('title')),
+				'DESCRIPTION'=>trim($this->input->post('description')),
+				'AMOUNT'=>trim($this->input->post('amount')),
+				'DATE'=>date('Y-m-d', strtotime($this->input->post('date'))),
+				'STAFF'=>$this->input->post('staff')
+			);
+
+			if($this->supervisor_model->add_expenses($expenses)){
+				echo "Expenses has been added";
+			}
+		}
+		else{
+
+			$error="";
+			if(form_error('title')){
+				$error.=form_error('title');
+			}
+			if(form_error('amount')){
+				$error.=form_error('amount');
+			}
+			if(form_error('date')){
+				$error.=form_error('date');
+			}
+			if(form_error('staff')){
+				$error.=form_error('staff');
+			}
+
+			echo $error;
+		}
+	}
+
+	//UPDATE EXPENSE
+	public function update_expense(){
+		$this->verify();
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules('title', 'Expenses Title', 'required');
+		$this->form_validation->set_rules('amount', 'Amount', 'required');
+		$this->form_validation->set_rules('date', 'Date', 'required');
+		$this->form_validation->set_rules('staff', 'Staff', 'required|numeric');
+		$this->form_validation->set_rules('expense_id', 'Expense ID', 'required|numeric');
+		if($this->form_validation->run()){
+
+			$expenses=array(
+				'TITLE'=>trim($this->input->post('title')),
+				'DESCRIPTION'=>trim($this->input->post('description')),
+				'AMOUNT'=>trim($this->input->post('amount')),
+				'DATE'=>date('Y-m-d', strtotime($this->input->post('date'))),
+				'STAFF'=>$this->input->post('staff'),
+				'EXPENSE_ID'=>$this->input->post('expense_id')
+			);
+
+			if($this->supervisor_model->update_expense($expenses)){
+				echo "Expenses has been updated";
+			}
+		}
+		else{
+
+			$error="";
+			if(form_error('title')){
+				$error.=form_error('title');
+			}
+			if(form_error('amount')){
+				$error.=form_error('amount');
+			}
+			if(form_error('date')){
+				$error.=form_error('date');
+			}
+			if(form_error('staff')){
+				$error.=form_error('staff');
+			}
+
+			echo $error;
+		}
+	}
+
+	//FETCH EXPENSES
+	public function fetch_expenses(){
+		$this->verify();
+		$data['expenses']=$this->supervisor_model->fetch_expenses();
+		$this->load->view('supervisor/expenses/list', $data);
+	}
+
+	//DELETE EXPENSES
+	public function delete_expense(){
+		$this->verify();
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules('expense_id', 'Expenses ID', 'required|numeric');
+		if($this->form_validation->run()){
+			if($this->supervisor_model->delete_expense($this->input->post('expense_id'))){
+				echo "Expenses has been deleted";
+			}
+		}
+	}
+
+	//FETCH EXPENSE RECORD
+	public function fetch_expense(){
+		$this->verify();
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules('expense_id', 'Expenses ID', 'required|numeric');
+		if($this->form_validation->run()){
+			$data['expense']=$this->supervisor_model->fetch_expense($this->input->post('expense_id'));
+			$data['staffList']=$this->staff_list();
+			$this->load->view('supervisor/expenses/info', $data);
+		}
+	}
+
 
 	
 
